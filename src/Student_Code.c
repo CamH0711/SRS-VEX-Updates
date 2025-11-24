@@ -32,8 +32,21 @@ double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of 
 
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
-{
-    
+{  
+    int distance_left, distance_right, sonar_distance;
+
+    while(true) {
+        distance_left = readSensor(LeftDistance);
+        distance_right = readSensor(RightDistance);
+        sonar_distance = readSensor(SonarSensor);
+
+
+        lcd_print(2,"Left Distance = %d mm", distance_left);
+        lcd_print(3, "Right Distance = %d mm", distance_right);
+        lcd_print(5, "Sonar Distance = %d mm", sonar_distance);
+
+        delay(100);
+    }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
