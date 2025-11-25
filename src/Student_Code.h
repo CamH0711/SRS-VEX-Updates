@@ -8,7 +8,7 @@ void student_Main();    // The main entry point to the student code
 double findObjectAngle();
 
 
-//Functions copied over from MECHENG 201 project
+//Functions copied over from 201 Vex project
 void driveStraight(int distance);
 int convertPower(double percentPower);
 double convertPosition(double encoderCount);

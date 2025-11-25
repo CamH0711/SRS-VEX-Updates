@@ -35,17 +35,33 @@ int sensorWidth = 139;              // Distance between the left and right dista
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 {  
-    while (true) {
-        lcd_print(2, "Left Distance = %d mm", readSensor(LeftDistance));
-        lcd_print(3, "Right Distance = %d mm", readSensor(RightDistance));
-        lcd_print(5, "Angle = %.2f Degrees", findObjectAngle());
+// while (true) {
+//     lcd_print(4, "Left Encoder = %d", readSensor(LeftEncoder));
+//     lcd_print(5, "Right Encoder = %d", readSensor(RightEncoder));
+//     delay(50);
+// }
+    // motorPower(LeftMotor, 3000);
+    // motorPower(RightMotor, 3000);
+    // delay(1000);
+    // motorPower(LeftMotor, 0);
+    // motorPower(RightMotor, 0);  
+    // delay(500);
 
-        delay(100);
-    }
+    driveStraight(300);
+
+    // while (true) {
+    //     lcd_print(2, "Left Distance = %d mm", readSensor(LeftDistance));
+    //     lcd_print(3, "Right Distance = %d mm", readSensor(RightDistance));
+    //     lcd_print(5, "Angle = %.2f Degrees", findObjectAngle());
+
+    //     delay(100);
+    // }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
 // Don't forget to add your function prototypes to Student_Code.h
+
+// *** NEW FUNCTIONS FOR SRS PROJECT ***
 
 //A function that calculates the angle at which the object in front of the robot is currently positioned at. Returns a positive 
 //angle for an angle of elevation, and negative for an angle of depression, measured from the right corner.
@@ -72,7 +88,7 @@ double findObjectAngle() {
     }
 }
 
-/*
+
 
 // *** FUNCTIONS COPIED OVER FROM SEM 1 201 PROJECT ***
 
@@ -83,7 +99,7 @@ void driveStraight(int distance) {
     int error, errorIntSum = 0, encError;
     int k = 50, errorArray[1000] = {0}; 
     double currentPosition = 0;
-    double Kp = 1, Ki = 0.1, Kp_straight = 1;
+    double Kp = 1, Ki = 0.1, Kp_straight = 1.0;
     double u = 100, uL, uR, uDiff;
     double encoderAverage;
     double tolerance = 0.1;
@@ -112,10 +128,10 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -90, 90);
+        u = saturate(u, -80, 80);
     
         //For the 1st second, ramp up voltage to stop twitching
-        if (k < 70) {			
+        if (k < 70) {	
             u = (((double) k - 49.0)/20.0) * u;
         }
         //Store all the values of the error in an array
@@ -135,8 +151,15 @@ void driveStraight(int distance) {
         motorPower(RightMotor, convertPower(uR));
         motorPower(LeftMotor, convertPower(uL));
         
+        lcd_print(1, "uL = %.2f", uL);
+        lcd_print(2, "uR = %.2f", uR);
+
+        lcd_print(4, "Left Encoder = %d", readSensor(LeftEncoder));
+        lcd_print(5, "Right Encoder = %d", readSensor(RightEncoder));
+
+
         delay(50);
-        } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance))); //while(!((abs(errorArray[k-1]) < (distance*tolerance)) && (abs(errorArray[k-40]) < (distance*tolerance))));//(abs(error) > (distance * tolerance)); 
+        } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
     
         motorPower(LeftMotor, 0);
         motorPower(RightMotor, 0);
@@ -172,5 +195,5 @@ double convertAngle(double encoderCount) {
 	double angle = (360.0/encCountPerRev)*encoderCount;
 
 	return angle;
-} */
+} 
     
