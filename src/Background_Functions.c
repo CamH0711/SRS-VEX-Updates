@@ -115,7 +115,7 @@
          }
          break;
      case 11: // left distance sensor
-        sensorOutput = distance_get(_distanceLeft);
+        sensorOutput = distance_get(_distanceLeft) + 14; //Seems to be a constant offset of approx. -14mm on this sensor for some reason
          break;
      case 12: // right distance sensor
          sensorOutput = distance_get(_distanceRight);
