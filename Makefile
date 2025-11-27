@@ -16,6 +16,10 @@ WARNFLAGS+=
 EXTRA_CFLAGS=
 EXTRA_CXXFLAGS=
 
+# Added by me
+CXXFLAGS += -I$(INCDIR)/liblvgl
+DISABLE_DEFAULT_LVGL := 1
+
 # Set to 1 to enable hot/cold linking
 USE_PACKAGE:=1
 

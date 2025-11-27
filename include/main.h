@@ -110,6 +110,7 @@
  /* Global variables */
  extern int _stopflag;           //1 || 0 - Used to control whether or not robot is to be stopped or in stop mode.
  extern int _arm_State;          // Variable that defines the state of the robot arm (-1 at lower limit, 1 at upper limit, and 0 in between)
- 
+
+
  #endif  // _PROS_MAIN_H_
  

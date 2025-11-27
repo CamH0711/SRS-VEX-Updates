@@ -15,6 +15,7 @@ extern "C" {
  *********************/
 
 #include "misc/lv_types.h"
+#include "lvgl.h"
 
 /*********************
  *      DEFINES

@@ -29,7 +29,7 @@
  * - 16: RGB565
  * - 32: ARGB8888
  */
-#define LV_COLOR_DEPTH     32
+#define LV_COLOR_DEPTH     16
 
 /* Swap the 2 bytes of RGB565 color.
  * Useful if the display has a 8 bit interface (e.g. SPI)*/
@@ -67,7 +67,7 @@
 #define LV_DISP_LARGE_LIMIT  70
 
 /* Type of coordinates. Should be `int16_t` (or `int32_t` for extreme cases) */
-typedef int16_t lv_coord_t;
+typedef int32_t lv_coord_t;
 
 /* Maximum buffer size to allocate for rotation. Only used if software rotation is enabled. */
 #define LV_DISP_ROT_MAX_BUF  (10U * 1024U)
@@ -147,6 +147,9 @@ typedef int16_t lv_coord_t;
  * Feature usage
  *==================*/
 
+//Enable display support - added by me
+#define LV_USE_DISPLAY        1
+
 /*1: Enable the Animations */
 #define LV_USE_ANIMATION        1
 #if LV_USE_ANIMATION
@@ -217,7 +220,7 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h" */
 typedef void * lv_fs_drv_user_data_t;
 #endif
 
-#define LV_USE_FS_STDIO 1
+#define LV_USE_FS_STDIO 0
 #define LV_FS_STDIO_LETTER 'S'
 #define LV_FS_STDIO_PATH "/usd/"
 #define LV_FS_STDIO_CACHE_SIZE 0
@@ -391,26 +394,26 @@ typedef void * lv_indev_drv_user_data_t;            /*Type of user data in the i
 /* Montserrat fonts with bpp = 4
  * https://fonts.google.com/specimen/Montserrat  */
 #define LV_FONT_MONTSERRAT_8     0
-#define LV_FONT_MONTSERRAT_10    1
-#define LV_FONT_MONTSERRAT_12    1
-#define LV_FONT_MONTSERRAT_14    1
-#define LV_FONT_MONTSERRAT_16    1
-#define LV_FONT_MONTSERRAT_18    1
-#define LV_FONT_MONTSERRAT_20    1
+#define LV_FONT_MONTSERRAT_10 0
+#define LV_FONT_MONTSERRAT_12 0
+#define LV_FONT_MONTSERRAT_14 1
+#define LV_FONT_MONTSERRAT_16 0
+#define LV_FONT_MONTSERRAT_18 0
+#define LV_FONT_MONTSERRAT_20 0
 #define LV_FONT_MONTSERRAT_22    0
-#define LV_FONT_MONTSERRAT_24    1
+#define LV_FONT_MONTSERRAT_24 1
 #define LV_FONT_MONTSERRAT_26    0
 #define LV_FONT_MONTSERRAT_28    0
-#define LV_FONT_MONTSERRAT_30    1
+#define LV_FONT_MONTSERRAT_30 0
 #define LV_FONT_MONTSERRAT_32    0
 #define LV_FONT_MONTSERRAT_34    0
-#define LV_FONT_MONTSERRAT_36    1
+#define LV_FONT_MONTSERRAT_36 0
 #define LV_FONT_MONTSERRAT_38    0
-#define LV_FONT_MONTSERRAT_40    1
-#define LV_FONT_MONTSERRAT_42    1
+#define LV_FONT_MONTSERRAT_40 0
+#define LV_FONT_MONTSERRAT_42 0
 #define LV_FONT_MONTSERRAT_44    0
 #define LV_FONT_MONTSERRAT_46    0
-#define LV_FONT_MONTSERRAT_48    1
+#define LV_FONT_MONTSERRAT_48 0
 
 /* Demonstrate special features */
 #define LV_FONT_MONTSERRAT_12_SUBPX      0

@@ -13,6 +13,7 @@ void driveStraight(int distance);
 int convertPower(double percentPower);
 double convertPosition(double encoderCount);
 double convertAngle(double encoderCount);
+int driveToObject(int finalDistance);
 
 
 

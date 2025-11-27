@@ -40,14 +40,10 @@ void student_Main()
 //     lcd_print(5, "Right Encoder = %d", readSensor(RightEncoder));
 //     delay(50);
 // }
-    // motorPower(LeftMotor, 3000);
-    // motorPower(RightMotor, 3000);
-    // delay(1000);
-    // motorPower(LeftMotor, 0);
-    // motorPower(RightMotor, 0);  
-    // delay(500);
 
-    driveStraight(300);
+    // driveStraight(300);
+
+    // driveToObject(400);
 
     // while (true) {
     //     lcd_print(2, "Left Distance = %d mm", readSensor(LeftDistance));
@@ -150,12 +146,10 @@ void driveStraight(int distance) {
         //Use uR and uL to drive the motors
         motorPower(RightMotor, convertPower(uR));
         motorPower(LeftMotor, convertPower(uL));
-        
-        lcd_print(1, "uL = %.2f", uL);
-        lcd_print(2, "uR = %.2f", uR);
 
-        lcd_print(4, "Left Encoder = %d", readSensor(LeftEncoder));
-        lcd_print(5, "Right Encoder = %d", readSensor(RightEncoder));
+        lcd_print(2, "Left Distance = %d", readSensor(LeftDistance));
+        lcd_print(3, "Right Distance = %d", readSensor(RightDistance));
+        lcd_print(5, "Sonar Distance = %d", readSensor(SonarSensor));
 
 
         delay(50);
@@ -165,7 +159,28 @@ void driveStraight(int distance) {
         motorPower(RightMotor, 0);
     }
 
+int driveToObject(int finalDistance) {
+	
+	//Ensure Arm is not blocking the sonar
+	armUp(4000);
 
+    /* For Sonar */
+	// //Initialise Variables
+	// int initialDistance = readSensor(SonarSensor);
+	// int distance = initialDistance - finalDistance;
+
+    /* For Distance Sensors */
+    //Initialise Variables
+    int left_distance = readSensor(LeftDistance);
+    int right_distance = readSensor(RightDistance);
+    int average_distance = (left_distance + right_distance) / 2;
+    int distance = average_distance - finalDistance;
+
+	//driveStraight until specified distance from the object
+	driveStraight(distance);
+
+	return distance;
+}
 
 
 //Convert a percentage input to a voltage output

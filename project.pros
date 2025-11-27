@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "SRS Updates",
+    "project_name": "Custom GUI",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -592,7 +592,8 @@
       }
     },
     "upload_options": {
-      "icon": "pros"
+      "icon": "X",
+      "slot": 2
     },
     "use_early_access": false
   }

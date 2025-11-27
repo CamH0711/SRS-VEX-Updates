@@ -15,6 +15,7 @@
  #include "pros/llemu.h"
  #include <stdint.h>
  #include "Student_Code.h"
+ #include "ui.h"
  
  /* Background processing variables. Do not modify or delete */
  task_t monitorMotors_Task;
@@ -25,8 +26,11 @@
  /* Runs initialization code. This occurs as soon as the program is started. Do not touch */
  void initialize() {
 	 
+	//Initialise LVGL GUI
+	 ui_init();
+
 	 //initialise LCD screen
-	 lcd_initialize();
+	 // lcd_initialize();
 	 
 	 //begin background processing tasks
 	 delay(200);
@@ -66,4 +70,4 @@
 	 student_Main();
 	 endOfProgram();
 	 // student_Task = task_create(student_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Student main task");
- }
+}
