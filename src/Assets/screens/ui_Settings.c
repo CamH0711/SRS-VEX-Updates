@@ -12,19 +12,20 @@ lv_obj_t * ui_Motor_Checkbox = NULL;
 lv_obj_t * ui_Motor_Checkbox_Text = NULL;
 lv_obj_t * ui_Back_to_Menu_Text = NULL;
 lv_obj_t * ui_Back_Arrow3 = NULL;
-// event functions
-void ui_event_Motor_Checkbox(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    lv_obj_t * target = lv_event_get_target(e);
 
-    if(event_code == LV_EVENT_VALUE_CHANGED &&  lv_obj_has_state(target, LV_STATE_CHECKED)) {
-        _ui_flag_modify(ui_Placeholder_Graph, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-    }
-    if(event_code == LV_EVENT_VALUE_CHANGED &&  !lv_obj_has_state(target, LV_STATE_CHECKED)) {
-        _ui_flag_modify(ui_Placeholder_Graph, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-    }
-}
+// event functions
+// void ui_event_Motor_Checkbox(lv_event_t * e)
+// {
+//     lv_event_code_t event_code = lv_event_get_code(e);
+//     lv_obj_t * target = lv_event_get_target(e);
+
+//     if(event_code == LV_EVENT_VALUE_CHANGED &&  lv_obj_has_state(target, LV_STATE_CHECKED)) {
+//         _ui_flag_modify(ui_Placeholder_Graph, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+//     }
+//     if(event_code == LV_EVENT_VALUE_CHANGED &&  !lv_obj_has_state(target, LV_STATE_CHECKED)) {
+//         _ui_flag_modify(ui_Placeholder_Graph, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+//     }
+// }
 
 void ui_event_Back_Arrow3(lv_event_t * e)
 {
@@ -100,7 +101,7 @@ void ui_Settings_screen_init(void)
     lv_obj_set_x(ui_Back_Arrow3, -5);
     lv_obj_set_y(ui_Back_Arrow3, -2);
 
-    lv_obj_add_event_cb(ui_Motor_Checkbox, ui_event_Motor_Checkbox, LV_EVENT_ALL, NULL);
+    // lv_obj_add_event_cb(ui_Motor_Checkbox, ui_event_Motor_Checkbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Back_Arrow3, ui_event_Back_Arrow3, LV_EVENT_ALL, NULL);
 
 }

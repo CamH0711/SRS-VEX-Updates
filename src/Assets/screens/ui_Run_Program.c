@@ -10,11 +10,13 @@ lv_obj_t * ui_User_Print_Output = NULL;
 lv_obj_t * ui_Stop_Button_Text = NULL;
 lv_obj_t * ui_Label5 = NULL;
 lv_obj_t * ui_Data = NULL;
-lv_obj_t * ui_Placeholder_Graph = NULL;
+// lv_obj_t * ui_Placeholder_Graph = NULL;
+lv_obj_t * ui_sensor_graph = NULL;
+lv_chart_series_t * ui_series = NULL;
 lv_obj_t * ui_Play_Button = NULL;
 lv_obj_t * ui_Pause_Button = NULL;
 lv_obj_t * ui_Stop_Button = NULL;
-// event funtions
+// event functions
 void ui_event_Stop_Button(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -25,7 +27,7 @@ void ui_event_Stop_Button(lv_event_t * e)
     }
 }
 
-// build funtions
+// build functions
 
 void ui_Run_Program_screen_init(void)
 {
@@ -71,14 +73,25 @@ void ui_Run_Program_screen_init(void)
     lv_obj_set_style_bg_color(ui_Data, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Data, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Placeholder_Graph = lv_image_create(ui_Data);
-    lv_image_set_src(ui_Placeholder_Graph, &ui_img_937709628);
-    lv_obj_set_width(ui_Placeholder_Graph, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Placeholder_Graph, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_Placeholder_Graph, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Placeholder_Graph, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_CLICKABLE);     /// Flags
-    lv_obj_remove_flag(ui_Placeholder_Graph, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_image_set_scale(ui_Placeholder_Graph, 80);
+    // ui_Placeholder_Graph = lv_image_create(ui_Data);
+    // lv_image_set_src(ui_Placeholder_Graph, &ui_img_937709628);
+    // lv_obj_set_width(ui_Placeholder_Graph, LV_SIZE_CONTENT);   /// 1
+    // lv_obj_set_height(ui_Placeholder_Graph, LV_SIZE_CONTENT);    /// 1
+    // lv_obj_set_align(ui_Placeholder_Graph, LV_ALIGN_CENTER);
+    // lv_obj_add_flag(ui_Placeholder_Graph, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_CLICKABLE);     /// Flags
+    // lv_obj_remove_flag(ui_Placeholder_Graph, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    // lv_image_set_scale(ui_Placeholder_Graph, 80);
+
+    //Sensor chart set up
+    ui_sensor_graph = lv_chart_create(ui_Run_Program);
+    lv_obj_set_size(ui_sensor_graph, 150, 100);
+    lv_obj_set_x(ui_sensor_graph, -45);
+    lv_obj_set_align(ui_sensor_graph, LV_ALIGN_RIGHT_MID);
+    lv_chart_set_type(ui_sensor_graph, LV_CHART_TYPE_LINE);
+    lv_chart_set_point_count(ui_sensor_graph, 50);
+    lv_chart_set_range(ui_sensor_graph, LV_CHART_AXIS_PRIMARY_Y, 0, 2000);
+    // lv_chart_set_axis_tick(ui_sensor_graph,LV_CHART_AXIS_PRIMARY_Y, 10, 5, 9, 4, true, 40);
+    ui_series = lv_chart_add_series(ui_sensor_graph, lv_palette_main(LV_PALETTE_RED), LV_CHART_AXIS_PRIMARY_Y);
 
     ui_Play_Button = lv_imagebutton_create(ui_Run_Program);
     lv_imagebutton_set_src(ui_Play_Button, LV_IMAGEBUTTON_STATE_RELEASED, NULL,
@@ -119,7 +132,7 @@ void ui_Run_Program_screen_destroy(void)
     ui_Stop_Button_Text = NULL;
     ui_Label5 = NULL;
     ui_Data = NULL;
-    ui_Placeholder_Graph = NULL;
+    // ui_Placeholder_Graph = NULL;
     ui_Play_Button = NULL;
     ui_Pause_Button = NULL;
     ui_Stop_Button = NULL;

@@ -22,13 +22,42 @@
  task_t check_sensors;
  int _stopflag = 0;
  int _arm_State = 0;
- 
+ bool gui_running = true;
+
+// Function to keep the LVGL GUI updated
+void lvgl_update_task(void* param) {
+    while (gui_running) {
+        lv_timer_handler();
+        delay(20);
+    }
+}
+
+//Function that reads the sensor and updates the GUI graph
+void sensor_chart(void *param)
+{
+    while (true)
+    {
+		//only update graph if on the Run Program screen
+		if (lv_scr_act() == ui_Run_Program) {
+        int sensor_value = readSensor(LeftDistance);
+        lv_chart_set_next_value(ui_sensor_graph, ui_series, sensor_value);
+		}
+        // Allow LVGL updates
+        lv_timer_handler();
+        delay(50);
+    }
+}
+
  /* Runs initialization code. This occurs as soon as the program is started. Do not touch */
  void initialize() {
 	 
 	//Initialise LVGL GUI
 	 ui_init();
-
+	 delay(50);
+	 task_t lv_task_handle = task_create(lvgl_update_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "LVGL Update");
+	 task_t lv_chart_task = task_create(sensor_chart, NULL, TASK_PRIORITY_DEFAULT, 
+		TASK_STACK_DEPTH_DEFAULT, "Sensor Chart");
+	
 	 //initialise LCD screen
 	 // lcd_initialize();
 	 

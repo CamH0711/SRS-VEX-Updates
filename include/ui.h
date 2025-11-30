@@ -15,7 +15,6 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
-
 ///////////////////// SCREENS ////////////////////
 
 #include "../src/Assets/screens/ui_Main_Menu.h"
@@ -47,6 +46,9 @@ LV_IMG_DECLARE(ui_img_1440723307);    // assets/electric-motor_12597972.png
 // UI INIT
 void ui_init(void);
 void ui_destroy(void);
+
+// UI Related Functions
+void sensor_chart_task(void *param);
 
 #ifdef __cplusplus
 } /*extern "C"*/

@@ -18,12 +18,15 @@ extern lv_obj_t * ui_User_Print_Output;
 extern lv_obj_t * ui_Stop_Button_Text;
 extern lv_obj_t * ui_Label5;
 extern lv_obj_t * ui_Data;
-extern lv_obj_t * ui_Placeholder_Graph;
+// extern lv_obj_t * ui_Placeholder_Graph;
+extern lv_obj_t * ui_sensor_graph;
+extern lv_chart_series_t * ui_series;
 extern lv_obj_t * ui_Play_Button;
 extern lv_obj_t * ui_Pause_Button;
 extern void ui_event_Stop_Button(lv_event_t * e);
 extern lv_obj_t * ui_Stop_Button;
 // CUSTOM VARIABLES
+
 
 #ifdef __cplusplus
 } /*extern "C"*/

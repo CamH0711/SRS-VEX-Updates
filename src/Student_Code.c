@@ -45,13 +45,13 @@ void student_Main()
 
     // driveToObject(400);
 
-    // while (true) {
-    //     lcd_print(2, "Left Distance = %d mm", readSensor(LeftDistance));
-    //     lcd_print(3, "Right Distance = %d mm", readSensor(RightDistance));
-    //     lcd_print(5, "Angle = %.2f Degrees", findObjectAngle());
+    while (true) {
+        lcd_print(2, "Left Distance = %d mm", readSensor(LeftDistance));
+        lcd_print(3, "Right Distance = %d mm", readSensor(RightDistance));
+        lcd_print(5, "Angle = %.2f Degrees", findObjectAngle());
 
-    //     delay(100);
-    // }
+        delay(100);
+    }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
