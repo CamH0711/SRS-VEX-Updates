@@ -4,6 +4,7 @@
 // Project name: Custom GUI for VEX V5
 
 #include "../include/ui.h"
+#include "../include/main.h"
 
 lv_obj_t * ui_Run_Program = NULL;
 lv_obj_t * ui_User_Print_Output = NULL;
@@ -24,6 +25,24 @@ void ui_event_Stop_Button(lv_event_t * e)
     if(event_code == LV_EVENT_PRESSED) {
         _ui_flag_modify(ui_Stop_Button_Text, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_screen_change(&ui_Main_Menu, LV_SCR_LOAD_ANIM_FADE_OUT, 100, 2500, &ui_Main_Menu_screen_init);
+    }
+}
+
+// Chart Functions
+
+int latest_sensor_value = 0;
+lv_timer_t *chart_timer;
+
+void sample_sensor_task(void *param) {
+    while (true) {
+        latest_sensor_value = readSensor(LeftDistance);
+        delay(50);
+    }
+}
+
+void chart_tick(lv_timer_t *timer) {
+    if (lv_scr_act() == ui_Run_Program) {
+        lv_chart_set_next_value(ui_sensor_graph, ui_series, latest_sensor_value);
     }
 }
 
@@ -90,8 +109,8 @@ void ui_Run_Program_screen_init(void)
     lv_chart_set_type(ui_sensor_graph, LV_CHART_TYPE_LINE);
     lv_chart_set_point_count(ui_sensor_graph, 50);
     lv_chart_set_range(ui_sensor_graph, LV_CHART_AXIS_PRIMARY_Y, 0, 2000);
-    // lv_chart_set_axis_tick(ui_sensor_graph,LV_CHART_AXIS_PRIMARY_Y, 10, 5, 9, 4, true, 40);
     ui_series = lv_chart_add_series(ui_sensor_graph, lv_palette_main(LV_PALETTE_RED), LV_CHART_AXIS_PRIMARY_Y);
+    chart_timer = lv_timer_create(chart_tick, 50, NULL);
 
     ui_Play_Button = lv_imagebutton_create(ui_Run_Program);
     lv_imagebutton_set_src(ui_Play_Button, LV_IMAGEBUTTON_STATE_RELEASED, NULL,

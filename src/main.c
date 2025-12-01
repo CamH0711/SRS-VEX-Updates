@@ -16,6 +16,8 @@
  #include <stdint.h>
  #include "Student_Code.h"
  #include "ui.h"
+ #include "../src/Assets/screens/ui_Run_Program.h"
+
  
  /* Background processing variables. Do not modify or delete */
  task_t monitorMotors_Task;
@@ -25,28 +27,14 @@
  bool gui_running = true;
 
 // Function to keep the LVGL GUI updated
-void lvgl_update_task(void* param) {
-    while (gui_running) {
-        lv_timer_handler();
-        delay(20);
-    }
-}
+// void ui_update(void* param) {
+//     while (gui_running) {
+//         lv_timer_handler();
+//         delay(20);
+//     }
+// }
 
-//Function that reads the sensor and updates the GUI graph
-void sensor_chart(void *param)
-{
-    while (true)
-    {
-		//only update graph if on the Run Program screen
-		if (lv_scr_act() == ui_Run_Program) {
-        int sensor_value = readSensor(LeftDistance);
-        lv_chart_set_next_value(ui_sensor_graph, ui_series, sensor_value);
-		}
-        // Allow LVGL updates
-        lv_timer_handler();
-        delay(50);
-    }
-}
+
 
  /* Runs initialization code. This occurs as soon as the program is started. Do not touch */
  void initialize() {
@@ -54,9 +42,13 @@ void sensor_chart(void *param)
 	//Initialise LVGL GUI
 	 ui_init();
 	 delay(50);
-	 task_t lv_task_handle = task_create(lvgl_update_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "LVGL Update");
-	 task_t lv_chart_task = task_create(sensor_chart, NULL, TASK_PRIORITY_DEFAULT, 
-		TASK_STACK_DEPTH_DEFAULT, "Sensor Chart");
+	// task_t lv_task_update = task_create(ui_update, NULL, TASK_PRIORITY_DEFAULT, 
+	// 	TASK_STACK_DEPTH_DEFAULT, "LVGL Update");
+	// task_t lv_chart_task = task_create(update_chart, NULL, TASK_PRIORITY_DEFAULT, 
+	// 	TASK_STACK_DEPTH_DEFAULT, "Sensor Chart");
+	task_t lv_chart_task = task_create(sample_sensor_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "SensorSampler");
+
+	
 	
 	 //initialise LCD screen
 	 // lcd_initialize();
