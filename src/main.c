@@ -26,32 +26,18 @@
  int _arm_State = 0;
  bool gui_running = true;
 
-// Function to keep the LVGL GUI updated
-// void ui_update(void* param) {
-//     while (gui_running) {
-//         lv_timer_handler();
-//         delay(20);
-//     }
-// }
-
 
 
  /* Runs initialization code. This occurs as soon as the program is started. Do not touch */
  void initialize() {
 	 
 	//Initialise LVGL GUI
-	 ui_init();
-	 delay(50);
-	// task_t lv_task_update = task_create(ui_update, NULL, TASK_PRIORITY_DEFAULT, 
-	// 	TASK_STACK_DEPTH_DEFAULT, "LVGL Update");
-	// task_t lv_chart_task = task_create(update_chart, NULL, TASK_PRIORITY_DEFAULT, 
-	// 	TASK_STACK_DEPTH_DEFAULT, "Sensor Chart");
-	task_t lv_chart_task = task_create(sample_sensor_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "SensorSampler");
+	//  ui_init();
+	//  delay(50);
+	//  task_t lv_chart_task = task_create(sample_sensor_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Sensor Chart");
 
-	
-	
 	 //initialise LCD screen
-	 // lcd_initialize();
+	 lcd_initialize();
 	 
 	 //begin background processing tasks
 	 delay(200);

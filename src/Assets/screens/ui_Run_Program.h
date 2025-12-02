@@ -27,9 +27,9 @@ extern void ui_event_Stop_Button(lv_event_t * e);
 extern lv_obj_t * ui_Stop_Button;
 // CUSTOM VARIABLES
 
+//Chart Declarations
 extern int latest_sensor_value;
 extern lv_timer_t *chart_timer;
-
 void sample_sensor_task(void *param);
 void chart_tick(lv_timer_t *timer);
 

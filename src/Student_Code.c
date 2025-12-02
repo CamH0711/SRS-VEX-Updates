@@ -46,11 +46,9 @@ void student_Main()
     // driveToObject(400);
 
     while (true) {
-        lcd_print(2, "Left Distance = %d mm", readSensor(LeftDistance));
-        lcd_print(3, "Right Distance = %d mm", readSensor(RightDistance));
-        lcd_print(5, "Angle = %.2f Degrees", findObjectAngle());
-
-        delay(100);
+        lcd_print(2, "Distance Sensor = %d mm", readSensor(LeftDistance));
+        lcd_print(4, "Ultrasonic Range Finder = %d mm", readSensor(SonarSensor));
+        delay(50);
     }
 }
 
@@ -84,6 +82,9 @@ double findObjectAngle() {
     }
 }
 
+void StraightenAngle(double percentPower) {
+
+}
 
 
 // *** FUNCTIONS COPIED OVER FROM SEM 1 201 PROJECT ***

@@ -6,6 +6,7 @@ void student_Main();    // The main entry point to the student code
 // Add your function prototypes below
 
 double findObjectAngle();
+void StraightenAngle(double percentPower);
 
 
 //Functions copied over from 201 Vex project
