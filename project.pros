@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Sensor Investigation",
+    "project_name": "Custom GUI",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -592,8 +592,8 @@
       }
     },
     "upload_options": {
-      "icon": "robot",
-      "slot": 3
+      "icon": "X",
+      "slot": 2
     },
     "use_early_access": false
   }

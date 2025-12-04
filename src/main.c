@@ -16,7 +16,7 @@
  #include <stdint.h>
  #include "Student_Code.h"
  #include "ui.h"
- #include "../src/Assets/screens/ui_Run_Program.h"
+//  #include "../src/Assets/screens/ui_Run_Program.h"
 
  
  /* Background processing variables. Do not modify or delete */
@@ -31,13 +31,13 @@
  /* Runs initialization code. This occurs as soon as the program is started. Do not touch */
  void initialize() {
 	 
-	//Initialise LVGL GUI
-	//  ui_init();
-	//  delay(50);
+	// Initialise LVGL GUI
+	 ui_init();
+	 delay(50);
 	//  task_t lv_chart_task = task_create(sample_sensor_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Sensor Chart");
 
 	 //initialise LCD screen
-	 lcd_initialize();
+	//  lcd_initialize();
 	 
 	 //begin background processing tasks
 	 delay(200);
