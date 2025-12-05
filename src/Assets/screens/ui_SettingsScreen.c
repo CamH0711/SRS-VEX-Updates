@@ -39,6 +39,35 @@ void ui_event_BackToMainButton(lv_event_t * e)
     }
 }
 
+// Show/Hide control effort series
+void ui_event_PlotUCheckbox(lv_event_t * e)
+{
+    lv_obj_t * obj = lv_event_get_target(e);
+    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
+    lv_chart_set_series_color(ui_Chart, series_U, checked ? lv_color_hex(0xFF0000) : lv_color_hex(0x00000000)); //Red
+}
+// Show/Hide error series
+void ui_event_PlotECheckbox(lv_event_t * e)
+{
+    lv_obj_t * obj = lv_event_get_target(e);
+    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
+    lv_chart_set_series_color(ui_Chart, series_E, checked ? lv_color_hex(0x00FF00) : lv_color_hex(0x00000000)); //Green
+}
+// Show/Hide encoder series
+void ui_event_PlotEncodersCheckbox(lv_event_t * e)
+{
+    lv_obj_t * obj = lv_event_get_target(e);
+    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
+    lv_chart_set_series_color(ui_Chart, series_Enc, checked ? lv_color_hex(0x0000FF) : lv_color_hex(0x00000000)); //Blue
+}
+// Show/Hide distance series
+void ui_event_PlotDistanceCheckbox(lv_event_t * e)
+{
+    lv_obj_t * obj = lv_event_get_target(e);
+    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
+    lv_chart_set_series_color(ui_Chart, series_Dist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //Yellow
+}
+
 // build functions
 
 void ui_SettingsScreen_screen_init(void)
@@ -242,6 +271,11 @@ void ui_SettingsScreen_screen_init(void)
 
     lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
 
+    // Add event callbacks for graph series checkboxes
+    lv_obj_add_event_cb(ui_PlotUCheckbox, ui_event_PlotUCheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotECheckbox, ui_event_PlotECheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotEncodersCheckbox, ui_event_PlotEncodersCheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotDistanceCheckbox, ui_event_PlotDistanceCheckbox, LV_EVENT_ALL, NULL);
 }
 
 void ui_SettingsScreen_screen_destroy(void)

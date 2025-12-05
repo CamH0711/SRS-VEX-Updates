@@ -39,6 +39,10 @@ extern void ui_event_BackToMainButton(lv_event_t * e);
 extern lv_obj_t * ui_BackToMainButton;
 extern lv_obj_t * ui_GoBackLabel;
 // CUSTOM VARIABLES
+extern void ui_event_PlotUCheckbox(lv_event_t * e);
+extern void ui_event_PlotECheckbox(lv_event_t * e);
+extern void ui_event_PlotEncodersCheckbox(lv_event_t * e);
+extern void ui_event_PlotDistanceCheckbox(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

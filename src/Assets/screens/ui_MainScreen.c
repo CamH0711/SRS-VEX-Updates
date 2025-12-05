@@ -20,6 +20,11 @@ lv_obj_t * ui_RunningText = NULL;
 lv_obj_t * ui_SettingsButton = NULL;
 lv_obj_t * ui_StopButtonPressedPanel = NULL;
 lv_obj_t * ui_StopButtonPressedText = NULL;
+lv_chart_series_t *series_U = NULL;
+lv_chart_series_t *series_E = NULL;
+lv_chart_series_t *series_Enc = NULL;
+lv_chart_series_t *series_Dist = NULL;
+
 // event functions
 void ui_event_Switch(lv_event_t * e)
 {
@@ -40,8 +45,23 @@ void ui_event_SettingsButton(lv_event_t * e)
     }
 }
 
-// build functions
+// Custom Functions
+void create_chart_series(void)
+{
+    if(series_U == NULL)
+        series_U = lv_chart_add_series(ui_Chart, lv_color_hex(0xFF0000), LV_CHART_AXIS_PRIMARY_Y);
 
+    if(series_E == NULL)
+        series_E = lv_chart_add_series(ui_Chart, lv_color_hex(0x00FF00), LV_CHART_AXIS_PRIMARY_Y);
+
+    if(series_Enc == NULL)
+        series_Enc = lv_chart_add_series(ui_Chart, lv_color_hex(0x0000FF), LV_CHART_AXIS_PRIMARY_Y);
+
+    if(series_Dist == NULL)
+        series_Dist = lv_chart_add_series(ui_Chart, lv_color_hex(0xFFFF00), LV_CHART_AXIS_PRIMARY_Y);
+}
+
+// build functions
 void ui_MainScreen_screen_init(void)
 {
     ui_MainScreen = lv_obj_create(NULL);
@@ -207,6 +227,9 @@ void ui_MainScreen_screen_init(void)
     lv_obj_add_event_cb(ui_Switch, ui_event_Switch, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingsButton, ui_event_SettingsButton, LV_EVENT_ALL, NULL);
 
+
+    //Initialise chart series
+    create_chart_series();
 }
 
 void ui_MainScreen_screen_destroy(void)

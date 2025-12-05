@@ -31,6 +31,10 @@ extern lv_obj_t * ui_SettingsButton;
 extern lv_obj_t * ui_StopButtonPressedPanel;
 extern lv_obj_t * ui_StopButtonPressedText;
 // CUSTOM VARIABLES
+extern lv_chart_series_t *series_U;
+extern lv_chart_series_t *series_E;
+extern lv_chart_series_t *series_Enc;
+extern lv_chart_series_t *series_Dist;
 
 #ifdef __cplusplus
 } /*extern "C"*/

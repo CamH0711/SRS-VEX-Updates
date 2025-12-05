@@ -6,6 +6,7 @@
 #include "ui.h"
 #include "ui_helpers.h"
 #include "../include/liblvgl/lvgl.h"
+#include "ui_custom_functions.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -35,6 +36,9 @@ void ui_init(void)
     ui_SettingsScreen_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_MainScreen);
+
+    //Custom initial actions
+    ui_create_chart_series();
 }
 
 void ui_destroy(void)
