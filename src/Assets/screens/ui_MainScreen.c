@@ -46,7 +46,7 @@ void ui_event_SettingsButton(lv_event_t * e)
 }
 
 // Custom Functions
-void create_chart_series(void)
+void ui_create_chart_series(void)
 {
     if(series_U == NULL)
         series_U = lv_chart_add_series(ui_Chart, lv_color_hex(0xFF0000), LV_CHART_AXIS_PRIMARY_Y);
@@ -229,7 +229,7 @@ void ui_MainScreen_screen_init(void)
 
 
     //Initialise chart series
-    create_chart_series();
+    // ui_create_chart_series();
 }
 
 void ui_MainScreen_screen_destroy(void)

@@ -6,7 +6,7 @@
 #include "ui.h"
 #include "ui_helpers.h"
 #include "../include/liblvgl/lvgl.h"
-#include "ui_custom_functions.h"
+#include "../include/Background_Functions.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -39,6 +39,8 @@ void ui_init(void)
 
     //Custom initial actions
     ui_create_chart_series();
+    delay(50);
+    lv_timer_create(graph_update_task, 50, NULL);
 }
 
 void ui_destroy(void)

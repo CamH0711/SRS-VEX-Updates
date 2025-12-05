@@ -12,6 +12,8 @@
  #include "main.h"
  #include "pros/adi.h"
  #include "pros/distance.h"
+ #include "../include/ui.h"
+ #include "../include/Background_Functions.h"
  
  adi_ultrasonic_t sonar;
  bool Ultra_Init = false;
@@ -398,4 +400,30 @@
  
  // ----------------------------------- New Functions - SRS ----------------------------------------
  
- //TODO: Made adjustments to the readSensor function
+ void graph_update_task(lv_timer_t * timer) {
+
+    // Only update if the screen is active
+    if (lv_scr_act() != ui_MainScreen) return;
+
+    // Figure out how to get control effort value
+    if (lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
+        // int u_val =  
+        // lv_chart_set_next_value(ui_Chart, series_U, u_val);
+    }
+
+    // Figure out how to get error value
+    if (lv_obj_has_state(ui_PlotECheckbox, LV_STATE_CHECKED)) {
+        // int e_val = 
+        // lv_chart_set_next_value(ui_Chart, series_E, e_val);
+    }
+
+    if (lv_obj_has_state(ui_PlotEncodersCheckbox, LV_STATE_CHECKED)) {
+        int enc_val = 0.5 * (readSensor(LeftEncoder) + readSensor(RightEncoder));
+        lv_chart_set_next_value(ui_Chart, series_Enc, enc_val);
+    }
+
+    if (lv_obj_has_state(ui_PlotDistanceCheckbox, LV_STATE_CHECKED)) {
+        int dist_val = readSensor(SonarSensor);
+        lv_chart_set_next_value(ui_Chart, series_Dist, dist_val);
+    }
+}
