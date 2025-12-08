@@ -30,12 +30,21 @@ extern void ui_event_SettingsButton(lv_event_t * e);
 extern lv_obj_t * ui_SettingsButton;
 extern lv_obj_t * ui_StopPanel;
 extern lv_obj_t * ui_StopText;
+extern lv_obj_t * ui_PrintLine1;
+extern lv_obj_t * ui_PrintLine2;
+extern lv_obj_t * ui_PrintLine3;
+extern lv_obj_t * ui_PrintLine4;
+extern lv_obj_t * ui_PrintLine5;
+extern lv_obj_t * ui_PrintLine6;
+extern lv_obj_t * ui_PrintLine7;
+extern lv_obj_t * ui_PrintLine8;
 // CUSTOM VARIABLES & FUNCTIONS
 extern lv_chart_series_t *series_U;
 extern lv_chart_series_t *series_E;
 extern lv_chart_series_t *series_Enc;
 extern lv_chart_series_t *series_Dist;
 extern void update_y_axis(int min, int max);
+extern void lvgl_print(int line_number, const char* text, ...);
 
 #ifdef __cplusplus
 } /*extern "C"*/

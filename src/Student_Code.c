@@ -17,6 +17,7 @@
 #include <string.h>
 #include <math.h>
 #include "Student_Code.h"
+#include "ui.h"
 
 #define BLACK_LOWER 1100
 
@@ -36,14 +37,14 @@ int sensorWidth = 139;              // Distance between the left and right dista
 void student_Main()
 {  
 
-motorPower(ArmMotor, 2000);
-delay(20000);
+// motorPower(ArmMotor, 2000);
+// delay(20000);
 
-// while (true) {
-//     lcd_print(4, "Left Encoder = %d", readSensor(LeftEncoder));
-//     lcd_print(5, "Right Encoder = %d", readSensor(RightEncoder));
-//     delay(50);
-// }
+while (true) {
+    lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
+    lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
+    delay(50);
+}
 
     // driveStraight(300);
 

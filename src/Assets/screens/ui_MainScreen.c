@@ -3,6 +3,7 @@
 // LVGL version: 9.2.2
 // Project name: VEX_Runtime_UI
 
+#include <string.h>
 #include "../include/ui.h"
 #include "../include/main.h"
 
@@ -21,6 +22,15 @@ lv_obj_t * ui_RunningText = NULL;
 lv_obj_t * ui_SettingsButton = NULL;
 lv_obj_t * ui_StopPanel = NULL;
 lv_obj_t * ui_StopText = NULL;
+lv_obj_t * ui_PrintLine1 = NULL;
+lv_obj_t * ui_PrintLine2 = NULL;
+lv_obj_t * ui_PrintLine3 = NULL;
+lv_obj_t * ui_PrintLine4 = NULL;
+lv_obj_t * ui_PrintLine5 = NULL;
+lv_obj_t * ui_PrintLine6 = NULL;
+lv_obj_t * ui_PrintLine7 = NULL;
+lv_obj_t * ui_PrintLine8 = NULL;
+// CUSTOM VARIABLES
 lv_chart_series_t *series_U = NULL;
 lv_chart_series_t *series_E = NULL;
 lv_chart_series_t *series_Enc = NULL;
@@ -85,6 +95,39 @@ void update_y_axis(int min, int max)
     lv_scale_set_label_show(ui_Chart_Yaxis2, true);
 }
 
+void lvgl_print(int line_number, const char* text, ...) {
+    //Limit string length to 30 characters
+    if (strlen(text) > 30) {
+        char truncated_text[31];
+        strncpy(truncated_text, text, 30);
+        truncated_text[30] = '\0';
+        text = truncated_text;
+    }
+    //Find correct line
+    lv_obj_t* line_obj = NULL;
+    switch (line_number) {
+        case 1: line_obj = ui_PrintLine1; break;
+        case 2: line_obj = ui_PrintLine2; break;
+        case 3: line_obj = ui_PrintLine3; break;
+        case 4: line_obj = ui_PrintLine4; break;
+        case 5: line_obj = ui_PrintLine5; break;
+        case 6: line_obj = ui_PrintLine6; break;
+        case 7: line_obj = ui_PrintLine7; break;
+        case 8: line_obj = ui_PrintLine8; break;
+        default: return; // Invalid line number
+    }
+    //Set line text
+    if (line_obj != NULL) {
+        char buffer[128]; // buffer to hold the formatted string
+        va_list args;
+        va_start(args, text);
+        vsnprintf(buffer, sizeof(buffer), text, args);
+        va_end(args);
+
+        lv_label_set_text(line_obj, buffer);
+    }
+}
+
 // build functions
 void ui_MainScreen_screen_init(void)
 {
@@ -103,6 +146,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_add_flag(ui_Chart, LV_OBJ_FLAG_OVERFLOW_VISIBLE);      //make scales visible - Should it be forced to True?
     //lv_obj_remove_flag( ui_Chart, LV_OBJ_FLAG_SCROLLABLE );    //no chart-zoom in LVGL9 - Shouldn't it be forced to False?
     lv_chart_set_type(ui_Chart, LV_CHART_TYPE_LINE);
+    lv_chart_set_point_count(ui_Chart, 50);
     lv_obj_set_style_bg_color(ui_Chart, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Chart, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Chart, lv_color_hex(0x3C3B3B), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -247,6 +291,61 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_color(ui_StopText, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_StopText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_PrintLine1 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine1, LV_SIZE_CONTENT);    /// 1
+    lv_label_set_text(ui_PrintLine1, "");
+
+    ui_PrintLine2 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PrintLine2, 0);
+    lv_obj_set_y(ui_PrintLine2, 20);
+    lv_label_set_text(ui_PrintLine2, "");
+
+    ui_PrintLine3 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine3, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine3, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PrintLine3, 0);
+    lv_obj_set_y(ui_PrintLine3, 40);
+    lv_label_set_text(ui_PrintLine3, "");
+
+    ui_PrintLine4 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine4, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine4, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PrintLine4, 0);
+    lv_obj_set_y(ui_PrintLine4, 60);
+    lv_label_set_text(ui_PrintLine4, "");
+
+    ui_PrintLine5 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine5, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine5, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PrintLine5, 0);
+    lv_obj_set_y(ui_PrintLine5, 80);
+    lv_label_set_text(ui_PrintLine5, "");
+
+    ui_PrintLine6 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine6, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine6, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PrintLine6, 0);
+    lv_obj_set_y(ui_PrintLine6, 100);
+    lv_label_set_text(ui_PrintLine6, "");
+
+    ui_PrintLine7 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine7, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine7, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PrintLine7, 0);
+    lv_obj_set_y(ui_PrintLine7, 120);
+    lv_label_set_text(ui_PrintLine7, "");
+
+    ui_PrintLine8 = lv_label_create(ui_PrintPanel);
+    lv_obj_set_width(ui_PrintLine8, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PrintLine8, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PrintLine8, 0);
+    lv_obj_set_y(ui_PrintLine8, 140);
+    lv_label_set_text(ui_PrintLine8, "");
+
+
     lv_obj_add_event_cb(ui_Switch, ui_event_Switch, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingsButton, ui_event_SettingsButton, LV_EVENT_ALL, NULL);
 
@@ -269,5 +368,13 @@ void ui_MainScreen_screen_destroy(void)
     ui_SettingsButton = NULL;
     ui_StopPanel = NULL;
     ui_StopText = NULL;
+    ui_PrintLine1 = NULL;
+    ui_PrintLine2 = NULL;
+    ui_PrintLine3 = NULL;
+    ui_PrintLine4 = NULL;
+    ui_PrintLine5 = NULL;
+    ui_PrintLine6 = NULL;
+    ui_PrintLine7 = NULL;
+    ui_PrintLine8 = NULL;
 
 }

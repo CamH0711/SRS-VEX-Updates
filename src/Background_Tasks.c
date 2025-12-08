@@ -94,7 +94,8 @@
      bool stopButton = adi_digital_read(_buttonStop);
      int arm_motorDir;
      task_delay(500); // this delay is necessary because for some reason it initialises with the Stop Button pressed. 
-     lcd_print(LCDLine8, "    Running ...    ");  // Redundant - delete later
+     // Redundant - delete later
+     lcd_print(LCDLine8, "    Running ...    ");
      while (1)
      {
  
