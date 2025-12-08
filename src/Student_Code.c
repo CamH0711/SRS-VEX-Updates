@@ -35,6 +35,12 @@ int sensorWidth = 139;              // Distance between the left and right dista
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 {  
+
+driveStraight(300);
+
+// motorPower(LeftMotor, 400);
+// delay(2000);
+
 // while (true) {
 //     lcd_print(4, "Left Encoder = %d", readSensor(LeftEncoder));
 //     lcd_print(5, "Right Encoder = %d", readSensor(RightEncoder));
@@ -45,11 +51,11 @@ void student_Main()
 
     // driveToObject(400);
 
-    while (true) {
-        lcd_print(2, "Distance Sensor = %d mm", readSensor(LeftDistance));
-        lcd_print(4, "Ultrasonic Range Finder = %d mm", readSensor(SonarSensor));
-        delay(50);
-    }
+    // while (true) {
+    //     lcd_print(2, "Distance Sensor = %d mm", readSensor(LeftDistance));
+    //     lcd_print(4, "Ultrasonic Range Finder = %d mm", readSensor(SonarSensor));
+    //     delay(50);
+    // }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
