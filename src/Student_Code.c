@@ -36,10 +36,8 @@ int sensorWidth = 139;              // Distance between the left and right dista
 void student_Main()
 {  
 
-driveStraight(300);
-
-// motorPower(LeftMotor, 400);
-// delay(2000);
+motorPower(ArmMotor, 2000);
+delay(20000);
 
 // while (true) {
 //     lcd_print(4, "Left Encoder = %d", readSensor(LeftEncoder));
