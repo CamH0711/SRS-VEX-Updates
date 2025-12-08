@@ -4,6 +4,7 @@
 // Project name: VEX_Runtime_UI
 
 #include "../include/ui.h"
+#include <stdlib.h>
 
 lv_obj_t * ui_SettingsScreen = NULL;
 lv_obj_t * ui_AdjustKp = NULL;
@@ -29,13 +30,17 @@ lv_obj_t * ui_YAxisMaxDropdown = NULL;
 lv_obj_t * ui_ToLabel = NULL;
 lv_obj_t * ui_BackToMainButton = NULL;
 lv_obj_t * ui_GoBackLabel = NULL;
+// Custom Variables
+int current_y_min = 0;
+int current_y_max = 100;
+
 // event functions
 void ui_event_BackToMainButton(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_FADE_ON, 100, 0, &ui_MainScreen_screen_init);
+        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_MainScreen_screen_init);
     }
 }
 
@@ -65,7 +70,40 @@ void ui_event_PlotDistanceCheckbox(lv_event_t * e)
 {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_Dist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //Yellow
+    lv_chart_set_series_color(ui_Chart, series_Dist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //White
+}
+
+//Set minimum Y-Axis limit
+void ui_event_YAxisMinDropdown(lv_event_t * e) {
+    lv_obj_t * obj = lv_event_get_target(e);
+
+    // Selected text from dropdown
+    char txt[8];
+    lv_dropdown_get_selected_str(obj, txt, 8);
+    if (txt == NULL) return;
+
+    // Convert to integer
+    current_y_min = atoi(txt);
+
+    // Update chart range — keep current max
+    lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, current_y_min, current_y_max);
+    update_y_axis(current_y_min, current_y_max);
+}
+
+//Set maximum Y-Axis limit
+void ui_event_YAxisMaxDropdown(lv_event_t * e) {
+    lv_obj_t * obj = lv_event_get_target(e);
+
+    // Selected text from dropdown
+    char txt[8];
+    lv_dropdown_get_selected_str(obj, txt, 8);
+    if (txt == NULL) return;
+
+    // Convert to integer
+    current_y_max = atoi(txt);
+
+    // Update chart range — keep current min
+    update_y_axis(current_y_min, current_y_max);
 }
 
 // build functions
@@ -271,11 +309,14 @@ void ui_SettingsScreen_screen_init(void)
 
     lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
 
-    // Add event callbacks for graph series checkboxes
+    // Event callbacks for graph series checkboxes
     lv_obj_add_event_cb(ui_PlotUCheckbox, ui_event_PlotUCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotECheckbox, ui_event_PlotECheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotEncodersCheckbox, ui_event_PlotEncodersCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotDistanceCheckbox, ui_event_PlotDistanceCheckbox, LV_EVENT_ALL, NULL);
+    // Event callbacks for Y-Axis limit dropdowns
+    lv_obj_add_event_cb(ui_YAxisMinDropDown, ui_event_YAxisMinDropdown, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_YAxisMaxDropdown, ui_event_YAxisMaxDropdown, LV_EVENT_ALL, NULL);
 }
 
 void ui_SettingsScreen_screen_destroy(void)

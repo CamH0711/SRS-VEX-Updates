@@ -32,7 +32,7 @@
 	 
 	// Initialise LVGL GUI
 	 ui_init();
-	 delay(50);
+	//  delay(50);
 	//  task_t lv_chart_task = task_create(sample_sensor_task, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Sensor Chart");
 	
 

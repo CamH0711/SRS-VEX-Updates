@@ -4,6 +4,7 @@
 // Project name: VEX_Runtime_UI
 
 #include "../include/ui.h"
+#include "../include/main.h"
 
 lv_obj_t * ui_MainScreen = NULL;
 lv_obj_t * ui_Chart = NULL;
@@ -18,8 +19,8 @@ lv_obj_t * ui_DisplayPrintText = NULL;
 lv_obj_t * ui_DisplayChartText = NULL;
 lv_obj_t * ui_RunningText = NULL;
 lv_obj_t * ui_SettingsButton = NULL;
-lv_obj_t * ui_StopButtonPressedPanel = NULL;
-lv_obj_t * ui_StopButtonPressedText = NULL;
+lv_obj_t * ui_StopPanel = NULL;
+lv_obj_t * ui_StopText = NULL;
 lv_chart_series_t *series_U = NULL;
 lv_chart_series_t *series_E = NULL;
 lv_chart_series_t *series_Enc = NULL;
@@ -41,7 +42,7 @@ void ui_event_SettingsButton(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_SettingsScreen, LV_SCR_LOAD_ANIM_FADE_ON, 100, 0, &ui_SettingsScreen_screen_init);
+        _ui_screen_change(&ui_SettingsScreen, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_SettingsScreen_screen_init);
     }
 }
 
@@ -58,7 +59,30 @@ void ui_create_chart_series(void)
         series_Enc = lv_chart_add_series(ui_Chart, lv_color_hex(0x0000FF), LV_CHART_AXIS_PRIMARY_Y);
 
     if(series_Dist == NULL)
-        series_Dist = lv_chart_add_series(ui_Chart, lv_color_hex(0xFFFF00), LV_CHART_AXIS_PRIMARY_Y);
+        series_Dist = lv_chart_add_series(ui_Chart, lv_color_hex(0xFFFFFF), LV_CHART_AXIS_PRIMARY_Y);
+}
+
+void update_y_axis(int min, int max)
+{
+    if (max <= min) max = min + 1;
+
+    int divisions = 4;                 // total labeled major ticks - 1
+    int major_step = (max - min) / divisions;
+    if (major_step < 1) major_step = 1;
+
+    int total_ticks = divisions * 2 + 1;   // because SquareLine uses 2 minor ticks per division
+
+    // LEFT Y axis (ticks only)
+    lv_scale_set_range(ui_Chart_Yaxis1, min, max);
+    lv_scale_set_total_tick_count(ui_Chart_Yaxis1, total_ticks);
+    lv_scale_set_major_tick_every(ui_Chart_Yaxis1, 2);
+    lv_scale_set_label_show(ui_Chart_Yaxis1, true);
+
+    // RIGHT Y axis (ticks + labels)
+    lv_scale_set_range(ui_Chart_Yaxis2, min, max);
+    lv_scale_set_total_tick_count(ui_Chart_Yaxis2, total_ticks);
+    lv_scale_set_major_tick_every(ui_Chart_Yaxis2, 2);
+    lv_scale_set_label_show(ui_Chart_Yaxis2, true);
 }
 
 // build functions
@@ -204,32 +228,28 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_y(ui_SettingsButton, -3);
     lv_obj_set_align(ui_SettingsButton, LV_ALIGN_BOTTOM_RIGHT);
 
-    ui_StopButtonPressedPanel = lv_obj_create(ui_MainScreen);
-    lv_obj_set_width(ui_StopButtonPressedPanel, 420);
-    lv_obj_set_height(ui_StopButtonPressedPanel, 30);
-    lv_obj_set_x(ui_StopButtonPressedPanel, 0);
-    lv_obj_set_y(ui_StopButtonPressedPanel, -25);
-    lv_obj_set_align(ui_StopButtonPressedPanel, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_StopButtonPressedPanel, LV_OBJ_FLAG_HIDDEN);     /// Flags
-    lv_obj_remove_flag(ui_StopButtonPressedPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_radius(ui_StopButtonPressedPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_StopButtonPressedPanel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_StopButtonPressedPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_StopPanel = lv_obj_create(ui_MainScreen);
+    lv_obj_set_width(ui_StopPanel, 480);
+    lv_obj_set_height(ui_StopPanel, 30);
+    lv_obj_set_x(ui_StopPanel, 0);
+    lv_obj_set_y(ui_StopPanel, -25);
+    lv_obj_set_align(ui_StopPanel, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_remove_flag(ui_StopPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_StopPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_StopPanel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_StopPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_StopButtonPressedText = lv_label_create(ui_StopButtonPressedPanel);
-    lv_obj_set_width(ui_StopButtonPressedText, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_StopButtonPressedText, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_StopButtonPressedText, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_StopButtonPressedText, "STOP BUTTON PRESSED!");
-    lv_obj_set_style_text_color(ui_StopButtonPressedText, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_StopButtonPressedText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_StopText = lv_label_create(ui_StopPanel);
+    lv_obj_set_width(ui_StopText, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_StopText, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_StopText, LV_ALIGN_CENTER);
+    lv_obj_set_style_text_color(ui_StopText, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_StopText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_Switch, ui_event_Switch, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingsButton, ui_event_SettingsButton, LV_EVENT_ALL, NULL);
 
-
-    //Initialise chart series
-    // ui_create_chart_series();
 }
 
 void ui_MainScreen_screen_destroy(void)
@@ -247,7 +267,7 @@ void ui_MainScreen_screen_destroy(void)
     ui_DisplayChartText = NULL;
     ui_RunningText = NULL;
     ui_SettingsButton = NULL;
-    ui_StopButtonPressedPanel = NULL;
-    ui_StopButtonPressedText = NULL;
+    ui_StopPanel = NULL;
+    ui_StopText = NULL;
 
 }

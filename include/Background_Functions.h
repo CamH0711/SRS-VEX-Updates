@@ -17,7 +17,7 @@ void resetEncoder(int encoderName);
 void resetTimer(int timerSelect);
 void endOfProgram(void);
 
-// SRS UI graph task
+// New functions for SRS
 void graph_update_task(lv_timer_t * timer);
 
 #endif

@@ -28,13 +28,14 @@ extern lv_obj_t * ui_DisplayChartText;
 extern lv_obj_t * ui_RunningText;
 extern void ui_event_SettingsButton(lv_event_t * e);
 extern lv_obj_t * ui_SettingsButton;
-extern lv_obj_t * ui_StopButtonPressedPanel;
-extern lv_obj_t * ui_StopButtonPressedText;
-// CUSTOM VARIABLES
+extern lv_obj_t * ui_StopPanel;
+extern lv_obj_t * ui_StopText;
+// CUSTOM VARIABLES & FUNCTIONS
 extern lv_chart_series_t *series_U;
 extern lv_chart_series_t *series_E;
 extern lv_chart_series_t *series_Enc;
 extern lv_chart_series_t *series_Dist;
+extern void update_y_axis(int min, int max);
 
 #ifdef __cplusplus
 } /*extern "C"*/

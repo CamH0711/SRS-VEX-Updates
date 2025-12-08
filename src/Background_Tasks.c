@@ -18,6 +18,7 @@
  #include "pros/llemu.h"
  #include "pros/misc.h"
  #include "pros/motors.h"
+ #include "ui.h"
  
  // adi_ultrasonic_t sonar;
  
@@ -28,7 +29,8 @@
      int threshold = 500;	// voltage threshold in mV to ignore in power variations (it's 0.5 V to allow for the arm motor to be in hold mode)
      int powerLMonitor, powerRMonitor, powerArmMonitor;
      int countL, countR, countA;
- 
+     char text[100];
+
      while (1)
      {		
          // GET THE MOTOR POWER LEVELS.
@@ -49,6 +51,10 @@
          {
              motorStopAll();
              _stopflag = 1;
+             sprintf(text, "%dmV-Low L motor pwr. Code stopped.", powerLMonitor);
+             lv_label_set_text(ui_StopText, text);
+             _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             // Redundant - delete later
              lcd_print(LCDLine8, "%dmV-Low L motor pwr. Code stopped.", powerLMonitor);
          }
          // Check right motor
@@ -56,6 +62,10 @@
          {
              motorStopAll();
              _stopflag = 1;
+             sprintf(text, "%dmV-Low R motor pwr. Code stopped.", powerRMonitor);
+             lv_label_set_text(ui_StopText, text);
+             _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             // Redundant - delete later
              lcd_print(LCDLine8, "%dmV-Low R motor pwr. Code stopped.", powerRMonitor);
          }
          // Check arm motor
@@ -63,6 +73,10 @@
          {
              motorStopAll();
              _stopflag = 1;
+             sprintf(text, "%dmV-Low arm motor pwr. Code stopped.", powerArmMonitor);
+             lv_label_set_text(ui_StopText, text);
+             _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             // Redundant - delete later
              lcd_print(LCDLine8, "%dmV-Low arm motor pwr. Code stopped.", powerArmMonitor);
          }
  
@@ -80,7 +94,7 @@
      bool stopButton = adi_digital_read(_buttonStop);
      int arm_motorDir;
      task_delay(500); // this delay is necessary because for some reason it initialises with the Stop Button pressed. 
-     lcd_print(LCDLine8, "    Running ...    ");
+     lcd_print(LCDLine8, "    Running ...    ");  // Redundant - delete later
      while (1)
      {
  
@@ -88,9 +102,11 @@
          stopButton = adi_digital_read(_buttonStop);
          if (stopButton == 1)
          {
-             lcd_print(LCDLine8, "    STOP BUTTON PRESSED    ");
+             lcd_print(LCDLine8, "    STOP BUTTON PRESSED    ");  // Redundant - delete later
              motorStopAll();
              _stopflag = 1;
+             lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
+             _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              endOfProgram();
          }
  

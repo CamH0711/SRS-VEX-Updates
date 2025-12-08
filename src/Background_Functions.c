@@ -400,29 +400,34 @@
  
  // ----------------------------------- New Functions - SRS ----------------------------------------
  
+/**
+  * @brief A timer task that updates the data being graphed on the main screen chart.
+  * @param timer (lv_timer_t) Pointer to the timer object
+  */
+
  void graph_update_task(lv_timer_t * timer) {
 
-    // Only update if the screen is active
-    if (lv_scr_act() != ui_MainScreen) return;
+    // Only update if the screen is active & chart exists
+    if (!ui_Chart) return;
 
     // Figure out how to get control effort value
-    if (lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
-        // int u_val =  
-        // lv_chart_set_next_value(ui_Chart, series_U, u_val);
+    if (series_U && lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
+        int u_val = 50; // Placeholder value 
+        lv_chart_set_next_value(ui_Chart, series_U, u_val);
     }
 
     // Figure out how to get error value
-    if (lv_obj_has_state(ui_PlotECheckbox, LV_STATE_CHECKED)) {
-        // int e_val = 
-        // lv_chart_set_next_value(ui_Chart, series_E, e_val);
+    if (series_E && lv_obj_has_state(ui_PlotECheckbox, LV_STATE_CHECKED)) {
+        int e_val = 40; // Placeholder value
+        lv_chart_set_next_value(ui_Chart, series_E, e_val);
     }
 
-    if (lv_obj_has_state(ui_PlotEncodersCheckbox, LV_STATE_CHECKED)) {
+    if (series_Enc && lv_obj_has_state(ui_PlotEncodersCheckbox, LV_STATE_CHECKED)) {
         int enc_val = 0.5 * (readSensor(LeftEncoder) + readSensor(RightEncoder));
         lv_chart_set_next_value(ui_Chart, series_Enc, enc_val);
     }
 
-    if (lv_obj_has_state(ui_PlotDistanceCheckbox, LV_STATE_CHECKED)) {
+    if (series_Dist && lv_obj_has_state(ui_PlotDistanceCheckbox, LV_STATE_CHECKED)) {
         int dist_val = readSensor(SonarSensor);
         lv_chart_set_next_value(ui_Chart, series_Dist, dist_val);
     }
