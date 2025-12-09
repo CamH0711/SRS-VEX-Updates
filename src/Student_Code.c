@@ -43,6 +43,7 @@ void student_Main()
 while (true) {
     lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
     lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
+    lvgl_print(5, "Test Test Test Test Test Test Test Test Test Test Test ");
     delay(50);
 }
 
@@ -51,8 +52,9 @@ while (true) {
     // driveToObject(400);
 
     // while (true) {
-    //     lcd_print(2, "Distance Sensor = %d mm", readSensor(LeftDistance));
-    //     lcd_print(4, "Ultrasonic Range Finder = %d mm", readSensor(SonarSensor));
+    //     lvgl_print(2, "Left Distance Sensor = %d mm", readSensor(LeftDistance));
+    //     lvgl_print(3, "Right Distance Sensor = %d mm", readSensor(RightDistance));
+    //     lvgl_print(5, "Sonar = %d mm", readSensor(SonarSensor));
     //     delay(50);
     // }
 }

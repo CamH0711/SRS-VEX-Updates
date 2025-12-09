@@ -95,14 +95,9 @@ void update_y_axis(int min, int max)
     lv_scale_set_label_show(ui_Chart_Yaxis2, true);
 }
 
-void lvgl_print(int line_number, const char* text, ...) {
-    //Limit string length to 30 characters
-    if (strlen(text) > 30) {
-        char truncated_text[31];
-        strncpy(truncated_text, text, 30);
-        truncated_text[30] = '\0';
-        text = truncated_text;
-    }
+void lvgl_print(int line_number, char* text, ...) {
+    //Limit string length to 40 characters
+    if (strlen(text) > 40) return;
     //Find correct line
     lv_obj_t* line_obj = NULL;
     switch (line_number) {

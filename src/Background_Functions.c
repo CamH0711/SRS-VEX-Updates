@@ -311,10 +311,10 @@
      { // if program wasn't stopped by pressing the button
          _stopflag = 1;
          
-         lv_label_set_text(ui_StopText, "Program ended normally");
+         lv_label_set_text(ui_StopText, "Program ended normally.");
          _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
          //Redundant - delete later
-         lcd_print(LCDLine8, "    Program ended normally.");
+         // lcd_print(LCDLine8, "    Program ended normally.");
      }
      delay(5000);
      exit(0);

@@ -103,6 +103,7 @@ void ui_event_YAxisMaxDropdown(lv_event_t * e) {
     current_y_max = atoi(txt);
 
     // Update chart range — keep current min
+    lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, current_y_min, current_y_max);
     update_y_axis(current_y_min, current_y_max);
 }
 
