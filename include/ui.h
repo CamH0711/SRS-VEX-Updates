@@ -36,6 +36,8 @@ LV_IMG_DECLARE(
 void ui_init(void);
 void ui_destroy(void);
 
+extern lv_timer_t *graph_timer;
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

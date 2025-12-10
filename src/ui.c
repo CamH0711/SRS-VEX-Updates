@@ -26,6 +26,8 @@ lv_obj_t * ui____initial_actions0;
 
 ///////////////////// SCREENS ////////////////////
 
+lv_timer_t *graph_timer = NULL;
+
 void ui_init(void)
 {
     lv_disp_t * dispp = lv_display_get_default();
@@ -39,7 +41,7 @@ void ui_init(void)
 
     //Custom initial actions
     ui_create_chart_series();
-    lv_timer_create(graph_update_task, 50, NULL);
+    graph_timer = lv_timer_create(graph_update_task, 50, NULL);
 }
 
 void ui_destroy(void)

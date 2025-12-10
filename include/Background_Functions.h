@@ -19,5 +19,6 @@ void endOfProgram(void);
 
 // New functions for SRS
 void graph_update_task(lv_timer_t * timer);
+void program_ended_banner(lv_timer_t *timer);
 
 #endif

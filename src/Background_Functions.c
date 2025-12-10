@@ -15,6 +15,7 @@
  #include "../include/ui.h"
  #include "../include/Background_Functions.h"
  #include "Controller_Telemetry.h"
+ #include "ui.h"
  
  adi_ultrasonic_t sonar;
  bool Ultra_Init = false;
@@ -308,12 +309,17 @@
      motor_move(_motorRight, 0);
      motor_move(_motorArm, 0);
  
+    if(graph_timer) {
+        lv_timer_del(graph_timer);
+        graph_timer = NULL;
+    }
+
      if (_stopflag == 0)
      { // if program wasn't stopped by pressing the button
          _stopflag = 1;
          
-         lv_label_set_text(ui_StopText, "Program ended normally");
-         _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+         lv_timer_t * t = lv_timer_create(program_ended_banner, 50, NULL);
+         lv_timer_set_repeat_count(t, 1);
          //Redundant - delete later
          // lcd_print(LCDLine8, "    Program ended normally.");
      }
@@ -412,8 +418,9 @@
 
  void graph_update_task(lv_timer_t * timer) {
 
-    // Only update the chart exists
+    // Ensure chart and series exist
     if (!ui_Chart) return;
+    if (!series_U && !series_E && !series_Enc && !series_Dist) return;
 
     if (series_U && lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
         int u_val = controller_sample.control_effort; 
@@ -433,5 +440,23 @@
     if (series_Dist && lv_obj_has_state(ui_PlotDistanceCheckbox, LV_STATE_CHECKED)) {
         int dist_val = readSensor(SonarSensor);
         lv_chart_set_next_value(ui_Chart, series_Dist, dist_val);
+    }
+}
+
+void program_ended_banner(lv_timer_t *timer) {
+    static int ticks = 0;
+    
+    // First call: show the message
+    if(ticks == 0) {
+        lv_label_set_text(ui_StopText, "Program ended normally");
+        _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    }
+
+    ticks++;
+
+    // Each tick = 50ms; after 5000ms = 100 ticks, exit
+    if(ticks >= 100) {
+        lv_timer_del(timer);
+        exit(0);
     }
 }

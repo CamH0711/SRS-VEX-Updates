@@ -49,7 +49,8 @@ void student_Main()
 // }
 
     driveStraight(1000);
-    delay(1000);
+    // delay(1000);
+
     // driveStraight(-1000);
     // driveToObject(400);
 
