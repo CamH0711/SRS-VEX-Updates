@@ -23,6 +23,7 @@ extern "C" {
 
 ///////////////////// VARIABLES ////////////////////
 
+#include "Controller_Telemetry.h"
 
 // EVENTS
 

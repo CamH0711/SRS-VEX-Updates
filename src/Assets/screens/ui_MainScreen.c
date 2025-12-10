@@ -82,13 +82,15 @@ void update_y_axis(int min, int max)
 
     int total_ticks = divisions * 2 + 1;   // because SquareLine uses 2 minor ticks per division
 
-    // LEFT Y axis (ticks only)
+    lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, min, max);
+
+    // LEFT Y axis
     lv_scale_set_range(ui_Chart_Yaxis1, min, max);
     lv_scale_set_total_tick_count(ui_Chart_Yaxis1, total_ticks);
     lv_scale_set_major_tick_every(ui_Chart_Yaxis1, 2);
     lv_scale_set_label_show(ui_Chart_Yaxis1, true);
 
-    // RIGHT Y axis (ticks + labels)
+    // RIGHT Y axis
     lv_scale_set_range(ui_Chart_Yaxis2, min, max);
     lv_scale_set_total_tick_count(ui_Chart_Yaxis2, total_ticks);
     lv_scale_set_major_tick_every(ui_Chart_Yaxis2, 2);
@@ -132,9 +134,9 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_bg_opa(ui_MainScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Chart = lv_chart_create(ui_MainScreen);
-    lv_obj_set_width(ui_Chart, 420);
+    lv_obj_set_width(ui_Chart, 400);
     lv_obj_set_height(ui_Chart, 185);
-    lv_obj_set_x(ui_Chart, 30);
+    lv_obj_set_x(ui_Chart, 40);
     lv_obj_set_y(ui_Chart, 5);
     lv_obj_add_flag(ui_Chart, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_OVERFLOW_VISIBLE);     /// Flags
     lv_obj_remove_flag(ui_Chart, LV_OBJ_FLAG_SCROLLABLE);      /// Flags

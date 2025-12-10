@@ -161,6 +161,9 @@ void driveStraight(int distance) {
         //Log data for plotting
         log_controller_sample(error, (int)u);
 
+        lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
+        lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
+
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
     
