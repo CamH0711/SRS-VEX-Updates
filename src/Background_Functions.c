@@ -14,6 +14,7 @@
  #include "pros/distance.h"
  #include "../include/ui.h"
  #include "../include/Background_Functions.h"
+ #include "Controller_Telemetry.h"
  
  adi_ultrasonic_t sonar;
  bool Ultra_Init = false;
@@ -311,7 +312,7 @@
      { // if program wasn't stopped by pressing the button
          _stopflag = 1;
          
-         lv_label_set_text(ui_StopText, "Program ended normally.");
+         lv_label_set_text(ui_StopText, "Program ended normally");
          _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
          //Redundant - delete later
          // lcd_print(LCDLine8, "    Program ended normally.");
@@ -411,18 +412,16 @@
 
  void graph_update_task(lv_timer_t * timer) {
 
-    // Only update if the screen is active & chart exists
+    // Only update the chart exists
     if (!ui_Chart) return;
 
-    // Figure out how to get control effort value
     if (series_U && lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
-        int u_val = 50; // Placeholder value 
+        int u_val = controller_sample.control_effort; 
         lv_chart_set_next_value(ui_Chart, series_U, u_val);
     }
 
-    // Figure out how to get error value
     if (series_E && lv_obj_has_state(ui_PlotECheckbox, LV_STATE_CHECKED)) {
-        int e_val = 40; // Placeholder value
+        int e_val = controller_sample.error;
         lv_chart_set_next_value(ui_Chart, series_E, e_val);
     }
 

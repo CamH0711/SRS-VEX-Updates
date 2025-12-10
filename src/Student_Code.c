@@ -18,6 +18,7 @@
 #include <math.h>
 #include "Student_Code.h"
 #include "ui.h"
+#include "Controller_Telemetry.h"
 
 #define BLACK_LOWER 1100
 
@@ -40,15 +41,16 @@ void student_Main()
 // motorPower(ArmMotor, 2000);
 // delay(20000);
 
-while (true) {
-    lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
-    lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
-    lvgl_print(5, "Test Test Test Test Test Test Test Test Test Test Test ");
-    delay(50);
-}
+// while (true) {
+//     lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
+//     lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
+//     lvgl_print(5, "Test Test Test Test Test Test Test Test Test Test Test ");
+//     delay(50);
+// }
 
-    // driveStraight(300);
-
+    driveStraight(1000);
+    delay(1000);
+    // driveStraight(-1000);
     // driveToObject(400);
 
     // while (true) {
@@ -132,7 +134,7 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -80, 80);
+        u = saturate(u, -40, 40);
     
         //For the 1st second, ramp up voltage to stop twitching
         if (k < 70) {	
@@ -155,10 +157,8 @@ void driveStraight(int distance) {
         motorPower(RightMotor, convertPower(uR));
         motorPower(LeftMotor, convertPower(uL));
 
-        lcd_print(2, "Left Distance = %d", readSensor(LeftDistance));
-        lcd_print(3, "Right Distance = %d", readSensor(RightDistance));
-        lcd_print(5, "Sonar Distance = %d", readSensor(SonarSensor));
-
+        //Log data for plotting
+        log_controller_sample(error, (int)u);
 
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
