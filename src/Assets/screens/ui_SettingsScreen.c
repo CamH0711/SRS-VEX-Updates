@@ -24,10 +24,6 @@ lv_obj_t * ui_PlotUCheckbox = NULL;
 lv_obj_t * ui_PlotECheckbox = NULL;
 lv_obj_t * ui_PlotEncodersCheckbox = NULL;
 lv_obj_t * ui_PlotDistanceCheckbox = NULL;
-lv_obj_t * ui_YAxisLimitsLabel = NULL;
-lv_obj_t * ui_YAxisMinDropDown = NULL;
-lv_obj_t * ui_YAxisMaxDropdown = NULL;
-lv_obj_t * ui_ToLabel = NULL;
 lv_obj_t * ui_BackToMainButton = NULL;
 lv_obj_t * ui_GoBackLabel = NULL;
 // Custom Variables
@@ -71,40 +67,6 @@ void ui_event_PlotDistanceCheckbox(lv_event_t * e)
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_Dist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //White
-}
-
-//Set minimum Y-Axis limit
-void ui_event_YAxisMinDropdown(lv_event_t * e) {
-    lv_obj_t * obj = lv_event_get_target(e);
-
-    // Selected text from dropdown
-    char txt[8];
-    lv_dropdown_get_selected_str(obj, txt, 8);
-    if (txt == NULL) return;
-
-    // Convert to integer
-    current_y_min = atoi(txt);
-
-    // Update chart range — keep current max
-    lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, current_y_min, current_y_max);
-    update_y_axis(current_y_min, current_y_max);
-}
-
-//Set maximum Y-Axis limit
-void ui_event_YAxisMaxDropdown(lv_event_t * e) {
-    lv_obj_t * obj = lv_event_get_target(e);
-
-    // Selected text from dropdown
-    char txt[8];
-    lv_dropdown_get_selected_str(obj, txt, 8);
-    if (txt == NULL) return;
-
-    // Convert to integer
-    current_y_max = atoi(txt);
-
-    // Update chart range — keep current min
-    lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, current_y_min, current_y_max);
-    update_y_axis(current_y_min, current_y_max);
 }
 
 // build functions
@@ -253,41 +215,6 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotDistanceCheckbox, 90);
     lv_obj_add_flag(ui_PlotDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_YAxisLimitsLabel = lv_label_create(ui_GraphSettings);
-    lv_obj_set_width(ui_YAxisLimitsLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_YAxisLimitsLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_YAxisLimitsLabel, 0);
-    lv_obj_set_y(ui_YAxisLimitsLabel, -45);
-    lv_obj_set_align(ui_YAxisLimitsLabel, LV_ALIGN_BOTTOM_MID);
-    lv_label_set_text(ui_YAxisLimitsLabel, "Y Axis Limits");
-
-    ui_YAxisMinDropDown = lv_dropdown_create(ui_GraphSettings);
-    lv_dropdown_set_options(ui_YAxisMinDropDown,
-                            "0\n10\n20\n30\n40\n50\n60\n70\n80\n90\n100\n200\n300\n400\n500\n1000\n2000");
-    lv_obj_set_width(ui_YAxisMinDropDown, 80);
-    lv_obj_set_height(ui_YAxisMinDropDown, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_YAxisMinDropDown, 25);
-    lv_obj_set_y(ui_YAxisMinDropDown, 0);
-    lv_obj_set_align(ui_YAxisMinDropDown, LV_ALIGN_BOTTOM_LEFT);
-    lv_obj_add_flag(ui_YAxisMinDropDown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-
-    ui_YAxisMaxDropdown = lv_dropdown_create(ui_GraphSettings);
-    lv_dropdown_set_options(ui_YAxisMaxDropdown, "100\n20\n30\n40\n50\n60\n70\n80\n90\n200\n300\n400\n500\n1000\n2000");
-    lv_obj_set_width(ui_YAxisMaxDropdown, 80);
-    lv_obj_set_height(ui_YAxisMaxDropdown, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_YAxisMaxDropdown, -25);
-    lv_obj_set_y(ui_YAxisMaxDropdown, 0);
-    lv_obj_set_align(ui_YAxisMaxDropdown, LV_ALIGN_BOTTOM_RIGHT);
-    lv_obj_add_flag(ui_YAxisMaxDropdown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-
-    ui_ToLabel = lv_label_create(ui_GraphSettings);
-    lv_obj_set_width(ui_ToLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_ToLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_ToLabel, 0);
-    lv_obj_set_y(ui_ToLabel, -10);
-    lv_obj_set_align(ui_ToLabel, LV_ALIGN_BOTTOM_MID);
-    lv_label_set_text(ui_ToLabel, "to");
-
     ui_BackToMainButton = lv_button_create(ui_SettingsScreen);
     lv_obj_set_width(ui_BackToMainButton, 160);
     lv_obj_set_height(ui_BackToMainButton, 50);
@@ -315,9 +242,6 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_add_event_cb(ui_PlotECheckbox, ui_event_PlotECheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotEncodersCheckbox, ui_event_PlotEncodersCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotDistanceCheckbox, ui_event_PlotDistanceCheckbox, LV_EVENT_ALL, NULL);
-    // Event callbacks for Y-Axis limit dropdowns
-    lv_obj_add_event_cb(ui_YAxisMinDropDown, ui_event_YAxisMinDropdown, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_YAxisMaxDropdown, ui_event_YAxisMaxDropdown, LV_EVENT_ALL, NULL);
 }
 
 void ui_SettingsScreen_screen_destroy(void)
@@ -343,10 +267,6 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_PlotECheckbox = NULL;
     ui_PlotEncodersCheckbox = NULL;
     ui_PlotDistanceCheckbox = NULL;
-    ui_YAxisLimitsLabel = NULL;
-    ui_YAxisMinDropDown = NULL;
-    ui_YAxisMaxDropdown = NULL;
-    ui_ToLabel = NULL;
     ui_BackToMainButton = NULL;
     ui_GoBackLabel = NULL;
 

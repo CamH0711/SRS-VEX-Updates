@@ -23,6 +23,7 @@
  long T2_timer = 0;
  long T3_timer = 0;
  long T4_timer = 0;
+ bool chart_needs_resize = false;
  
  // __[ GET MOTOR POWER ]________________________________________________
  /**
@@ -424,7 +425,6 @@
     if (!ui_Chart) return;
     if (!series_U && !series_E && !series_Enc && !series_Dist) return;
 
-    bool plotted = false;
     int local_min = INT32_MAX;
     int local_max = INT32_MIN;
 
@@ -433,7 +433,7 @@
     if (series_U && lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
         u_val = controller_sample.control_effort; 
         lv_chart_set_next_value(ui_Chart, series_U, u_val);
-        plotted = true;
+        chart_needs_resize = true;
         local_min = min(local_min, u_val);
         local_max = max(local_max, u_val);
     }
@@ -441,7 +441,7 @@
     if (series_E && lv_obj_has_state(ui_PlotECheckbox, LV_STATE_CHECKED)) {
         e_val = controller_sample.error;
         lv_chart_set_next_value(ui_Chart, series_E, e_val);
-        plotted = true;
+        chart_needs_resize = true;
         local_min = min(local_min, e_val);
         local_max = max(local_max, e_val);
     }
@@ -449,7 +449,7 @@
     if (series_Enc && lv_obj_has_state(ui_PlotEncodersCheckbox, LV_STATE_CHECKED)) {
         enc_val = readSensor(LeftEncoder);
         lv_chart_set_next_value(ui_Chart, series_Enc, enc_val);
-        plotted = true;
+        chart_needs_resize = true;
         local_min = min(local_min, enc_val);
         local_max = max(local_max, enc_val);
     }
@@ -457,33 +457,35 @@
     if (series_Dist && lv_obj_has_state(ui_PlotDistanceCheckbox, LV_STATE_CHECKED)) {
         dist_val = readSensor(SonarSensor);
         lv_chart_set_next_value(ui_Chart, series_Dist, dist_val);
-        plotted = true;
+        chart_needs_resize = true;
         local_min = min(local_min, dist_val);
         local_max = max(local_max, dist_val);
     }
 
-    if (!plotted) return;
+    if (!chart_needs_resize) return;
 
     /* Autoscale Logic */
 
-    int range_padding_min = 0;
-    int range_padding_max;
-
-    range_padding_max = (abs(local_max) > 10) ? abs(local_max) / 5 : 5;    
-    range_padding_min = (local_min < 0) ? abs(local_min) / 2 : 0;
+    // Add some padding
+    int range_padding_min = (local_min < 0) ? abs(local_min) / 5 : 0;
+    int range_padding_max = (abs(local_max) > 10) ? abs(local_max) / 5 : 5;
 
     int target_min = local_min - range_padding_min;
     int target_max = local_max + range_padding_max;
 
+    // Ensure valid range
     if (target_max <= target_min) {
         target_max = target_min + 1;
     }
 
-    if (target_min < current_y_min || target_max > current_y_max) {
+    // Only allow min to decrease
+    if (target_min < current_y_min) {
         current_y_min = target_min;
-        if (current_y_min > 0) {
-            current_y_min = 0;
-        }
+        update_y_axis(current_y_min, current_y_max);
+    }
+
+    // Only allow max to increase
+    if (target_max > current_y_max) {
         current_y_max = target_max;
         update_y_axis(current_y_min, current_y_max);
     }
@@ -504,5 +506,12 @@ void program_ended_banner(lv_timer_t *timer) {
     if(ticks >= 100) {
         lv_timer_del(timer);
         exit(0);
+    }
+}
+
+void chart_update_task(lv_timer_t* timer) {
+    if (chart_needs_resize) {
+        chart_needs_resize = false;
+        lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, current_y_min, current_y_max);
     }
 }

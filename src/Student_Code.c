@@ -48,18 +48,18 @@ void student_Main()
 //     delay(50);
 // }
 
-    driveStraight(1000);
+    // driveStraight(1000);
     // delay(1000);
 
     // driveStraight(-1000);
     // driveToObject(400);
 
-    // while (true) {
-    //     lvgl_print(2, "Left Distance Sensor = %d mm", readSensor(LeftDistance));
-    //     lvgl_print(3, "Right Distance Sensor = %d mm", readSensor(RightDistance));
-    //     lvgl_print(5, "Sonar = %d mm", readSensor(SonarSensor));
-    //     delay(50);
-    // }
+    while (true) {
+        lvgl_print(2, "Left Distance Sensor = %d mm", readSensor(LeftDistance));
+        lvgl_print(3, "Right Distance Sensor = %d mm", readSensor(RightDistance));
+        lvgl_print(5, "Sonar = %d mm", readSensor(SonarSensor));
+        delay(50);
+    }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//

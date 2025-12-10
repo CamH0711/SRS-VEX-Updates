@@ -6,7 +6,8 @@
 #include "ui.h"
 #include "ui_helpers.h"
 #include "../include/liblvgl/lvgl.h"
-#include "../include/Background_Functions.h"
+#include "../include/main.h"
+#include "Background_Functions.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -27,6 +28,7 @@ lv_obj_t * ui____initial_actions0;
 ///////////////////// SCREENS ////////////////////
 
 lv_timer_t *graph_timer = NULL;
+lv_timer_t *chart_resize_timer = NULL;
 
 void ui_init(void)
 {
@@ -42,6 +44,7 @@ void ui_init(void)
     //Custom initial actions
     ui_create_chart_series();
     graph_timer = lv_timer_create(graph_update_task, 50, NULL);
+    chart_resize_timer = lv_timer_create(chart_update_task, 200, NULL);
 }
 
 void ui_destroy(void)

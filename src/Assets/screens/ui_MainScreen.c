@@ -82,8 +82,6 @@ void update_y_axis(int min, int max)
 
     int total_ticks = divisions * 2 + 1;   // because SquareLine uses 2 minor ticks per division
 
-    lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, min, max);
-
     // LEFT Y axis
     lv_scale_set_range(ui_Chart_Yaxis1, min, max);
     lv_scale_set_total_tick_count(ui_Chart_Yaxis1, total_ticks);

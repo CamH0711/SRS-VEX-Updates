@@ -20,5 +20,7 @@ void endOfProgram(void);
 // New functions for SRS
 void graph_update_task(lv_timer_t * timer);
 void program_ended_banner(lv_timer_t *timer);
+void chart_update_task(lv_timer_t* timer);
+extern bool chart_needs_resize;
 
 #endif
