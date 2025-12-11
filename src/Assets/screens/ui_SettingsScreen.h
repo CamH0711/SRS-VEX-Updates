@@ -41,6 +41,8 @@ extern void ui_event_PlotEncodersCheckbox(lv_event_t * e);
 extern void ui_event_PlotDistanceCheckbox(lv_event_t * e);
 extern int current_y_min;
 extern int current_y_max;
+extern lv_obj_t * ui_StopPanel2;
+extern lv_obj_t * ui_StopText2;
 
 #ifdef __cplusplus
 } /*extern "C"*/

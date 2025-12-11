@@ -26,7 +26,10 @@ lv_obj_t * ui_PlotEncodersCheckbox = NULL;
 lv_obj_t * ui_PlotDistanceCheckbox = NULL;
 lv_obj_t * ui_BackToMainButton = NULL;
 lv_obj_t * ui_GoBackLabel = NULL;
+lv_obj_t * ui_StopPanel2 = NULL;
+lv_obj_t * ui_StopText2 = NULL;
 // Custom Variables
+
 int current_y_min = 0;
 int current_y_max = 100;
 
@@ -235,6 +238,25 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_align(ui_GoBackLabel, LV_ALIGN_CENTER);
     lv_label_set_text(ui_GoBackLabel, "Go Back");
 
+    ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
+    lv_obj_set_width(ui_StopPanel2, 480);
+    lv_obj_set_height(ui_StopPanel2, 30);
+    lv_obj_set_x(ui_StopPanel2, 0);
+    lv_obj_set_y(ui_StopPanel2, -25);
+    lv_obj_set_align(ui_StopPanel2, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_remove_flag(ui_StopPanel2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_StopPanel2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_StopPanel2, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_StopPanel2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_StopText2 = lv_label_create(ui_StopPanel2);
+    lv_obj_set_width(ui_StopText2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_StopText2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_StopText2, LV_ALIGN_CENTER);
+    lv_obj_set_style_text_color(ui_StopText2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_StopText2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
 
     // Event callbacks for graph series checkboxes
@@ -269,5 +291,6 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_PlotDistanceCheckbox = NULL;
     ui_BackToMainButton = NULL;
     ui_GoBackLabel = NULL;
-
+    ui_StopPanel2 = NULL;
+    ui_StopText2 = NULL;
 }

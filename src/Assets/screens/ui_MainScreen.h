@@ -38,6 +38,19 @@ extern lv_obj_t * ui_PrintLine5;
 extern lv_obj_t * ui_PrintLine6;
 extern lv_obj_t * ui_PrintLine7;
 extern lv_obj_t * ui_PrintLine8;
+extern lv_obj_t * ui_ULegend;
+extern lv_obj_t * ui_UColour;
+extern lv_obj_t * ui_ULegendLabel;
+extern lv_obj_t * ui_ELegend;
+extern lv_obj_t * ui_EColour;
+extern lv_obj_t * ui_ELegendLabel;
+extern lv_obj_t * ui_EncLegend;
+extern lv_obj_t * ui_EncColour;
+extern lv_obj_t * ui_EncLegendLabel;
+extern lv_obj_t * ui_DistLegend;
+extern lv_obj_t * ui_DistColour;
+extern lv_obj_t * ui_DistLegendLabel;
+
 // CUSTOM VARIABLES & FUNCTIONS
 extern lv_chart_series_t *series_U;
 extern lv_chart_series_t *series_E;

@@ -54,8 +54,10 @@
              sprintf(text, "%dmV-Low L motor pwr. Code stopped.", powerLMonitor);
              lv_label_set_text(ui_StopText, text);
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             lv_label_set_text(ui_StopText2, text);
+             _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              // Redundant - delete later
-             lcd_print(LCDLine8, "%dmV-Low L motor pwr. Code stopped.", powerLMonitor);
+             // lcd_print(LCDLine8, "%dmV-Low L motor pwr. Code stopped.", powerLMonitor);
          }
          // Check right motor
          if ((abs(powerRMonitor) > threshold)  && ((motor_get_position(_encoderRight) - countR) == 0) )
@@ -65,8 +67,10 @@
              sprintf(text, "%dmV-Low R motor pwr. Code stopped.", powerRMonitor);
              lv_label_set_text(ui_StopText, text);
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             lv_label_set_text(ui_StopText2, text);
+             _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              // Redundant - delete later
-             lcd_print(LCDLine8, "%dmV-Low R motor pwr. Code stopped.", powerRMonitor);
+             // lcd_print(LCDLine8, "%dmV-Low R motor pwr. Code stopped.", powerRMonitor);
          }
          // Check arm motor
          if ((abs(powerArmMonitor)> threshold) && ((motor_get_position(_encoderArm) - countA) == 0) )
@@ -76,8 +80,10 @@
              sprintf(text, "%dmV-Low arm motor pwr. Code stopped.", powerArmMonitor);
              lv_label_set_text(ui_StopText, text);
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             lv_label_set_text(ui_StopText2, text);
+             _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              // Redundant - delete later
-             lcd_print(LCDLine8, "%dmV-Low arm motor pwr. Code stopped.", powerArmMonitor);
+             // lcd_print(LCDLine8, "%dmV-Low arm motor pwr. Code stopped.", powerArmMonitor);
          }
  
      }
@@ -95,7 +101,7 @@
      int arm_motorDir;
      task_delay(500); // this delay is necessary because for some reason it initialises with the Stop Button pressed. 
      // Redundant - delete later
-     lcd_print(LCDLine8, "    Running ...    ");
+     // lcd_print(LCDLine8, "    Running ...    ");
      while (1)
      {
  
@@ -103,11 +109,13 @@
          stopButton = adi_digital_read(_buttonStop);
          if (stopButton == 1)
          {
-             lcd_print(LCDLine8, "    STOP BUTTON PRESSED    ");  // Redundant - delete later
+             // lcd_print(LCDLine8, "    STOP BUTTON PRESSED    ");  // Redundant - delete later
              motorStopAll();
              _stopflag = 1;
              lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
+             lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              endOfProgram();
          }
  

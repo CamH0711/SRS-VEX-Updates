@@ -24,6 +24,8 @@
  long T3_timer = 0;
  long T4_timer = 0;
  bool chart_needs_resize = false;
+ double filteredDistanceLeft = 0;
+ double filteredDistanceRight = 0;
  
  // __[ GET MOTOR POWER ]________________________________________________
  /**
@@ -121,10 +123,10 @@
          break;
      case 11: // left distance sensor
         // This sensor constantly reads 14mm less than the other sensor for some reason
-        sensorOutput = distance_get(_distanceLeft);
+        sensorOutput = lowPassFilter(distance_get(_distanceLeft), true);
          break;
      case 12: // right distance sensor
-         sensorOutput = distance_get(_distanceRight);
+         sensorOutput = lowPassFilter(distance_get(_distanceRight), false);
          break;
      }
      return sensorOutput;
@@ -447,7 +449,7 @@
     }
 
     if (series_Enc && lv_obj_has_state(ui_PlotEncodersCheckbox, LV_STATE_CHECKED)) {
-        enc_val = readSensor(LeftEncoder);
+        enc_val = 0.5 * (readSensor(LeftEncoder) + readSensor(RightEncoder));
         lv_chart_set_next_value(ui_Chart, series_Enc, enc_val);
         chart_needs_resize = true;
         local_min = min(local_min, enc_val);
@@ -498,6 +500,8 @@ void program_ended_banner(lv_timer_t *timer) {
     if(ticks == 0) {
         lv_label_set_text(ui_StopText, "Program ended normally");
         _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        lv_label_set_text(ui_StopText2, "Program ended normally");
+        _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
     }
 
     ticks++;
@@ -513,5 +517,16 @@ void chart_update_task(lv_timer_t* timer) {
     if (chart_needs_resize) {
         chart_needs_resize = false;
         lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, current_y_min, current_y_max);
+    }
+}
+
+double lowPassFilter(double newReading, bool left) {
+    double alpha = 0.2; // Smoothing factor (0 < alpha <= 1)
+    if (left) {
+        filteredDistanceLeft = alpha * newReading + (1 - alpha) * filteredDistanceLeft;
+        return filteredDistanceLeft;
+    } else {
+        filteredDistanceRight = alpha * newReading + (1 - alpha) * filteredDistanceRight;
+        return filteredDistanceRight;
     }
 }
