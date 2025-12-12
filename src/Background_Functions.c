@@ -421,11 +421,11 @@
 
  void graph_update_task(lv_timer_t * timer) {
 
-    int u_val, e_val, enc_val, dist_val;
+    int u_val, e_val, wheel_enc_val, arm_enc_val, left_dist_val, right_dist_val;
 
     // Ensure chart and series exist
     if (!ui_Chart) return;
-    if (!series_U && !series_E && !series_Enc && !series_Dist) return;
+    if (!series_U && !series_E && !series_WheelEnc && !series_ArmEnc && !series_LeftDist && !series_RightDist) return;
 
     int local_min = INT32_MAX;
     int local_max = INT32_MIN;
@@ -448,20 +448,36 @@
         local_max = max(local_max, e_val);
     }
 
-    if (series_Enc && lv_obj_has_state(ui_PlotEncodersCheckbox, LV_STATE_CHECKED)) {
-        enc_val = 0.5 * (readSensor(LeftEncoder) + readSensor(RightEncoder));
-        lv_chart_set_next_value(ui_Chart, series_Enc, enc_val);
+    if (series_WheelEnc && lv_obj_has_state(ui_PlotWheelEncCheckbox, LV_STATE_CHECKED)) {
+        wheel_enc_val = 0.5 * (readSensor(LeftEncoder) + readSensor(RightEncoder));
+        lv_chart_set_next_value(ui_Chart, series_WheelEnc, wheel_enc_val);
         chart_needs_resize = true;
-        local_min = min(local_min, enc_val);
-        local_max = max(local_max, enc_val);
+        local_min = min(local_min, wheel_enc_val);
+        local_max = max(local_max, wheel_enc_val);
     }
 
-    if (series_Dist && lv_obj_has_state(ui_PlotDistanceCheckbox, LV_STATE_CHECKED)) {
-        dist_val = readSensor(SonarSensor);
-        lv_chart_set_next_value(ui_Chart, series_Dist, dist_val);
+    if (series_ArmEnc && lv_obj_has_state(ui_PlotArmEncCheckbox, LV_STATE_CHECKED)) {
+        arm_enc_val = readSensor(ArmEncoder);
+        lv_chart_set_next_value(ui_Chart, series_ArmEnc, arm_enc_val);
         chart_needs_resize = true;
-        local_min = min(local_min, dist_val);
-        local_max = max(local_max, dist_val);
+        local_min = min(local_min, arm_enc_val);
+        local_max = max(local_max, arm_enc_val);
+    }
+
+    if (series_LeftDist && lv_obj_has_state(ui_PlotLeftDistanceCheckbox, LV_STATE_CHECKED)) {
+        left_dist_val = readSensor(LeftDistance);
+        lv_chart_set_next_value(ui_Chart, series_LeftDist, left_dist_val);
+        chart_needs_resize = true;
+        local_min = min(local_min, left_dist_val);
+        local_max = max(local_max, left_dist_val);
+    }
+
+    if (series_RightDist && lv_obj_has_state(ui_PlotRightDistanceCheckbox, LV_STATE_CHECKED)) {
+        right_dist_val = readSensor(RightDistance);
+        lv_chart_set_next_value(ui_Chart, series_RightDist, right_dist_val);
+        chart_needs_resize = true;
+        local_min = min(local_min, right_dist_val);
+        local_max = max(local_max, right_dist_val);
     }
 
     if (!chart_needs_resize) return;

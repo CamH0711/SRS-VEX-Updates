@@ -22,8 +22,10 @@ lv_obj_t * ui_GraphSettingsLabel = NULL;
 lv_obj_t * ui_GraphSettings = NULL;
 lv_obj_t * ui_PlotUCheckbox = NULL;
 lv_obj_t * ui_PlotECheckbox = NULL;
-lv_obj_t * ui_PlotEncodersCheckbox = NULL;
-lv_obj_t * ui_PlotDistanceCheckbox = NULL;
+lv_obj_t * ui_PlotWheelEncCheckbox = NULL;
+lv_obj_t * ui_PlotArmEncCheckbox = NULL;
+lv_obj_t * ui_PlotLeftDistanceCheckbox = NULL;
+lv_obj_t * ui_PlotRightDistanceCheckbox = NULL;
 lv_obj_t * ui_BackToMainButton = NULL;
 lv_obj_t * ui_GoBackLabel = NULL;
 lv_obj_t * ui_StopPanel2 = NULL;
@@ -32,6 +34,7 @@ lv_obj_t * ui_StopText2 = NULL;
 
 int current_y_min = 0;
 int current_y_max = 100;
+int legend_y_pos = 20;
 
 // event functions
 void ui_event_BackToMainButton(lv_event_t * e)
@@ -57,23 +60,35 @@ void ui_event_PlotECheckbox(lv_event_t * e)
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_E, checked ? lv_color_hex(0x00FF00) : lv_color_hex(0x00000000)); //Green
 }
-// Show/Hide encoder series
-void ui_event_PlotEncodersCheckbox(lv_event_t * e)
+// Show/Hide wheel encoder series
+void ui_event_PlotWheelEncCheckbox(lv_event_t * e)
 {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_Enc, checked ? lv_color_hex(0x0000FF) : lv_color_hex(0x00000000)); //Blue
+    lv_chart_set_series_color(ui_Chart, series_WheelEnc, checked ? lv_color_hex(0x0000FF) : lv_color_hex(0x00000000)); //Blue
 }
-// Show/Hide distance series
-void ui_event_PlotDistanceCheckbox(lv_event_t * e)
+// Show/Hide arm encoder series
+void ui_event_PlotArmEncCheckbox(lv_event_t * e) {
+    lv_obj_t * obj = lv_event_get_target(e);
+    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
+    lv_chart_set_series_color(ui_Chart, series_ArmEnc, checked ? lv_color_hex(0xFF00FF) : lv_color_hex(0x00000000)); //Blue
+
+}
+// Show/Hide left distance sensor series
+void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e)
 {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_Dist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //White
+    lv_chart_set_series_color(ui_Chart, series_LeftDist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //White
+}
+// Show/Hide Right distance sensor series
+void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
+    lv_obj_t * obj = lv_event_get_target(e);
+    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
+    lv_chart_set_series_color(ui_Chart, series_RightDist, checked ? lv_color_hex(0xFFFF00) : lv_color_hex(0x00000000)); //White
 }
 
 // build functions
-
 void ui_SettingsScreen_screen_init(void)
 {
     ui_SettingsScreen = lv_obj_create(NULL);
@@ -202,21 +217,37 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotECheckbox, 30);
     lv_obj_add_flag(ui_PlotECheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_PlotEncodersCheckbox = lv_checkbox_create(ui_GraphSettings);
-    lv_checkbox_set_text(ui_PlotEncodersCheckbox, "Plot Encoders");
-    lv_obj_set_width(ui_PlotEncodersCheckbox, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_PlotEncodersCheckbox, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PlotEncodersCheckbox, 20);
-    lv_obj_set_y(ui_PlotEncodersCheckbox, 60);
-    lv_obj_add_flag(ui_PlotEncodersCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    ui_PlotWheelEncCheckbox = lv_checkbox_create(ui_GraphSettings);
+    lv_checkbox_set_text(ui_PlotWheelEncCheckbox, "Plot Wheel Encoders");
+    lv_obj_set_width(ui_PlotWheelEncCheckbox, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PlotWheelEncCheckbox, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PlotWheelEncCheckbox, 20);
+    lv_obj_set_y(ui_PlotWheelEncCheckbox, 60);
+    lv_obj_add_flag(ui_PlotWheelEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_PlotDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
-    lv_checkbox_set_text(ui_PlotDistanceCheckbox, "Plot Sonar Distance");
-    lv_obj_set_width(ui_PlotDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_PlotDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PlotDistanceCheckbox, 20);
-    lv_obj_set_y(ui_PlotDistanceCheckbox, 90);
-    lv_obj_add_flag(ui_PlotDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    ui_PlotArmEncCheckbox = lv_checkbox_create(ui_GraphSettings);
+    lv_checkbox_set_text(ui_PlotArmEncCheckbox, "Plot Arm Encoder");
+    lv_obj_set_width(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PlotArmEncCheckbox, 20);
+    lv_obj_set_y(ui_PlotArmEncCheckbox, 90);
+    lv_obj_add_flag(ui_PlotArmEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+
+    ui_PlotLeftDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
+    lv_checkbox_set_text(ui_PlotLeftDistanceCheckbox, "Plot Left Distance");
+    lv_obj_set_width(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PlotLeftDistanceCheckbox, 20);
+    lv_obj_set_y(ui_PlotLeftDistanceCheckbox, 120);
+    lv_obj_add_flag(ui_PlotLeftDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+
+    ui_PlotRightDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
+    lv_checkbox_set_text(ui_PlotRightDistanceCheckbox, "Plot Right Distance");
+    lv_obj_set_width(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PlotRightDistanceCheckbox, 20);
+    lv_obj_set_y(ui_PlotRightDistanceCheckbox, 150);
+    lv_obj_add_flag(ui_PlotRightDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_BackToMainButton = lv_button_create(ui_SettingsScreen);
     lv_obj_set_width(ui_BackToMainButton, 160);
@@ -232,14 +263,8 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_opa(ui_BackToMainButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_BackToMainButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_GoBackLabel = lv_label_create(ui_BackToMainButton);
-    lv_obj_set_width(ui_GoBackLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_GoBackLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_GoBackLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_GoBackLabel, "Go Back");
-
-    ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
-    lv_obj_set_width(ui_StopPanel2, 480);
+    ui_StopPanel2 = lv_obj_create(ui_MainScreen);
+    lv_obj_set_width(ui_StopPanel2, 420);
     lv_obj_set_height(ui_StopPanel2, 30);
     lv_obj_set_x(ui_StopPanel2, 0);
     lv_obj_set_y(ui_StopPanel2, -25);
@@ -254,16 +279,27 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_StopText2, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_StopText2, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_StopText2, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
     lv_obj_set_style_text_color(ui_StopText2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_StopText2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_GoBackLabel = lv_label_create(ui_BackToMainButton);
+    lv_obj_set_width(ui_GoBackLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_GoBackLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_GoBackLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_GoBackLabel, "Go Back");
+
 
     lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
 
     // Event callbacks for graph series checkboxes
     lv_obj_add_event_cb(ui_PlotUCheckbox, ui_event_PlotUCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotECheckbox, ui_event_PlotECheckbox, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PlotEncodersCheckbox, ui_event_PlotEncodersCheckbox, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PlotDistanceCheckbox, ui_event_PlotDistanceCheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotWheelEncCheckbox, ui_event_PlotWheelEncCheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotArmEncCheckbox, ui_event_PlotArmEncCheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotLeftDistanceCheckbox, ui_event_PlotLeftDistanceCheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotRightDistanceCheckbox, ui_event_PlotRightDistanceCheckbox, LV_EVENT_ALL, NULL);
+
 }
 
 void ui_SettingsScreen_screen_destroy(void)
@@ -287,8 +323,10 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_GraphSettings = NULL;
     ui_PlotUCheckbox = NULL;
     ui_PlotECheckbox = NULL;
-    ui_PlotEncodersCheckbox = NULL;
-    ui_PlotDistanceCheckbox = NULL;
+    ui_PlotWheelEncCheckbox = NULL;
+    ui_PlotArmEncCheckbox = NULL;
+    ui_PlotLeftDistanceCheckbox = NULL;
+    ui_PlotRightDistanceCheckbox = NULL;
     ui_BackToMainButton = NULL;
     ui_GoBackLabel = NULL;
     ui_StopPanel2 = NULL;
