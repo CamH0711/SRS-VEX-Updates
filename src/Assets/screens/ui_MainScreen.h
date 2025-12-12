@@ -70,6 +70,7 @@ extern lv_chart_series_t *series_LeftDist;
 extern lv_chart_series_t *series_RightDist;
 extern void update_y_axis(int min, int max);
 extern void lvgl_print(int line_number, char* text, ...);
+extern void ui_event_OnScreenStopButton(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

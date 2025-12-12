@@ -52,6 +52,13 @@ void ui_event_PlotUCheckbox(lv_event_t * e)
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_U, checked ? lv_color_hex(0xFF0000) : lv_color_hex(0x00000000)); //Red
+    // _ui_flag_modify(ui_ULegend, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    // lv_obj_set_y(ui_ULegend, legend_y_pos);
+    // if (checked) {
+    //     legend_y_pos += 20;
+    // } else {
+    //     legend_y_pos -= 20;
+    // }
 }
 // Show/Hide error series
 void ui_event_PlotECheckbox(lv_event_t * e)
@@ -263,8 +270,8 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_opa(ui_BackToMainButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_BackToMainButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_StopPanel2 = lv_obj_create(ui_MainScreen);
-    lv_obj_set_width(ui_StopPanel2, 420);
+    ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
+    lv_obj_set_width(ui_StopPanel2, 480);
     lv_obj_set_height(ui_StopPanel2, 30);
     lv_obj_set_x(ui_StopPanel2, 0);
     lv_obj_set_y(ui_StopPanel2, -25);
