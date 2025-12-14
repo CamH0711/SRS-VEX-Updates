@@ -114,8 +114,8 @@
              _stopflag = 1;
              lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
              lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
-             _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-             _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
+             lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
              endOfProgram();
          }
  

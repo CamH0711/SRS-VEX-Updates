@@ -319,9 +319,9 @@
 
     if (_stopflag == 0) {
         lv_label_set_text(ui_StopText, "Program ended normally");
-        _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
         lv_label_set_text(ui_StopText2, "Program ended normally");
-        _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
     }
     lv_timer_t * t = lv_timer_create(exit_program, 5000, NULL);
     lv_timer_set_repeat_count(t, 1);
