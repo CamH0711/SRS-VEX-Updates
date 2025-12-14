@@ -21,6 +21,7 @@ void endOfProgram(void);
 void graph_update_task(lv_timer_t * timer);
 void program_ended_banner(lv_timer_t *timer);
 void chart_update_task(lv_timer_t* timer);
+extern void exit_program(lv_timer_t * t);
 extern bool chart_needs_resize;
 double lowPassFilter(double newReading, bool left);
 

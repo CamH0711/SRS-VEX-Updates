@@ -317,17 +317,14 @@
         graph_timer = NULL;
     }
 
-     if (_stopflag == 0)
-     { // if program wasn't stopped by pressing the button
-         _stopflag = 1;
-         
-         lv_timer_t * t = lv_timer_create(program_ended_banner, 50, NULL);
-         lv_timer_set_repeat_count(t, 1);
-         //Redundant - delete later
-         // lcd_print(LCDLine8, "    Program ended normally.");
-     }
-     delay(5000);
-     exit(0);
+    if (_stopflag == 0) {
+        lv_label_set_text(ui_StopText, "Program ended normally");
+        _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        lv_label_set_text(ui_StopText2, "Program ended normally");
+        _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    }
+    lv_timer_t * t = lv_timer_create(exit_program, 5000, NULL);
+    lv_timer_set_repeat_count(t, 1);
  }
  
  
@@ -546,3 +543,5 @@ double lowPassFilter(double newReading, bool left) {
         return filteredDistanceRight;
     }
 }
+
+void exit_program(lv_timer_t * t) { exit(0); }

@@ -6,6 +6,7 @@
 #include <string.h>
 #include "../include/ui.h"
 #include "../include/main.h"
+#include "Background_Functions.h"
 
 lv_obj_t * ui_MainScreen = NULL;
 lv_obj_t * ui_Chart = NULL;
@@ -83,16 +84,30 @@ void ui_event_SettingsButton(lv_event_t * e)
 }
 
 void ui_event_OnScreenStopButton(lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
+    if (lv_event_get_code(e) != LV_EVENT_CLICKED) return;
 
-    if(event_code == LV_EVENT_CLICKED) {
-        lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
-        lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
-        _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        // _stopflag = 1;
-        // endOfProgram();
+    // Stop motors immediately
+    motor_move(_motorLeft, 0);
+    motor_move(_motorRight, 0);
+    motor_move(_motorArm, 0);
+
+    // Stop graph updates
+    if (graph_timer) {
+        lv_timer_del(graph_timer);
+        graph_timer = NULL;
     }
+
+    // Show STOP banner
+    lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
+    lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
+    lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
+
+    _stopflag = 1;
+
+    // Schedule program exit AFTER 5 seconds
+    lv_timer_t * t = lv_timer_create(exit_program, 5000, NULL);
+    lv_timer_set_repeat_count(t, 1);
 }
 
 // Custom Functions
