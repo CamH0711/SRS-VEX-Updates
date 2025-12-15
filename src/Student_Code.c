@@ -54,6 +54,11 @@ void student_Main()
     // driveStraight(-1000);
     // driveToObject(200);
 
+    PlotData(LeftDistance);
+    PlotData(LeftEncoder);
+    PlotData(Error);
+    PlotData(ControlEffort);
+
     while (true) {
         lvgl_print(2, "Left Distance Sensor = %d mm", readSensor(LeftDistance));
         lvgl_print(3, "Right Distance Sensor = %d mm", readSensor(RightDistance));

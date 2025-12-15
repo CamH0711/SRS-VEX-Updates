@@ -5,6 +5,7 @@
 
 #include "../include/ui.h"
 #include <stdlib.h>
+#include "main.h"
 
 lv_obj_t * ui_SettingsScreen = NULL;
 lv_obj_t * ui_AdjustKp = NULL;
@@ -93,6 +94,23 @@ void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_RightDist, checked ? lv_color_hex(0xFFFF00) : lv_color_hex(0x00000000)); //White
+}
+
+//Custom Functions
+void PlotData(int data_name) {
+    if (data_name == LeftDistance) {
+        lv_obj_add_state(ui_PlotLeftDistanceCheckbox, LV_STATE_CHECKED);
+    } else if (data_name == RightDistance) {
+        lv_obj_add_state(ui_PlotRightDistanceCheckbox, LV_STATE_CHECKED);
+    } else if (data_name == LeftEncoder || data_name == RightEncoder) {
+        lv_obj_add_state(ui_PlotWheelEncCheckbox, LV_STATE_CHECKED);
+    } else if (data_name == ArmEncoder) {
+        lv_obj_add_state(ui_PlotArmEncCheckbox, LV_STATE_CHECKED);
+    } else if (data_name == ControlEffort) {
+        lv_obj_add_state(ui_PlotUCheckbox, LV_STATE_CHECKED);
+    } else if (data_name == Error) {
+        lv_obj_add_state(ui_PlotECheckbox, LV_STATE_CHECKED);
+    }
 }
 
 // build functions

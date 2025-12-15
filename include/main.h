@@ -82,6 +82,10 @@
  #define MOTOR_CEILING   5000
  #define PI 3.14159265359
  
+ /* Macros for Error and Control Effort */
+ #define ControlEffort 22
+ #define Error 23
+
  void initialize(void);
  
  /* Function declarations from Background_Functions.c */

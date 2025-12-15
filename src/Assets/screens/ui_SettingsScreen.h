@@ -47,6 +47,7 @@ extern int current_y_min;
 extern int current_y_max;
 extern lv_obj_t * ui_StopPanel2;
 extern lv_obj_t * ui_StopText2;
+extern void PlotData(int sensor_name);
 
 #ifdef __cplusplus
 } /*extern "C"*/
