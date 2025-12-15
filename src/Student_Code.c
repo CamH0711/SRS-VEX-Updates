@@ -19,6 +19,7 @@
 #include "Student_Code.h"
 #include "ui.h"
 #include "Controller_Telemetry.h"
+#include "Background_Functions.h"
 
 #define BLACK_LOWER 1100
 
@@ -48,11 +49,10 @@ void student_Main()
 //     delay(50);
 // }
 
-    // driveStraight(1000);
-    // delay(1000);
+    // driveStraight(500);
 
     // driveStraight(-1000);
-    // driveToObject(400);
+    // driveToObject(200);
 
     while (true) {
         lvgl_print(2, "Left Distance Sensor = %d mm", readSensor(LeftDistance));
@@ -135,7 +135,7 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -40, 40);
+        u = saturate(u, -70, 70);
     
         //For the 1st second, ramp up voltage to stop twitching
         if (k < 70) {	
@@ -173,19 +173,19 @@ void driveStraight(int distance) {
 
 int driveToObject(int finalDistance) {
 	
+    //Reset Left and Right distance sensors
+    resetDistance(LeftDistance);
+    resetDistance(RightDistance);
+
 	//Ensure Arm is not blocking the sonar
 	armUp(4000);
-
-    /* For Sonar */
-	// //Initialise Variables
-	// int initialDistance = readSensor(SonarSensor);
-	// int distance = initialDistance - finalDistance;
 
     /* For Distance Sensors */
     //Initialise Variables
     int left_distance = readSensor(LeftDistance);
     int right_distance = readSensor(RightDistance);
     int average_distance = (left_distance + right_distance) / 2;
+    // int average_distance = readSensor(SonarSensor);
     int distance = average_distance - finalDistance;
 
 	//driveStraight until specified distance from the object

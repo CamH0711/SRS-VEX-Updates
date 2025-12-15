@@ -26,6 +26,8 @@
  bool chart_needs_resize = false;
  double filteredDistanceLeft = 0;
  double filteredDistanceRight = 0;
+ bool leftInitialised = false;
+ bool rightInitialised = false;
  
  // __[ GET MOTOR POWER ]________________________________________________
  /**
@@ -412,10 +414,10 @@
  // ----------------------------------- New Functions - SRS ----------------------------------------
  
 /**
-  * @brief A timer task that updates the data being graphed on the main screen chart.
+  * @brief A timer task that updates the data being graphed on the main screen chart, and automatically
+  * scales the Y axis according to the values being plotted.
   * @param timer (lv_timer_t) Pointer to the timer object
   */
-
  void graph_update_task(lv_timer_t * timer) {
 
     int u_val, e_val, wheel_enc_val, arm_enc_val, left_dist_val, right_dist_val;
@@ -506,6 +508,10 @@
     }
 }
 
+/**
+  * @brief A timer task that displays the "Program Ended Normally" banner when called.
+  * @param timer (lv_timer_t) Pointer to the timer object
+  */
 void program_ended_banner(lv_timer_t *timer) {
     static int ticks = 0;
     
@@ -526,6 +532,10 @@ void program_ended_banner(lv_timer_t *timer) {
     }
 }
 
+/**
+  * @brief A timer task that updates the Y axes of the graph when called.
+  * @param timer (lv_timer_t) Pointer to the timer object
+  */
 void chart_update_task(lv_timer_t* timer) {
     if (chart_needs_resize) {
         chart_needs_resize = false;
@@ -533,15 +543,48 @@ void chart_update_task(lv_timer_t* timer) {
     }
 }
 
+/**
+  * @brief A Low Pass Filter that is designed to reduce fluctuation in the outputs 
+  * of each distance sensor.  It does this using a discrete, first order LPF algorithm.
+  * @param newReading (double): the most recent reading from the distance sensor.
+  * @param left (bool): true or false corresponds to left or right distance sensor.
+  */
 double lowPassFilter(double newReading, bool left) {
     double alpha = 0.2; // Smoothing factor (0 < alpha <= 1)
     if (left) {
-        filteredDistanceLeft = alpha * newReading + (1 - alpha) * filteredDistanceLeft;
+        if (!leftInitialised) {
+            filteredDistanceLeft = newReading;
+            leftInitialised = true;
+        } else {
+            filteredDistanceLeft =
+                alpha * newReading + (1 - alpha) * filteredDistanceLeft;
+        }
         return filteredDistanceLeft;
     } else {
-        filteredDistanceRight = alpha * newReading + (1 - alpha) * filteredDistanceRight;
+        if (!rightInitialised) {
+            filteredDistanceRight = newReading;
+            rightInitialised = true;
+        } else {
+            filteredDistanceRight =
+                alpha * newReading + (1 - alpha) * filteredDistanceRight;
+        }
         return filteredDistanceRight;
     }
 }
-
+/**
+  * @brief A timer task that exits the program when called.
+  * @param timer (lv_timer_t) Pointer to the timer object
+  */
 void exit_program(lv_timer_t * t) { exit(0); }
+
+/**
+  * @brief A function that resets .
+  * @param timer (lv_timer_t) Pointer to the timer object
+  */
+void resetDistance(int sensor_name) {
+    if (sensor_name == LeftDistance) {
+        leftInitialised = false;
+    } else if (sensor_name == RightDistance) {
+        rightInitialised = false;
+    }
+}
