@@ -204,6 +204,7 @@ void ui_MainScreen_screen_init(void)
     //lv_obj_remove_flag( ui_Chart, LV_OBJ_FLAG_SCROLLABLE );    //no chart-zoom in LVGL9 - Shouldn't it be forced to False?
     lv_chart_set_type(ui_Chart, LV_CHART_TYPE_LINE);
     lv_chart_set_range(ui_Chart, LV_CHART_AXIS_SECONDARY_Y, 0, 0);
+    lv_chart_set_point_count(ui_Chart, 50);
     lv_obj_set_style_bg_color(ui_Chart, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Chart, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Chart, lv_color_hex(0x3C3B3B), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -217,8 +218,8 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_y(ui_Chart_Xaxis, 50 + lv_obj_get_style_pad_bottom(ui_Chart,
                                                                   LV_PART_MAIN) + lv_obj_get_style_border_width(ui_Chart, LV_PART_MAIN));
     lv_obj_set_style_line_width(ui_Chart_Xaxis, 0, LV_PART_MAIN);
-    lv_obj_set_style_line_width(ui_Chart_Xaxis, 1, LV_PART_ITEMS);   //LVGL-9.1 ticks are thicker by default
-    lv_obj_set_style_line_width(ui_Chart_Xaxis, 1, LV_PART_INDICATOR);
+    lv_obj_set_style_line_width(ui_Chart_Xaxis, 0, LV_PART_ITEMS);   //LVGL-9.1 ticks are thicker by default
+    lv_obj_set_style_line_width(ui_Chart_Xaxis, 0, LV_PART_INDICATOR);
     lv_obj_set_style_length(ui_Chart_Xaxis, 0, LV_PART_ITEMS);      //minor tick length
     lv_obj_set_style_length(ui_Chart_Xaxis, 0, LV_PART_INDICATOR);      //major tick length
     lv_scale_set_range(ui_Chart_Xaxis, 0, 0 > 0 ? 0 - 1 : 0);

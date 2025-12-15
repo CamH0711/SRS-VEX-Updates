@@ -28,6 +28,10 @@
  double filteredDistanceRight = 0;
  bool leftInitialised = false;
  bool rightInitialised = false;
+ int plot_divider = 0;
+ int point_count = 0;
+ 
+ #define CHART_GROW_STEP 50
  
  // __[ GET MOTOR POWER ]________________________________________________
  /**
@@ -420,6 +424,11 @@
   */
  void graph_update_task(lv_timer_t * timer) {
 
+    plot_divider++;
+    if (plot_divider < 2) { return; } //Plot every 4 points
+
+    plot_divider = 0;
+
     int u_val, e_val, wheel_enc_val, arm_enc_val, left_dist_val, right_dist_val;
 
     // Ensure chart and series exist
@@ -479,9 +488,11 @@
         local_max = max(local_max, right_dist_val);
     }
 
+    point_count++;
+
     if (!chart_needs_resize) return;
 
-    /* Autoscale Logic */
+    /* Autoscale Logic - Y Axis */
 
     // Add some padding
     int range_padding_min = (local_min < 0) ? abs(local_min) / 5 : 0;
@@ -506,6 +517,16 @@
         current_y_max = target_max;
         update_y_axis(current_y_min, current_y_max);
     }
+
+    /* Autoscale Logic - X Axis */
+
+    if (point_count >= lv_chart_get_point_count(ui_Chart) - 5) {
+        uint32_t new_count =
+            lv_chart_get_point_count(ui_Chart) + CHART_GROW_STEP;
+
+        lv_chart_set_point_count(ui_Chart, new_count);
+    }
+
 }
 
 /**
