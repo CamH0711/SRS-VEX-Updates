@@ -31,7 +31,7 @@ int wheelWidth = 22;				// width of the driving wheel [mm]
 double drivingWheelRatio = 1;	    // ratio of wheel shaft rotations to wheel motor shaft rotations
 double armRatio = 7;				// ratio of arm shaft rotations to arm motor shaft rotations
 double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of the motor shaft
-//New for Distance Sensor
+//New for SRS
 int sensorWidth = 139;              // Distance between the left and right distance sensor
 // ------------------------------------------------------------------------------------
 
@@ -109,10 +109,10 @@ void StraightenAngle(double percentPower) {
 void driveStraight(int distance) {
 
     //Initialise Variables
-    int error, errorIntSum = 0, encError;
+    int errorIntSum = 0, encError;
     int k = 50, errorArray[1000] = {0}; 
     double currentPosition = 0;
-    double Kp = 1, Ki = 0.1, Kp_straight = 1.0;
+    double Kp_straight = 1.0;
     double u = 100, uL, uR, uDiff;
     double encoderAverage;
     double tolerance = 0.1;

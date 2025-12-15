@@ -143,6 +143,9 @@ void update_y_axis(int min, int max)
 
     int total_ticks = divisions * 2 + 1;   // because SquareLine uses 2 minor ticks per division
 
+    current_y_max = max;
+    current_y_min = min;
+
     // LEFT Y axis
     lv_scale_set_range(ui_Chart_Yaxis1, min, max);
     lv_scale_set_total_tick_count(ui_Chart_Yaxis1, total_ticks);
@@ -204,7 +207,7 @@ void ui_MainScreen_screen_init(void)
     //lv_obj_remove_flag( ui_Chart, LV_OBJ_FLAG_SCROLLABLE );    //no chart-zoom in LVGL9 - Shouldn't it be forced to False?
     lv_chart_set_type(ui_Chart, LV_CHART_TYPE_LINE);
     lv_chart_set_range(ui_Chart, LV_CHART_AXIS_SECONDARY_Y, 0, 0);
-    lv_chart_set_point_count(ui_Chart, 50);
+    lv_chart_set_point_count(ui_Chart, 40);
     lv_obj_set_style_bg_color(ui_Chart, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Chart, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Chart, lv_color_hex(0x3C3B3B), LV_PART_MAIN | LV_STATE_DEFAULT);

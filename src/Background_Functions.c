@@ -29,8 +29,12 @@
  bool leftInitialised = false;
  bool rightInitialised = false;
  int plot_divider = 0;
- int point_count = 0;
- 
+ int observed_min = INT32_MAX;
+ int observed_max = INT32_MIN;
+
+int shrink_counter = 0;
+
+ #define SHRINK_DELAY_TICKS 50   // ~1 second if timer = 50ms
  #define CHART_GROW_STEP 50
  
  // __[ GET MOTOR POWER ]________________________________________________
@@ -431,12 +435,12 @@
 
     int u_val, e_val, wheel_enc_val, arm_enc_val, left_dist_val, right_dist_val;
 
+    int local_min = INT32_MAX;
+    int local_max = INT32_MIN;
+
     // Ensure chart and series exist
     if (!ui_Chart) return;
     if (!series_U && !series_E && !series_WheelEnc && !series_ArmEnc && !series_LeftDist && !series_RightDist) return;
-
-    int local_min = INT32_MAX;
-    int local_max = INT32_MIN;
 
     /* Plotting Logic */
 
@@ -488,11 +492,9 @@
         local_max = max(local_max, right_dist_val);
     }
 
-    point_count++;
-
     if (!chart_needs_resize) return;
 
-    /* Autoscale Logic - Y Axis */
+    /* Autoscale - Expanding Logic */
 
     // Add some padding
     int range_padding_min = (local_min < 0) ? abs(local_min) / 5 : 0;
@@ -506,25 +508,43 @@
         target_max = target_min + 1;
     }
 
+    bool expanded = false;
+
     // Only allow min to decrease
     if (target_min < current_y_min) {
         current_y_min = target_min;
-        update_y_axis(current_y_min, current_y_max);
+        expanded = true;
     }
 
     // Only allow max to increase
     if (target_max > current_y_max) {
         current_y_max = target_max;
-        update_y_axis(current_y_min, current_y_max);
+        expanded = true;
     }
 
-    /* Autoscale Logic - X Axis */
+    if (expanded) {
+    shrink_counter = 0;   // reset shrink logic
+    update_y_axis(current_y_min, current_y_max);
+    return;
+    }
 
-    if (point_count >= lv_chart_get_point_count(ui_Chart) - 5) {
-        uint32_t new_count =
-            lv_chart_get_point_count(ui_Chart) + CHART_GROW_STEP;
+    /* Autoscale - Shrinking Logic */
 
-        lv_chart_set_point_count(ui_Chart, new_count);
+    int current_range = current_y_max - current_y_min;
+    int desired_range = target_max - target_min;
+
+    if (desired_range > 0 &&
+        desired_range < (current_range * 6) / 10) {
+
+        shrink_counter++;
+
+        if (shrink_counter >= SHRINK_DELAY_TICKS) {
+            current_y_min += (target_min - current_y_min) / 8;
+            current_y_max -= (current_y_max - target_max) / 8;
+            update_y_axis(current_y_min, current_y_max);
+        }
+    } else {
+        shrink_counter = 0;
     }
 
 }
