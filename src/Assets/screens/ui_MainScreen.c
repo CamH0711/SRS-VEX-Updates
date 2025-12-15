@@ -178,6 +178,13 @@ void lvgl_print(int line_number, char* text, ...) {
     }
 }
 
+void ShowChart() {
+    lv_obj_add_state(ui_Switch, LV_STATE_CHECKED);
+    lv_obj_clear_flag(ui_Chart, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(ui_Legend, LV_OBJ_FLAG_HIDDEN);
+}
+
 // build functions
 void ui_MainScreen_screen_init(void)
 {
