@@ -46,7 +46,7 @@ void ui_init(void)
     ui_create_chart_series();
     graph_timer = lv_timer_create(graph_update_task, 50, NULL);
     chart_resize_timer = lv_timer_create(chart_update_task, 200, NULL);
-    slider_labels_timer = lv_timer_create(update_gain_labels, 250, NULL);
+    slider_labels_timer = lv_timer_create(update_gain_labels, 100, NULL);
 }
 
 void ui_destroy(void)

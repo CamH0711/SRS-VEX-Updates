@@ -115,7 +115,7 @@ void ui_event_KiSlider(lv_event_t * e)
     double raw = lv_slider_get_value(ui_KiSlider); // raw's value is 0-100
     raw *= 0.01; // Limit raw's value to 0-1
     if (raw < 0.1) raw = 0.1; // Ensures Kp is never zero
-    
+
     Ki = raw; 
 }
 
@@ -138,16 +138,10 @@ void PlotData(int data_name) {
 
 void setKp(double Kp_value) {
     Kp = Kp_value;
-
-    int slider_val = (int)(Kp_value * 10);
-    lv_slider_set_value(ui_KpSlider, slider_val, LV_ANIM_OFF);
 }
 
 void setKi(double Ki_value) {
     Ki = Ki_value;
-    
-    int slider_val = (int)(Ki_value * 100);
-    lv_slider_set_value(ui_KiSlider, slider_val, LV_ANIM_OFF);
 }
 
 // build functions

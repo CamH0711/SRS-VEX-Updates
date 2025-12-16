@@ -639,4 +639,7 @@ void update_gain_labels(lv_timer_t * t)
 
     snprintf(buf, sizeof(buf), "Ki = %.2f", Ki);
     lv_label_set_text(ui_KiLabel, buf);
+
+    lv_slider_set_value(ui_KpSlider, (int)(Kp * 10.0), LV_ANIM_OFF);
+    lv_slider_set_value(ui_KiSlider, (int)(Ki * 100.0), LV_ANIM_OFF);
 }
