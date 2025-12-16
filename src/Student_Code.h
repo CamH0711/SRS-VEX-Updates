@@ -16,11 +16,10 @@ double convertPosition(double encoderCount);
 double convertAngle(double encoderCount);
 int driveToObject(int finalDistance);
 
-// ---------------------- Defining Controller Parameters ------------------------------
-double Kp = 1.0;                    // Proportional Controller gain
-double Ki = 0.1;                    // Integral Controller gain
-double u;                           //Control Effort
-int error;                          //Controller Error
+extern volatile double Kp;
+extern volatile double Ki;
+extern volatile double u;
+extern volatile int error;
 
 // DO NOT ADD ANY PROTOTYPES AFTER THIS LINE
 #endif  // STUDENT_CODE_H

@@ -6,6 +6,7 @@
 #include "../include/ui.h"
 #include <stdlib.h>
 #include "main.h"
+#include "../src/Student_Code.h"
 
 lv_obj_t * ui_SettingsScreen = NULL;
 lv_obj_t * ui_AdjustKp = NULL;
@@ -96,6 +97,28 @@ void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
     lv_chart_set_series_color(ui_Chart, series_RightDist, checked ? lv_color_hex(0xFFFF00) : lv_color_hex(0x00000000)); //White
 }
 
+void ui_event_KpSlider(lv_event_t * e)
+{
+    if (lv_event_get_code(e) != LV_EVENT_VALUE_CHANGED) return;
+
+    double raw = lv_slider_get_value(ui_KpSlider); // raw's value is 0-100
+    raw *= 0.1; // Limit raw's value to 0-10
+    if (raw < 0.1) raw = 0.1; // Ensures Kp is never zero
+
+    Kp = raw; 
+}
+
+void ui_event_KiSlider(lv_event_t * e)
+{
+    if (lv_event_get_code(e) != LV_EVENT_VALUE_CHANGED) return;
+
+    double raw = lv_slider_get_value(ui_KiSlider); // raw's value is 0-100
+    raw *= 0.01; // Limit raw's value to 0-1
+    if (raw < 0.1) raw = 0.1; // Ensures Kp is never zero
+    
+    Ki = raw; 
+}
+
 //Custom Functions
 void PlotData(int data_name) {
     if (data_name == LeftDistance) {
@@ -111,6 +134,20 @@ void PlotData(int data_name) {
     } else if (data_name == Error) {
         lv_obj_add_state(ui_PlotECheckbox, LV_STATE_CHECKED);
     }
+}
+
+void setKp(double Kp_value) {
+    Kp = Kp_value;
+
+    int slider_val = (int)(Kp_value * 10);
+    lv_slider_set_value(ui_KpSlider, slider_val, LV_ANIM_OFF);
+}
+
+void setKi(double Ki_value) {
+    Ki = Ki_value;
+    
+    int slider_val = (int)(Ki_value * 100);
+    lv_slider_set_value(ui_KiSlider, slider_val, LV_ANIM_OFF);
 }
 
 // build functions
@@ -143,7 +180,6 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_KpLabel, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_KpLabel, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_KpLabel, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_KpLabel, "Adjust Kp");
 
     ui_KpMin = lv_label_create(ui_AdjustKp);
     lv_obj_set_width(ui_KpMin, LV_SIZE_CONTENT);   /// 1
@@ -184,7 +220,6 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_KiLabel, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_KiLabel, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_KiLabel, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_KiLabel, "Adjust Ki\n");
 
     ui_KiMin = lv_label_create(ui_AdjustKi);
     lv_obj_set_width(ui_KiMin, LV_SIZE_CONTENT);   /// 1
@@ -324,6 +359,9 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_add_event_cb(ui_PlotArmEncCheckbox, ui_event_PlotArmEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotLeftDistanceCheckbox, ui_event_PlotLeftDistanceCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotRightDistanceCheckbox, ui_event_PlotRightDistanceCheckbox, LV_EVENT_ALL, NULL);
+    // Event callbacks for Gain Sliders
+    lv_obj_add_event_cb(ui_KpSlider, ui_event_KpSlider, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_KiSlider, ui_event_KiSlider, LV_EVENT_ALL, NULL);
 
 }
 

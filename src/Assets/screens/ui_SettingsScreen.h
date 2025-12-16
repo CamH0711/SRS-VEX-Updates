@@ -48,6 +48,10 @@ extern int current_y_max;
 extern lv_obj_t * ui_StopPanel2;
 extern lv_obj_t * ui_StopText2;
 extern void PlotData(int sensor_name);
+extern void ui_event_KpSlider(lv_event_t * e);
+extern void ui_event_KiSlider(lv_event_t * e);
+extern void setKp(double Kp_value);
+extern void setKi(double Ki_value);
 
 #ifdef __cplusplus
 } /*extern "C"*/

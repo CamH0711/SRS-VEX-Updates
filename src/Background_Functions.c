@@ -14,8 +14,8 @@
  #include "pros/distance.h"
  #include "../include/ui.h"
  #include "../include/Background_Functions.h"
- #include "Controller_Telemetry.h"
  #include "ui.h"
+ #include "Student_Code.h"
  
  adi_ultrasonic_t sonar;
  bool Ultra_Init = false;
@@ -433,7 +433,7 @@ int shrink_counter = 0;
 
     plot_divider = 0;
 
-    int u_val, e_val, wheel_enc_val, arm_enc_val, left_dist_val, right_dist_val;
+    int  wheel_enc_val, arm_enc_val, left_dist_val, right_dist_val;
 
     int local_min = INT32_MAX;
     int local_max = INT32_MIN;
@@ -445,19 +445,17 @@ int shrink_counter = 0;
     /* Plotting Logic */
 
     if (series_U && lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
-        u_val = controller_sample.control_effort; 
-        lv_chart_set_next_value(ui_Chart, series_U, u_val);
+        lv_chart_set_next_value(ui_Chart, series_U, (int) u);
         chart_needs_resize = true;
-        local_min = min(local_min, u_val);
-        local_max = max(local_max, u_val);
+        local_min = min(local_min, (int) u);
+        local_max = max(local_max, (int) u);
     }
 
     if (series_E && lv_obj_has_state(ui_PlotECheckbox, LV_STATE_CHECKED)) {
-        e_val = controller_sample.error;
-        lv_chart_set_next_value(ui_Chart, series_E, e_val);
+        lv_chart_set_next_value(ui_Chart, series_E, error);
         chart_needs_resize = true;
-        local_min = min(local_min, e_val);
-        local_max = max(local_max, e_val);
+        local_min = min(local_min, error);
+        local_max = max(local_max, error);
     }
 
     if (series_WheelEnc && lv_obj_has_state(ui_PlotWheelEncCheckbox, LV_STATE_CHECKED)) {
@@ -546,7 +544,6 @@ int shrink_counter = 0;
     } else {
         shrink_counter = 0;
     }
-
 }
 
 /**
@@ -628,4 +625,18 @@ void resetDistance(int sensor_name) {
     } else if (sensor_name == RightDistance) {
         rightInitialised = false;
     }
+}
+
+/**
+  * @brief A function that constantly checks the Kp and Ki slider labels, making sure they display the correct text.
+  */
+void update_gain_labels(lv_timer_t * t)
+{
+    static char buf[32];
+
+    snprintf(buf, sizeof(buf), "Kp = %.2f", Kp);
+    lv_label_set_text(ui_KpLabel, buf);
+
+    snprintf(buf, sizeof(buf), "Ki = %.2f", Ki);
+    lv_label_set_text(ui_KiLabel, buf);
 }

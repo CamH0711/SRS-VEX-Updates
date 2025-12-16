@@ -18,7 +18,6 @@
 #include <math.h>
 #include "Student_Code.h"
 #include "ui.h"
-#include "Controller_Telemetry.h"
 #include "Background_Functions.h"
 
 #define BLACK_LOWER 1100
@@ -33,37 +32,22 @@ double armRatio = 7;				// ratio of arm shaft rotations to arm motor shaft rotat
 double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of the motor shaft
 //New for SRS
 int sensorWidth = 139;              // Distance between the left and right distance sensor
+// ---------------------- Initialising Controller Parameters ------------------------------
+volatile double Kp;                 // Proportional Controller gain
+volatile double Ki;                 // Integral Controller gain
+volatile double u;                  // Control Effort
+volatile int error;                 // Controller Error
 // ------------------------------------------------------------------------------------
 
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 {  
+    setKp(5);
+    setKi(0.8);
 
-// motorPower(ArmMotor, 2000);
-// delay(20000);
-
-// while (true) {
-//     lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
-//     lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
-//     lvgl_print(5, "Test Test Test Test Test Test Test Test Test Test Test ");
-//     delay(50);
-// }
-
-    // driveStraight(500);
-
-    // driveStraight(-1000);
-    // driveToObject(200);
-
-    ShowChart();
-    PlotData(LeftDistance);
-    // PlotData(LeftEncoder);
-    // PlotData(Error);
-    // PlotData(ControlEffort);
-
-    while (true) {
-        lvgl_print(2, "Left Distance Sensor = %d mm", readSensor(LeftDistance));
-        lvgl_print(3, "Right Distance Sensor = %d mm", readSensor(RightDistance));
-        lvgl_print(5, "Sonar = %d mm", readSensor(SonarSensor));
+    while(true) {
+        lvgl_print(2, "Kp = %.2f", Kp);
+        lvgl_print(3, "Ki = %.2f", Ki);
         delay(50);
     }
 }
@@ -113,7 +97,7 @@ void driveStraight(int distance) {
     int k = 50, errorArray[1000] = {0}; 
     double currentPosition = 0;
     double Kp_straight = 1.0;
-    double u = 100, uL, uR, uDiff;
+    double uL, uR, uDiff;
     double encoderAverage;
     double tolerance = 0.1;
     
@@ -141,7 +125,7 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -70, 70);
+        u = saturate(u, -40, 40);
     
         //For the 1st second, ramp up voltage to stop twitching
         if (k < 70) {	
@@ -163,9 +147,6 @@ void driveStraight(int distance) {
         //Use uR and uL to drive the motors
         motorPower(RightMotor, convertPower(uR));
         motorPower(LeftMotor, convertPower(uL));
-
-        //Log data for plotting
-        log_controller_sample(error, (int)u);
 
         lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
         lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));

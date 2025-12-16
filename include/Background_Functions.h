@@ -4,7 +4,6 @@
 #include "main.h"
 #include "pros/adi.h"
 #include "pros/distance.h"
-#include "liblvgl/lvgl.h"
 
 // Declare your functions
 int getMotorPower(int motorName);
@@ -25,5 +24,6 @@ extern void exit_program(lv_timer_t * t);
 extern bool chart_needs_resize;
 double lowPassFilter(double newReading, bool left);
 void resetDistance(int sensor_name);
+void update_gain_labels(lv_timer_t * t);
 
 #endif

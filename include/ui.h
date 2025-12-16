@@ -23,8 +23,6 @@ extern "C" {
 
 ///////////////////// VARIABLES ////////////////////
 
-#include "Controller_Telemetry.h"
-
 // EVENTS
 
 extern lv_obj_t * ui____initial_actions0;
@@ -39,6 +37,7 @@ void ui_destroy(void);
 
 extern lv_timer_t *graph_timer;
 extern lv_timer_t *chart_resize_timer;
+extern lv_timer_t *slider_labels_timer;
 
 #ifdef __cplusplus
 } /*extern "C"*/
