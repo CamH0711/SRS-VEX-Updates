@@ -39,6 +39,7 @@ extern lv_timer_t *graph_timer;
 extern lv_timer_t *chart_resize_timer;
 extern lv_timer_t *slider_labels_timer;
 extern lv_timer_t *print_update_timer;
+extern lv_timer_t *stop_button_timer;
 
 #ifdef __cplusplus
 } /*extern "C"*/

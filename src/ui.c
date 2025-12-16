@@ -31,6 +31,7 @@ lv_timer_t *graph_timer = NULL;
 lv_timer_t *chart_resize_timer = NULL;
 lv_timer_t *slider_labels_timer = NULL;
 lv_timer_t *print_update_timer = NULL;
+lv_timer_t *stop_button_timer = NULL;
 
 void ui_init(void)
 {
@@ -49,6 +50,7 @@ void ui_init(void)
     chart_resize_timer = lv_timer_create(chart_update_task, 200, NULL);
     slider_labels_timer = lv_timer_create(update_gain_labels, 100, NULL);
     print_update_timer = lv_timer_create(print_update_task, 50, NULL);
+    stop_button_timer = lv_timer_create(stop_button_task, 50, NULL);
 }
 
 void ui_destroy(void)

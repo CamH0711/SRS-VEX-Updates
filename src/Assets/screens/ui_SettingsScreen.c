@@ -33,10 +33,14 @@ lv_obj_t * ui_GoBackLabel = NULL;
 lv_obj_t * ui_StopPanel2 = NULL;
 lv_obj_t * ui_StopText2 = NULL;
 // Custom Variables
-
 int current_y_min = 0;
 int current_y_max = 100;
-// int legend_y_pos = 20;
+bool plot_u_enabled = false;
+bool plot_e_enabled = false;
+bool plot_wheel_enabled = false;
+bool plot_arm_enabled = false;
+bool plot_left_dist_enabled = false;
+bool plot_right_dist_enabled = false;
 
 // event functions
 void ui_event_BackToMainButton(lv_event_t * e)
@@ -50,46 +54,45 @@ void ui_event_BackToMainButton(lv_event_t * e)
 
 // Show/Hide control effort series
 void ui_event_PlotUCheckbox(lv_event_t * e) {
-    lv_obj_t * obj = lv_event_get_target(e);
-    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_U, checked ? lv_color_hex(0xFF0000) : lv_color_hex(0x00000000)); //Red
-    // _ui_flag_modify(ui_ULegend, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-    // lv_obj_set_y(ui_ULegend, legend_y_pos);
-    // if (checked) {
-    //     legend_y_pos += 20;
-    // } else {
-    //     legend_y_pos -= 20;
-    // }
+    plot_u_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
+    if (!plot_u_enabled) {
+        clearSeries(series_U);
+    }
 }
 // Show/Hide error series
 void ui_event_PlotECheckbox(lv_event_t * e){
-    lv_obj_t * obj = lv_event_get_target(e);
-    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_E, checked ? lv_color_hex(0x00FF00) : lv_color_hex(0x00000000)); //Green
+     plot_e_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
+    if (!plot_e_enabled) {
+        clearSeries(series_E);
+    }
 }
 // Show/Hide wheel encoder series
 void ui_event_PlotWheelEncCheckbox(lv_event_t * e) {
-    lv_obj_t * obj = lv_event_get_target(e);
-    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_WheelEnc, checked ? lv_color_hex(0x0000FF) : lv_color_hex(0x00000000)); //Blue
+     plot_wheel_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
+    if (!plot_wheel_enabled) {
+        clearSeries(series_WheelEnc);
+    }
 }
 // Show/Hide arm encoder series
 void ui_event_PlotArmEncCheckbox(lv_event_t * e) {
-    lv_obj_t * obj = lv_event_get_target(e);
-    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_ArmEnc, checked ? lv_color_hex(0xFF00FF) : lv_color_hex(0x00000000)); //Blue
+     plot_arm_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
+    if (!plot_arm_enabled) {
+        clearSeries(series_ArmEnc);
+    }
 }
 // Show/Hide left distance sensor series
 void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e) {
-    lv_obj_t * obj = lv_event_get_target(e);
-    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_LeftDist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //White
+     plot_left_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
+    if (!plot_left_dist_enabled) {
+        clearSeries(series_LeftDist);
+    }
 }
 // Show/Hide Right distance sensor series
 void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
-    lv_obj_t * obj = lv_event_get_target(e);
-    bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
-    lv_chart_set_series_color(ui_Chart, series_RightDist, checked ? lv_color_hex(0xFFFF00) : lv_color_hex(0x00000000)); //White
+     plot_right_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
+    if (!plot_right_dist_enabled) {
+        clearSeries(series_RightDist);
+    }
 }
 
 void ui_event_KpSlider(lv_event_t * e) {
@@ -135,6 +138,10 @@ void setKp(double Kp_value) {
 
 void setKi(double Ki_value) {
     Ki = Ki_value;
+}
+
+void clearSeries(lv_chart_series_t * series) {
+    lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
 }
 
 // build functions

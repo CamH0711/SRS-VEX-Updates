@@ -15,6 +15,7 @@
  #include "../include/ui.h"
  #include "../include/Background_Functions.h"
  #include "Student_Code.h"
+ #include "Background_Tasks.h"
  
  adi_ultrasonic_t sonar;
  bool Ultra_Init = false;
@@ -443,21 +444,21 @@ int shrink_counter = 0;
 
     /* Plotting Logic */
 
-    if (series_U && lv_obj_has_state(ui_PlotUCheckbox, LV_STATE_CHECKED)) {
+    if (plot_u_enabled && series_U) {
         lv_chart_set_next_value(ui_Chart, series_U, (int) u);
         chart_needs_resize = true;
         local_min = min(local_min, (int) u);
         local_max = max(local_max, (int) u);
     }
 
-    if (series_E && lv_obj_has_state(ui_PlotECheckbox, LV_STATE_CHECKED)) {
+    if (plot_e_enabled && series_E) {
         lv_chart_set_next_value(ui_Chart, series_E, error);
         chart_needs_resize = true;
         local_min = min(local_min, error);
         local_max = max(local_max, error);
     }
 
-    if (series_WheelEnc && lv_obj_has_state(ui_PlotWheelEncCheckbox, LV_STATE_CHECKED)) {
+    if (plot_wheel_enabled && series_WheelEnc) {
         wheel_enc_val = 0.5 * (readSensor(LeftEncoder) + readSensor(RightEncoder));
         lv_chart_set_next_value(ui_Chart, series_WheelEnc, wheel_enc_val);
         chart_needs_resize = true;
@@ -465,7 +466,7 @@ int shrink_counter = 0;
         local_max = max(local_max, wheel_enc_val);
     }
 
-    if (series_ArmEnc && lv_obj_has_state(ui_PlotArmEncCheckbox, LV_STATE_CHECKED)) {
+    if (plot_arm_enabled && series_ArmEnc) {
         arm_enc_val = readSensor(ArmEncoder);
         lv_chart_set_next_value(ui_Chart, series_ArmEnc, arm_enc_val);
         chart_needs_resize = true;
@@ -473,7 +474,7 @@ int shrink_counter = 0;
         local_max = max(local_max, arm_enc_val);
     }
 
-    if (series_LeftDist && lv_obj_has_state(ui_PlotLeftDistanceCheckbox, LV_STATE_CHECKED)) {
+    if (plot_left_dist_enabled && series_LeftDist) {
         left_dist_val = readSensor(LeftDistance);
         lv_chart_set_next_value(ui_Chart, series_LeftDist, left_dist_val);
         chart_needs_resize = true;
@@ -481,7 +482,7 @@ int shrink_counter = 0;
         local_max = max(local_max, left_dist_val);
     }
 
-    if (series_RightDist && lv_obj_has_state(ui_PlotRightDistanceCheckbox, LV_STATE_CHECKED)) {
+    if (plot_right_dist_enabled && series_RightDist) {
         right_dist_val = readSensor(RightDistance);
         lv_chart_set_next_value(ui_Chart, series_RightDist, right_dist_val);
         chart_needs_resize = true;
@@ -680,6 +681,6 @@ void stop_button_task(lv_timer_t *t) {
         lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
 
-        endOfProgram();  // now safe
+        endOfProgram();
     }
 }

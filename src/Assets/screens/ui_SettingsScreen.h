@@ -36,22 +36,31 @@ extern lv_obj_t * ui_PlotRightDistanceCheckbox;
 extern void ui_event_BackToMainButton(lv_event_t * e);
 extern lv_obj_t * ui_BackToMainButton;
 extern lv_obj_t * ui_GoBackLabel;
-// CUSTOM VARIABLES & FUNCTIONS
+extern lv_obj_t * ui_StopPanel2;
+extern lv_obj_t * ui_StopText2;
+// Custom Functions
 extern void ui_event_PlotUCheckbox(lv_event_t * e);
 extern void ui_event_PlotECheckbox(lv_event_t * e);
 extern void ui_event_PlotWheelEncCheckbox(lv_event_t * e);
 extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
 extern void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e);
 extern void ui_event_PlotRightDistanceCheckbox(lv_event_t * e);
-extern int current_y_min;
-extern int current_y_max;
-extern lv_obj_t * ui_StopPanel2;
-extern lv_obj_t * ui_StopText2;
 extern void PlotData(int sensor_name);
 extern void ui_event_KpSlider(lv_event_t * e);
 extern void ui_event_KiSlider(lv_event_t * e);
 extern void setKp(double Kp_value);
 extern void setKi(double Ki_value);
+extern void clearSeries(lv_chart_series_t *series);
+// Custom Variables
+extern int current_y_min;
+extern int current_y_max;
+extern bool plot_u_enabled;
+extern bool plot_e_enabled;
+extern bool plot_wheel_enabled;
+extern bool plot_arm_enabled;
+extern bool plot_left_dist_enabled;
+extern bool plot_right_dist_enabled;
+
 
 #ifdef __cplusplus
 } /*extern "C"*/
