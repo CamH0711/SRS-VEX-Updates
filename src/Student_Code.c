@@ -46,8 +46,8 @@ void student_Main()
     setKi(0.8);
 
     while(true) {
-        lvgl_print(2, "Kp = %.2f", Kp);
-        lvgl_print(3, "Ki = %.2f", Ki);
+        lvgl_print(2, "Left Distance = %.2d", readSensor(LeftDistance));
+        lvgl_print(3, "Right Distance = %.2d", readSensor(RightDistance));
         delay(50);
     }
 }

@@ -21,6 +21,7 @@
  #include "ui.h"
  
  // adi_ultrasonic_t sonar;
+ volatile bool stop_requested = false;
  
  /// @brief This task regularly checks the power being sent to the motors. If power is being sent but the motors are not moving, it will stop all the motors and prevent further motor activation.
  /// @param none
@@ -112,11 +113,7 @@
              // lcd_print(LCDLine8, "    STOP BUTTON PRESSED    ");  // Redundant - delete later
              motorStopAll();
              _stopflag = 1;
-             lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
-             lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
-             lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
-             lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
-             endOfProgram();
+             stop_requested = true;
          }
  
          // Checking the arm limit switches

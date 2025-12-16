@@ -60,18 +60,22 @@ lv_chart_series_t *series_WheelEnc = NULL;
 lv_chart_series_t *series_ArmEnc = NULL;
 lv_chart_series_t *series_LeftDist = NULL;
 lv_chart_series_t *series_RightDist = NULL;
+// Global Variables for printing
+volatile bool print_panel_visible = true;
+char print_buffers[8][64];
+bool print_dirty[8];
 
 
 // event functions
 void ui_event_Switch(lv_event_t * e)
 {
-    lv_event_code_t event_code = lv_event_get_code(e);
+    if (lv_event_get_code(e) != LV_EVENT_CLICKED) return;
 
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_flag_modify(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_flag_modify(ui_Chart, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_flag_modify(ui_Legend, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-    }
+    print_panel_visible = !print_panel_visible;
+
+    _ui_flag_modify(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    _ui_flag_modify(ui_Chart, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    _ui_flag_modify(ui_Legend, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
 }
 
 void ui_event_SettingsButton(lv_event_t * e)
@@ -154,31 +158,16 @@ void update_y_axis(int min, int max)
 }
 
 void lvgl_print(int line_number, char* text, ...) {
-    //Limit string length to 40 characters
-    if (strlen(text) > 40) return;
-    //Find correct line
-    lv_obj_t* line_obj = NULL;
-    switch (line_number) {
-        case 1: line_obj = ui_PrintLine1; break;
-        case 2: line_obj = ui_PrintLine2; break;
-        case 3: line_obj = ui_PrintLine3; break;
-        case 4: line_obj = ui_PrintLine4; break;
-        case 5: line_obj = ui_PrintLine5; break;
-        case 6: line_obj = ui_PrintLine6; break;
-        case 7: line_obj = ui_PrintLine7; break;
-        case 8: line_obj = ui_PrintLine8; break;
-        default: return; // Invalid line number
-    }
-    //Set line text
-    if (line_obj != NULL) {
-        char buffer[128]; // buffer to hold the formatted string
-        va_list args;
-        va_start(args, text);
-        vsnprintf(buffer, sizeof(buffer), text, args);
-        va_end(args);
+   if (line_number < 1 || line_number > 8) return;
 
-        lv_label_set_text(line_obj, buffer);
-    }
+    va_list args;
+    va_start(args, text);
+    vsnprintf(print_buffers[line_number - 1],
+              sizeof(print_buffers[0]),
+              text, args);
+    va_end(args);
+
+    print_dirty[line_number - 1] = true;
 }
 
 void ShowChart() {

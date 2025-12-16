@@ -25,5 +25,7 @@ extern bool chart_needs_resize;
 double lowPassFilter(double newReading, bool left);
 void resetDistance(int sensor_name);
 void update_gain_labels(lv_timer_t * t);
+void print_update_task(lv_timer_t * t);
+void stop_button_task(lv_timer_t *t);
 
 #endif

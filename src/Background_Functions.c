@@ -14,7 +14,6 @@
  #include "pros/distance.h"
  #include "../include/ui.h"
  #include "../include/Background_Functions.h"
- #include "ui.h"
  #include "Student_Code.h"
  
  adi_ultrasonic_t sonar;
@@ -611,13 +610,14 @@ double lowPassFilter(double newReading, bool left) {
 }
 /**
   * @brief A timer task that exits the program when called.
-  * @param timer (lv_timer_t) Pointer to the timer object
+  * @param t (lv_timer_t) Pointer to the timer object
   */
 void exit_program(lv_timer_t * t) { exit(0); }
 
 /**
-  * @brief A function that resets .
-  * @param timer (lv_timer_t) Pointer to the timer object
+  * @brief A function that resets the Distance sensors.
+  * @param sensor_name (int) An integer that represents either the
+  * left or right distance sensor.
   */
 void resetDistance(int sensor_name) {
     if (sensor_name == LeftDistance) {
@@ -628,7 +628,10 @@ void resetDistance(int sensor_name) {
 }
 
 /**
-  * @brief A function that constantly checks the Kp and Ki slider labels, making sure they display the correct text.
+  * @brief A function that constantly checks the Kp and Ki slider labels, making sure they display 
+  * the correct text.  It also checks the sliders themselves, making sure their position correctly
+  * reflects the current Kp and Ki values. 
+  * @param t (lv_timer_t) Pointer to the timer object
   */
 void update_gain_labels(lv_timer_t * t)
 {
@@ -642,4 +645,41 @@ void update_gain_labels(lv_timer_t * t)
 
     lv_slider_set_value(ui_KpSlider, (int)(Kp * 10.0), LV_ANIM_OFF);
     lv_slider_set_value(ui_KiSlider, (int)(Ki * 100.0), LV_ANIM_OFF);
+}
+
+/**
+  * @brief A timer function that constantly makes sure the print lines
+  * are being updated.
+  * @param t (lv_timer_t) Pointer to the timer object
+  */
+void print_update_task(lv_timer_t * t)
+{
+    if (!print_panel_visible) return;
+
+    lv_obj_t* lines[8] = {
+        ui_PrintLine1, ui_PrintLine2, ui_PrintLine3, ui_PrintLine4,
+        ui_PrintLine5, ui_PrintLine6, ui_PrintLine7, ui_PrintLine8
+    };
+
+    for (int i = 0; i < 8; i++) {
+        if (print_dirty[i]) {
+            lv_label_set_text(lines[i], print_buffers[i]);
+            print_dirty[i] = false;
+        }
+    }
+}
+
+void stop_button_task(lv_timer_t *t) {
+     static bool handled = false;
+
+    if (stop_requested && !handled) {
+        handled = true;
+
+        lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
+        lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
+        lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
+
+        endOfProgram();  // now safe
+    }
 }

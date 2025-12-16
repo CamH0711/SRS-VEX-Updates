@@ -36,7 +36,7 @@ lv_obj_t * ui_StopText2 = NULL;
 
 int current_y_min = 0;
 int current_y_max = 100;
-int legend_y_pos = 20;
+// int legend_y_pos = 20;
 
 // event functions
 void ui_event_BackToMainButton(lv_event_t * e)
@@ -49,8 +49,7 @@ void ui_event_BackToMainButton(lv_event_t * e)
 }
 
 // Show/Hide control effort series
-void ui_event_PlotUCheckbox(lv_event_t * e)
-{
+void ui_event_PlotUCheckbox(lv_event_t * e) {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_U, checked ? lv_color_hex(0xFF0000) : lv_color_hex(0x00000000)); //Red
@@ -63,15 +62,13 @@ void ui_event_PlotUCheckbox(lv_event_t * e)
     // }
 }
 // Show/Hide error series
-void ui_event_PlotECheckbox(lv_event_t * e)
-{
+void ui_event_PlotECheckbox(lv_event_t * e){
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_E, checked ? lv_color_hex(0x00FF00) : lv_color_hex(0x00000000)); //Green
 }
 // Show/Hide wheel encoder series
-void ui_event_PlotWheelEncCheckbox(lv_event_t * e)
-{
+void ui_event_PlotWheelEncCheckbox(lv_event_t * e) {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_WheelEnc, checked ? lv_color_hex(0x0000FF) : lv_color_hex(0x00000000)); //Blue
@@ -81,11 +78,9 @@ void ui_event_PlotArmEncCheckbox(lv_event_t * e) {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_ArmEnc, checked ? lv_color_hex(0xFF00FF) : lv_color_hex(0x00000000)); //Blue
-
 }
 // Show/Hide left distance sensor series
-void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e)
-{
+void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e) {
     lv_obj_t * obj = lv_event_get_target(e);
     bool checked = lv_obj_has_state(obj, LV_STATE_CHECKED);
     lv_chart_set_series_color(ui_Chart, series_LeftDist, checked ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x00000000)); //White
@@ -97,8 +92,7 @@ void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
     lv_chart_set_series_color(ui_Chart, series_RightDist, checked ? lv_color_hex(0xFFFF00) : lv_color_hex(0x00000000)); //White
 }
 
-void ui_event_KpSlider(lv_event_t * e)
-{
+void ui_event_KpSlider(lv_event_t * e) {
     if (lv_event_get_code(e) != LV_EVENT_VALUE_CHANGED) return;
 
     double raw = lv_slider_get_value(ui_KpSlider); // raw's value is 0-100
@@ -108,13 +102,12 @@ void ui_event_KpSlider(lv_event_t * e)
     Kp = raw; 
 }
 
-void ui_event_KiSlider(lv_event_t * e)
-{
+void ui_event_KiSlider(lv_event_t * e) {
     if (lv_event_get_code(e) != LV_EVENT_VALUE_CHANGED) return;
 
     double raw = lv_slider_get_value(ui_KiSlider); // raw's value is 0-100
     raw *= 0.01; // Limit raw's value to 0-1
-    if (raw < 0.1) raw = 0.1; // Ensures Kp is never zero
+    if (raw < 0.1) raw = 0.1; // Ensures Ki is never zero
 
     Ki = raw; 
 }

@@ -72,6 +72,9 @@ extern void update_y_axis(int min, int max);
 extern void lvgl_print(int line_number, char* text, ...);
 extern void ui_event_OnScreenStopButton(lv_event_t * e);
 extern void ShowChart();
+extern volatile bool print_panel_visible;
+extern char print_buffers[8][64];
+extern bool print_dirty[8];
 
 #ifdef __cplusplus
 } /*extern "C"*/
