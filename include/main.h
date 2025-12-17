@@ -103,18 +103,28 @@
  double min(double num1, double num2);
  double max(double num1, double num2);
  int sgn(double input);
- //  *** New for SRS ***
- 
+ // New functions/global variables for SRS
+ void graph_update_task(lv_timer_t * timer);
+ void program_ended_banner(lv_timer_t *timer);
+ void chart_update_task(lv_timer_t* timer);
+ extern void exit_program(lv_timer_t * t);
+ extern bool chart_needs_resize;
+ double lowPassFilter(double newReading, bool left);
+ void resetDistance(int sensor_name);
+ void update_gain_labels(lv_timer_t * t);
+ void print_update_task(lv_timer_t * t);
+ void stop_button_task(lv_timer_t *t);
+
  /* Function declarations from Background_Tasks.c */
- 
  void monitorMotorPower(void* param);
  void motorStopAll(void);
  void checkSensors(void* param);
- 
+// New functions/global variables for SRS
+ extern volatile bool stop_requested;
+
  /* Global variables */
  extern int _stopflag;           //1 || 0 - Used to control whether or not robot is to be stopped or in stop mode.
  extern int _arm_State;          // Variable that defines the state of the robot arm (-1 at lower limit, 1 at upper limit, and 0 in between)
 
 
  #endif  // _PROS_MAIN_H_
- 

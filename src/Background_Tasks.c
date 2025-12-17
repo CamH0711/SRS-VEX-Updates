@@ -18,9 +18,8 @@
  #include "pros/llemu.h"
  #include "pros/misc.h"
  #include "pros/motors.h"
- #include "ui.h"
- #include "Background_Tasks.h"
- 
+ #include "../include/ui.h"
+
  // adi_ultrasonic_t sonar;
  volatile bool stop_requested = false;
  

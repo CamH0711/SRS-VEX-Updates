@@ -16,6 +16,7 @@ double convertPosition(double encoderCount);
 double convertAngle(double encoderCount);
 int driveToObject(int finalDistance);
 
+// Control systems global variables
 extern volatile double Kp;
 extern volatile double Ki;
 extern volatile double u;

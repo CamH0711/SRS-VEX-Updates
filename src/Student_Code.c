@@ -17,8 +17,7 @@
 #include <string.h>
 #include <math.h>
 #include "Student_Code.h"
-#include "ui.h"
-#include "Background_Functions.h"
+#include "../include/ui.h"
 
 #define BLACK_LOWER 1100
 

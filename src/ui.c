@@ -3,11 +3,10 @@
 // LVGL version: 9.2.2
 // Project name: VEX_Runtime_UI
 
-#include "ui.h"
+#include "../include/ui.h"
 #include "ui_helpers.h"
 #include "../include/liblvgl/lvgl.h"
 #include "../include/main.h"
-#include "Background_Functions.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -48,7 +47,7 @@ void ui_init(void)
     ui_create_chart_series();
     graph_timer = lv_timer_create(graph_update_task, 50, NULL);
     chart_resize_timer = lv_timer_create(chart_update_task, 200, NULL);
-    slider_labels_timer = lv_timer_create(update_gain_labels, 100, NULL);
+    slider_labels_timer = lv_timer_create(update_gain_labels, 50, NULL);
     print_update_timer = lv_timer_create(print_update_task, 50, NULL);
     stop_button_timer = lv_timer_create(stop_button_task, 50, NULL);
 }

@@ -3,7 +3,7 @@
 // LVGL version: 9.2.2
 // Project name: VEX_Runtime_UI
 
-#include "../include/ui.h"
+#include "ui.h"
 #include <stdlib.h>
 #include "main.h"
 #include "../src/Student_Code.h"

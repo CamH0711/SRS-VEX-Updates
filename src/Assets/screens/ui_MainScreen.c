@@ -4,9 +4,8 @@
 // Project name: VEX_Runtime_UI
 
 #include <string.h>
-#include "../include/ui.h"
-#include "../include/main.h"
-#include "Background_Functions.h"
+#include "ui.h"
+#include "main.h"
 
 lv_obj_t * ui_MainScreen = NULL;
 lv_obj_t * ui_Chart = NULL;

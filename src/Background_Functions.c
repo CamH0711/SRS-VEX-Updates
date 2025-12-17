@@ -13,9 +13,7 @@
  #include "pros/adi.h"
  #include "pros/distance.h"
  #include "../include/ui.h"
- #include "../include/Background_Functions.h"
  #include "Student_Code.h"
- #include "Background_Tasks.h"
  
  adi_ultrasonic_t sonar;
  bool Ultra_Init = false;
