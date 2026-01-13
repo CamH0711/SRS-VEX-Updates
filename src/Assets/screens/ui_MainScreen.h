@@ -55,16 +55,20 @@ extern lv_obj_t * ui_LeftDistLegendText;
 extern lv_obj_t * ui_RightDistLegend;
 extern lv_obj_t * ui_RightDistColour;
 extern lv_obj_t * ui_RightDistLegendText;
-extern lv_obj_t * ui_ArmEncLegend;
-extern lv_obj_t * ui_ArmEncColour;
-extern lv_obj_t * ui_ArmEncLegendText;
 extern lv_obj_t * ui_OnScreenStopButton;
 extern lv_obj_t * ui_StopButtonText;
+extern lv_obj_t * ui_LeftEncLegend;
+extern lv_obj_t * ui_LeftEncColour;
+extern lv_obj_t * ui_LeftEncLegendText;
+extern lv_obj_t * ui_RightEncLegend;
+extern lv_obj_t * ui_RightEncColour;
+extern lv_obj_t * ui_RightEncLegendText;
 
 // CUSTOM VARIABLES & FUNCTIONS
 extern lv_chart_series_t *series_U;
 extern lv_chart_series_t *series_E;
-extern lv_chart_series_t *series_WheelEnc;
+extern lv_chart_series_t *series_LeftEnc;
+extern lv_chart_series_t *series_RightEnc;
 extern lv_chart_series_t *series_ArmEnc;
 extern lv_chart_series_t *series_LeftDist;
 extern lv_chart_series_t *series_RightDist;

@@ -431,14 +431,14 @@ int shrink_counter = 0;
 
     plot_divider = 0;
 
-    int  wheel_enc_val, arm_enc_val, left_dist_val, right_dist_val;
+    int  left_enc_val, right_enc_val, arm_enc_val, left_dist_val, right_dist_val;
 
     int local_min = INT32_MAX;
     int local_max = INT32_MIN;
 
     // Ensure chart and series exist
     if (!ui_Chart) return;
-    if (!series_U && !series_E && !series_WheelEnc && !series_ArmEnc && !series_LeftDist && !series_RightDist) return;
+    if (!series_U && !series_E && !series_LeftEnc && !series_RightEnc && !series_ArmEnc && !series_LeftDist && !series_RightDist) return;
 
     /* Plotting Logic */
 
@@ -456,12 +456,20 @@ int shrink_counter = 0;
         local_max = max(local_max, error);
     }
 
-    if (plot_wheel_enabled && series_WheelEnc) {
-        wheel_enc_val = 0.5 * (readSensor(LeftEncoder) + readSensor(RightEncoder));
-        lv_chart_set_next_value(ui_Chart, series_WheelEnc, wheel_enc_val);
+    if (plot_left_enc_enabled && series_LeftEnc) {
+        left_enc_val = readSensor(LeftEncoder);
+        lv_chart_set_next_value(ui_Chart, series_LeftEnc, left_enc_val);
         chart_needs_resize = true;
-        local_min = min(local_min, wheel_enc_val);
-        local_max = max(local_max, wheel_enc_val);
+        local_min = min(local_min, left_enc_val);
+        local_max = max(local_max, left_enc_val);
+    }
+
+    if (plot_right_enc_enabled && series_RightEnc) {
+        right_enc_val = readSensor(RightEncoder);
+        lv_chart_set_next_value(ui_Chart, series_RightEnc, right_enc_val);
+        chart_needs_resize = true;
+        local_min = min(local_min, right_enc_val);
+        local_max = max(local_max, right_enc_val);
     }
 
     if (plot_arm_enabled && series_ArmEnc) {

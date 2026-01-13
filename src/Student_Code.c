@@ -41,13 +41,10 @@ volatile int error;                 // Controller Error
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 {  
-    setKp(5);
-    setKi(0.8);
-
     while(true) {
-        lvgl_print(2, "Left Distance = %.2d", readSensor(LeftDistance));
-        lvgl_print(3, "Right Distance = %.2d", readSensor(RightDistance));
-        delay(50);
+        lvgl_print(1, "Left Distance = %d mm", readSensor(LeftDistance));
+        lvgl_print(2, "Right Distance = %d mm", readSensor(RightDistance));
+        delay(100);
     }
 }
 
@@ -100,6 +97,9 @@ void driveStraight(int distance) {
     double encoderAverage;
     double tolerance = 0.1;
     
+    setKp(1.0);
+    setKi(0.1);
+
     int i;
     
     for (i = 0; i <= 1000; i++) {
