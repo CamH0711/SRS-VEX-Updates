@@ -246,21 +246,21 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_AdjustControllerGainsLabel, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_AdjustControllerGainsLabel, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_AdjustControllerGainsLabel, 35);
-    lv_obj_set_y(ui_AdjustControllerGainsLabel, 15);
+    lv_obj_set_y(ui_AdjustControllerGainsLabel, 10);
     lv_label_set_text(ui_AdjustControllerGainsLabel, "Adjust Controller Gains:");
 
     ui_GraphSettingsLabel = lv_label_create(ui_SettingsScreen);
     lv_obj_set_width(ui_GraphSettingsLabel, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_GraphSettingsLabel, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_GraphSettingsLabel, -60);
-    lv_obj_set_y(ui_GraphSettingsLabel, 15);
+    lv_obj_set_y(ui_GraphSettingsLabel, 10);
     lv_obj_set_align(ui_GraphSettingsLabel, LV_ALIGN_TOP_RIGHT);
     lv_label_set_text(ui_GraphSettingsLabel, "Graph Settings:");
 
      ui_GraphSettings = lv_obj_create(ui_SettingsScreen);
     lv_obj_remove_style_all(ui_GraphSettings);
     lv_obj_set_width(ui_GraphSettings, 240);
-    lv_obj_set_height(ui_GraphSettings, 180);
+    lv_obj_set_height(ui_GraphSettings, 200);
     lv_obj_set_x(ui_GraphSettings, 0);
     lv_obj_set_y(ui_GraphSettings, 15);
     lv_obj_set_align(ui_GraphSettings, LV_ALIGN_RIGHT_MID);
@@ -279,7 +279,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotECheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotECheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotECheckbox, 20);
-    lv_obj_set_y(ui_PlotECheckbox, 25);
+    lv_obj_set_y(ui_PlotECheckbox, 28);
     lv_obj_add_flag(ui_PlotECheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotLeftEncCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -287,7 +287,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotLeftEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotLeftEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotLeftEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotLeftEncCheckbox, 50);
+    lv_obj_set_y(ui_PlotLeftEncCheckbox, 56);
     lv_obj_add_flag(ui_PlotLeftEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotRightEncCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -295,7 +295,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotRightEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotRightEncCheckbox, 75);
+    lv_obj_set_y(ui_PlotRightEncCheckbox, 84);
     lv_obj_add_flag(ui_PlotRightEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotArmEncCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -303,7 +303,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotArmEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotArmEncCheckbox, 100);
+    lv_obj_set_y(ui_PlotArmEncCheckbox, 112);
     lv_obj_add_flag(ui_PlotArmEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotLeftDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -311,7 +311,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotLeftDistanceCheckbox, 20);
-    lv_obj_set_y(ui_PlotLeftDistanceCheckbox, 125);
+    lv_obj_set_y(ui_PlotLeftDistanceCheckbox, 140);
     lv_obj_add_flag(ui_PlotLeftDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotRightDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -319,7 +319,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotRightDistanceCheckbox, 20);
-    lv_obj_set_y(ui_PlotRightDistanceCheckbox, 150);
+    lv_obj_set_y(ui_PlotRightDistanceCheckbox, 168);
     lv_obj_add_flag(ui_PlotRightDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
 

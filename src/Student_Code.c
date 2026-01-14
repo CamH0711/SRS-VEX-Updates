@@ -40,12 +40,18 @@ volatile int error;                 // Controller Error
 
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
-{  
-    while(true) {
-        lvgl_print(1, "Left Distance = %d mm", readSensor(LeftDistance));
-        lvgl_print(2, "Right Distance = %d mm", readSensor(RightDistance));
-        delay(100);
-    }
+{ 
+
+    showChart();
+    PlotData(ControlEffort);
+    PlotData(Error);
+    driveStraight(1000);
+
+//     while(true) {
+//         lvgl_print(1, "Left Distance = %d mm", readSensor(LeftDistance));
+//         lvgl_print(2, "Right Distance = %d mm", readSensor(RightDistance));
+//         delay(100);
+//     }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//

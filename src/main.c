@@ -32,10 +32,9 @@
 	 
 	// Initialise LVGL GUI
 	 ui_init();
-	//  delay(50);
 
-	 //initialise LCD screen
-	//  lcd_initialize();
+	// initialise LCD screen
+	// lcd_initialize();
 	 
 	 //begin background processing tasks
 	 delay(200);
