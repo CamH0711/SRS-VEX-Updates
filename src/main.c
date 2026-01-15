@@ -21,6 +21,7 @@
  /* Background processing variables. Do not modify or delete */
  task_t monitorMotors_Task;
  task_t check_sensors;
+ task_t low_pass_filter;
  int _stopflag = 0;
  int _arm_State = 0;
  bool gui_running = true;
@@ -35,14 +36,9 @@
 
 	// initialise LCD screen
 	// lcd_initialize();
-	 
-	 //begin background processing tasks
-	 delay(200);
-	 check_sensors = task_create(checkSensors, NULL, TASK_PRIORITY_DEFAULT+2, TASK_STACK_DEPTH_DEFAULT, "Check sensors");
-	 delay(200);
-	 monitorMotors_Task = task_create(monitorMotorPower, NULL, TASK_PRIORITY_DEFAULT+1, TASK_STACK_DEPTH_DEFAULT, "Monitor Motor Power");
-	 delay(200);
- 
+
+	delay(50); // short delay to allow GUI to initialise
+
 	 //initialise and configure adi pins
 	 int32_t success = adi_port_set_config(_lightLeft, E_ADI_ANALOG_IN);
 	 success = adi_port_set_config(_lightMid, E_ADI_ANALOG_IN);
@@ -51,6 +47,15 @@
 	 success = adi_port_set_config(_armLimitHigh, E_ADI_DIGITAL_IN);
 	 success = adi_port_set_config(_buttonStop, E_ADI_DIGITAL_IN);
  
+	//begin background processing tasks
+	 delay(200);
+	 low_pass_filter = task_create(lowPassFilter, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Low Pass Filter");
+	 delay(200);
+	 check_sensors = task_create(checkSensors, NULL, TASK_PRIORITY_DEFAULT+2, TASK_STACK_DEPTH_DEFAULT, "Check sensors");
+	 delay(200);
+	 monitorMotors_Task = task_create(monitorMotorPower, NULL, TASK_PRIORITY_DEFAULT+1, TASK_STACK_DEPTH_DEFAULT, "Monitor Motor Power");
+	 delay(200);
+
 	 //initialise left wheel motor
 	   motor_set_gearing(_motorLeft, E_MOTOR_GEARSET_18);
 	   motor_set_reversed(_motorLeft, false);

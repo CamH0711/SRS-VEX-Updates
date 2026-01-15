@@ -21,7 +21,13 @@
  #include "../include/ui.h"
 
  // adi_ultrasonic_t sonar;
- volatile bool stop_requested = false;
+volatile bool stop_requested = false;
+
+// global variables for Low Pass Filter
+bool leftInitialised = false;      // Flags for LPF initialisation
+bool rightInitialised = false;
+double filteredDistanceLeft = 0;   // Filtered distance values
+double filteredDistanceRight = 0;
  
  /// @brief This task regularly checks the power being sent to the motors. If power is being sent but the motors are not moving, it will stop all the motors and prevent further motor activation.
  /// @param none
@@ -151,3 +157,34 @@
      motor_move(_motorRight, 0);
      motor_move(_motorArm, 0);
  }
+
+ /**
+  * @brief A Low Pass Filter that is designed to reduce fluctuation in the outputs 
+  * of each distance sensor.  It does this using a discrete, first order LPF algorithm.
+  * @param none
+  */
+void lowPassFilter(void *param) {
+    double alpha = 0.2; // Smoothing factor (0 < alpha <= 1)
+    double newReadingLeft, newReadingRight;
+
+    while (1) {
+        newReadingLeft = (double) distance_get(_distanceLeft);  // Left distance sensor
+        newReadingRight = (double) distance_get(_distanceRight); // Right distance sensor
+            if (!leftInitialised) {
+                filteredDistanceLeft = newReadingLeft;
+                leftInitialised = true;
+            } else {
+                filteredDistanceLeft =
+                    alpha * newReadingLeft + (1 - alpha) * filteredDistanceLeft;
+            }
+            if (!rightInitialised) {
+                filteredDistanceRight = newReadingRight;
+                rightInitialised = true;
+            } else {
+                filteredDistanceRight =
+                    alpha * newReadingRight + (1 - alpha) * filteredDistanceRight;
+            }
+
+        delay(50); // Filter has a frequency of 20 Hz
+    }
+}

@@ -22,10 +22,6 @@
  long T3_timer = 0;
  long T4_timer = 0;
  bool chart_needs_resize = false;
- double filteredDistanceLeft = 0;
- double filteredDistanceRight = 0;
- bool leftInitialised = false;
- bool rightInitialised = false;
  int plot_divider = 0;
  int observed_min = INT32_MAX;
  int observed_max = INT32_MIN;
@@ -130,12 +126,14 @@ int shrink_counter = 0;
          }
          break;
      case 11: // left distance sensor
-        // This sensor constantly reads 14mm less than the other sensor for some reason
-        sensorOutput = lowPassFilter(distance_get(_distanceLeft), true);
+        sensorOutput = filteredDistanceLeft;
          break;
      case 12: // right distance sensor
-         sensorOutput = lowPassFilter(distance_get(_distanceRight), false);
+         sensorOutput = filteredDistanceRight;
          break;
+    //  case 13: // unfiltered left distance sensor
+    //      sensorOutput = distance_get(_distanceLeft);
+    //      break;
      }
      return sensorOutput;
  }
@@ -426,11 +424,6 @@ int shrink_counter = 0;
   */
  void graph_update_task(lv_timer_t * timer) {
 
-    plot_divider++;
-    if (plot_divider < 2) { return; } //Plot every 4 points
-
-    plot_divider = 0;
-
     int  left_enc_val, right_enc_val, arm_enc_val, left_dist_val, right_dist_val;
 
     int local_min = INT32_MAX;
@@ -587,34 +580,6 @@ void chart_update_task(lv_timer_t* timer) {
     }
 }
 
-/**
-  * @brief A Low Pass Filter that is designed to reduce fluctuation in the outputs 
-  * of each distance sensor.  It does this using a discrete, first order LPF algorithm.
-  * @param newReading (double): the most recent reading from the distance sensor.
-  * @param left (bool): true or false corresponds to left or right distance sensor.
-  */
-double lowPassFilter(double newReading, bool left) {
-    double alpha = 0.2; // Smoothing factor (0 < alpha <= 1)
-    if (left) {
-        if (!leftInitialised) {
-            filteredDistanceLeft = newReading;
-            leftInitialised = true;
-        } else {
-            filteredDistanceLeft =
-                alpha * newReading + (1 - alpha) * filteredDistanceLeft;
-        }
-        return filteredDistanceLeft;
-    } else {
-        if (!rightInitialised) {
-            filteredDistanceRight = newReading;
-            rightInitialised = true;
-        } else {
-            filteredDistanceRight =
-                alpha * newReading + (1 - alpha) * filteredDistanceRight;
-        }
-        return filteredDistanceRight;
-    }
-}
 /**
   * @brief A timer task that exits the program when called.
   * @param t (lv_timer_t) Pointer to the timer object
