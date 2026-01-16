@@ -34,6 +34,8 @@ LV_IMG_DECLARE(
 // UI INIT
 void ui_init(void);
 void ui_destroy(void);
+void init_plot_series(void);
+void init_plot_slots(void);
 
 extern lv_timer_t *graph_timer;
 extern lv_timer_t *chart_resize_timer;

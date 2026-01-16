@@ -15,6 +15,8 @@
  #ifndef _PROS_MAIN_H_
  #define _PROS_MAIN_H_
  #define PROS_USE_LITERALS
+
+ #define MAX_PLOT_SLOTS 4
  
  #include "api.h"
  #include "pros/distance.h"
@@ -109,7 +111,6 @@
  void chart_update_task(lv_timer_t* timer);
  extern void exit_program(lv_timer_t * t);
  extern bool chart_needs_resize;
- void lowPassFilter(void *param);
  void resetDistance(int sensor_name);
  void update_gain_labels(lv_timer_t * t);
  void print_update_task(lv_timer_t * t);
@@ -119,6 +120,7 @@
  void monitorMotorPower(void* param);
  void motorStopAll(void);
  void checkSensors(void* param);
+ void lowPassFilter(void *param);
 
  /* Global variables */
  extern int _stopflag;              //1 || 0 - Used to control whether or not robot is to be stopped or in stop mode.
@@ -130,5 +132,31 @@
  extern bool rightInitialised;
  extern double filteredDistanceLeft;
  extern double filteredDistanceRight;
+
+
+ /* Plotting Related */
+ typedef enum {
+    PLOT_NONE = 0,
+    PLOT_LEFT_ENC,
+    PLOT_RIGHT_ENC,
+    PLOT_ARM_ENC,
+    PLOT_LEFT_DIST,
+    PLOT_RIGHT_DIST,
+    PLOT_CUSTOM
+} plot_source_t;
+
+typedef struct {
+    lv_chart_series_t *series;
+    plot_source_t source;
+    bool active;
+} plot_slot_t;
+
+extern plot_slot_t plot_slots[MAX_PLOT_SLOTS];
+extern lv_chart_series_t *slot_series[MAX_PLOT_SLOTS];
+
+ int get_plot_value(plot_source_t src);
+ bool is_source_enabled(plot_source_t src);
+ void update_plot_slots(void);
+
 
  #endif  // _PROS_MAIN_H_

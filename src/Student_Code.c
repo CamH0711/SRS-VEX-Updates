@@ -47,6 +47,9 @@ void student_Main()
     // PlotData(Error);
     // driveStraight(1000);
 
+    // delay(1000);
+    // driveToObject(200);
+
     while(true) {
         lvgl_print(2, "Filtered Distance = %d mm", readSensor(LeftDistance));
         delay(100);

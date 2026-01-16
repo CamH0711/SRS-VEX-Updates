@@ -57,51 +57,51 @@ void ui_event_BackToMainButton(lv_event_t * e)
 // Show/Hide control effort series
 void ui_event_PlotUCheckbox(lv_event_t * e) {
     plot_u_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    if (!plot_u_enabled) {
-        clearSeries(series_U);
-    }
+    // if (!plot_u_enabled) {
+    //     clearSeries(series_U);
+    // }
 }
 // Show/Hide error series
 void ui_event_PlotECheckbox(lv_event_t * e){
      plot_e_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    if (!plot_e_enabled) {
-        clearSeries(series_E);
-    }
+    // if (!plot_e_enabled) {
+    //     clearSeries(series_E);
+    // }
 }
 // Show/Hide left wheel encoder series
 void ui_event_PlotLeftEncCheckbox(lv_event_t * e) {
      plot_left_enc_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    if (!plot_left_enc_enabled) {
-        clearSeries(series_LeftEnc);
-    }
+    // if (!plot_left_enc_enabled) {
+    //     clearSeries(series_LeftEnc);
+    // }
 }
 // Show/Hide right wheel encoder series
 void ui_event_PlotRightEncCheckbox(lv_event_t * e) {
      plot_right_enc_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    if (!plot_right_enc_enabled) {
-        clearSeries(series_RightEnc);
-    }
+    // if (!plot_right_enc_enabled) {
+    //     clearSeries(series_RightEnc);
+    // }
 }
 // Show/Hide arm encoder series
 void ui_event_PlotArmEncCheckbox(lv_event_t * e) {
      plot_arm_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    if (!plot_arm_enabled) {
-        clearSeries(series_ArmEnc);
-    }
+    // if (!plot_arm_enabled) {
+    //     clearSeries(series_ArmEnc);
+    // }
 }
 // Show/Hide left distance sensor series
 void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e) {
      plot_left_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    if (!plot_left_dist_enabled) {
-        clearSeries(series_LeftDist);
-    }
+    // if (!plot_left_dist_enabled) {
+    //     clearSeries(series_LeftDist);
+    // }
 }
 // Show/Hide Right distance sensor series
 void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
      plot_right_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    if (!plot_right_dist_enabled) {
-        clearSeries(series_RightDist);
-    }
+    // if (!plot_right_dist_enabled) {
+    //     clearSeries(series_RightDist);
+    // }
 }
 
 void ui_event_KpSlider(lv_event_t * e) {

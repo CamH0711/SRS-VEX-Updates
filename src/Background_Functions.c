@@ -417,6 +417,76 @@ int shrink_counter = 0;
  
  // ----------------------------------- New Functions - SRS ----------------------------------------
  
+ int get_plot_value(plot_source_t src) {
+    switch (src) {
+        case PLOT_LEFT_ENC:    return readSensor(LeftEncoder);
+        case PLOT_RIGHT_ENC:   return readSensor(RightEncoder);
+        case PLOT_ARM_ENC:     return readSensor(ArmEncoder);
+        case PLOT_LEFT_DIST:   return readSensor(LeftDistance);
+        case PLOT_RIGHT_DIST:  return readSensor(RightDistance);
+        default:               return 0;
+    }
+}
+
+ bool is_source_enabled(plot_source_t src) {
+    switch (src) {
+        case PLOT_LEFT_ENC:    return plot_left_enc_enabled;
+        case PLOT_RIGHT_ENC:   return plot_right_enc_enabled;
+        case PLOT_ARM_ENC:     return plot_arm_enabled;
+        case PLOT_LEFT_DIST:   return plot_left_dist_enabled;
+        case PLOT_RIGHT_DIST:  return plot_right_dist_enabled;
+        default:               return false;
+    }
+}
+
+ void update_plot_slots(void) {
+
+    plot_source_t requested[] = {
+        PLOT_LEFT_ENC,
+        PLOT_RIGHT_ENC,
+        PLOT_ARM_ENC,
+        PLOT_LEFT_DIST,
+        PLOT_RIGHT_DIST
+    };
+
+    /* Remove sources that are no longer enabled */
+    for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
+        if (plot_slots[i].active &&
+            !is_source_enabled(plot_slots[i].source)) {
+            plot_slots[i].active = false;
+            plot_slots[i].source = PLOT_NONE;
+        }
+    }
+
+    /* Assign new sources to free slots */
+    for (int r = 0; r < (int)(sizeof(requested)/sizeof(requested[0])); r++) {
+        plot_source_t src = requested[r];
+
+        if (!is_source_enabled(src))
+            continue;
+
+        bool already_assigned = false;
+
+        for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
+            if (plot_slots[i].active && plot_slots[i].source == src) {
+                already_assigned = true;
+                break;
+            }
+        }
+
+        if (already_assigned)
+            continue;
+
+        for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
+            if (!plot_slots[i].active) {
+                plot_slots[i].source = src;
+                plot_slots[i].active = true;
+                break;
+            }
+        }
+    }
+}
+
 /**
   * @brief A timer task that updates the data being graphed on the main screen chart, and automatically
   * scales the Y axis according to the values being plotted.
@@ -424,69 +494,29 @@ int shrink_counter = 0;
   */
  void graph_update_task(lv_timer_t * timer) {
 
-    int  left_enc_val, right_enc_val, arm_enc_val, left_dist_val, right_dist_val;
-
     int local_min = INT32_MAX;
     int local_max = INT32_MIN;
 
-    // Ensure chart and series exist
     if (!ui_Chart) return;
-    if (!series_U && !series_E && !series_LeftEnc && !series_RightEnc && !series_ArmEnc && !series_LeftDist && !series_RightDist) return;
 
-    /* Plotting Logic */
+    update_plot_slots();
 
-    if (plot_u_enabled && series_U) {
-        lv_chart_set_next_value(ui_Chart, series_U, (int) u);
+    for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
+
+        if (!plot_slots[i].active || !plot_slots[i].series)
+            continue;
+
+        int value = get_plot_value(plot_slots[i].source);
+
+        lv_chart_set_next_value(
+            ui_Chart,
+            plot_slots[i].series,
+            value
+        );
+
         chart_needs_resize = true;
-        local_min = min(local_min, (int) u);
-        local_max = max(local_max, (int) u);
-    }
-
-    if (plot_e_enabled && series_E) {
-        lv_chart_set_next_value(ui_Chart, series_E, error);
-        chart_needs_resize = true;
-        local_min = min(local_min, error);
-        local_max = max(local_max, error);
-    }
-
-    if (plot_left_enc_enabled && series_LeftEnc) {
-        left_enc_val = readSensor(LeftEncoder);
-        lv_chart_set_next_value(ui_Chart, series_LeftEnc, left_enc_val);
-        chart_needs_resize = true;
-        local_min = min(local_min, left_enc_val);
-        local_max = max(local_max, left_enc_val);
-    }
-
-    if (plot_right_enc_enabled && series_RightEnc) {
-        right_enc_val = readSensor(RightEncoder);
-        lv_chart_set_next_value(ui_Chart, series_RightEnc, right_enc_val);
-        chart_needs_resize = true;
-        local_min = min(local_min, right_enc_val);
-        local_max = max(local_max, right_enc_val);
-    }
-
-    if (plot_arm_enabled && series_ArmEnc) {
-        arm_enc_val = readSensor(ArmEncoder);
-        lv_chart_set_next_value(ui_Chart, series_ArmEnc, arm_enc_val);
-        chart_needs_resize = true;
-        local_min = min(local_min, arm_enc_val);
-        local_max = max(local_max, arm_enc_val);
-    }
-
-    if (plot_left_dist_enabled && series_LeftDist) {
-        left_dist_val = readSensor(LeftDistance);
-        lv_chart_set_next_value(ui_Chart, series_LeftDist, left_dist_val);
-        chart_needs_resize = true;
-        local_min = min(local_min, left_dist_val);
-        local_max = max(local_max, left_dist_val);
-    }
-
-    if (plot_right_dist_enabled && series_RightDist) {
-        right_dist_val = readSensor(RightDistance);
-        lv_chart_set_next_value(ui_Chart, series_RightDist, right_dist_val);
-        chart_needs_resize = true;
-        local_min = min(local_min, right_dist_val);
-        local_max = max(local_max, right_dist_val);
+        local_min = min(local_min, value);
+        local_max = max(local_max, value);
     }
 
     if (!chart_needs_resize) return;

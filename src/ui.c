@@ -31,6 +31,8 @@ lv_timer_t *chart_resize_timer = NULL;
 lv_timer_t *slider_labels_timer = NULL;
 lv_timer_t *print_update_timer = NULL;
 lv_timer_t *stop_button_timer = NULL;
+lv_chart_series_t *slot_series[MAX_PLOT_SLOTS] = {NULL};
+plot_slot_t plot_slots[MAX_PLOT_SLOTS];
 
 void ui_init(void)
 {
@@ -44,7 +46,9 @@ void ui_init(void)
     lv_disp_load_scr(ui_MainScreen);
 
     //Custom initial actions & timers
-    ui_create_chart_series();
+    // ui_create_chart_series();
+    init_plot_series();
+    init_plot_slots();
     graph_timer = lv_timer_create(graph_update_task, 100, NULL);
     chart_resize_timer = lv_timer_create(chart_update_task, 200, NULL);
     slider_labels_timer = lv_timer_create(update_gain_labels, 50, NULL);
@@ -56,4 +60,39 @@ void ui_destroy(void)
 {
     ui_MainScreen_screen_destroy();
     ui_SettingsScreen_screen_destroy();
+}
+
+void init_plot_series(void) {
+
+    slot_series[0] = lv_chart_add_series(
+        ui_Chart,
+        lv_palette_main(LV_PALETTE_RED),
+        LV_CHART_AXIS_PRIMARY_Y
+    );
+
+    slot_series[1] = lv_chart_add_series(
+        ui_Chart,
+        lv_palette_main(LV_PALETTE_GREEN),
+        LV_CHART_AXIS_PRIMARY_Y
+    );
+
+    slot_series[2] = lv_chart_add_series(
+        ui_Chart,
+        lv_palette_main(LV_PALETTE_BLUE),
+        LV_CHART_AXIS_PRIMARY_Y
+    );
+
+    slot_series[3] = lv_chart_add_series(
+        ui_Chart,
+        lv_palette_main(LV_PALETTE_ORANGE),
+        LV_CHART_AXIS_PRIMARY_Y
+    );
+}
+
+void init_plot_slots(void) {
+    for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
+        plot_slots[i].series = slot_series[i];
+        plot_slots[i].active = false;
+        plot_slots[i].source = PLOT_NONE;
+    }
 }
