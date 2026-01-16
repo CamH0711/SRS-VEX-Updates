@@ -22,8 +22,6 @@ lv_obj_t * ui_KiMax = NULL;
 lv_obj_t * ui_AdjustControllerGainsLabel = NULL;
 lv_obj_t * ui_GraphSettingsLabel = NULL;
 lv_obj_t * ui_GraphSettings = NULL;
-lv_obj_t * ui_PlotUCheckbox = NULL;
-lv_obj_t * ui_PlotECheckbox = NULL;
 lv_obj_t * ui_PlotLeftEncCheckbox = NULL;
 lv_obj_t * ui_PlotRightEncCheckbox = NULL;
 lv_obj_t * ui_PlotArmEncCheckbox = NULL;
@@ -54,54 +52,25 @@ void ui_event_BackToMainButton(lv_event_t * e)
     }
 }
 
-// Show/Hide control effort series
-void ui_event_PlotUCheckbox(lv_event_t * e) {
-    plot_u_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    // if (!plot_u_enabled) {
-    //     clearSeries(series_U);
-    // }
-}
-// Show/Hide error series
-void ui_event_PlotECheckbox(lv_event_t * e){
-     plot_e_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    // if (!plot_e_enabled) {
-    //     clearSeries(series_E);
-    // }
-}
 // Show/Hide left wheel encoder series
 void ui_event_PlotLeftEncCheckbox(lv_event_t * e) {
      plot_left_enc_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    // if (!plot_left_enc_enabled) {
-    //     clearSeries(series_LeftEnc);
-    // }
 }
 // Show/Hide right wheel encoder series
 void ui_event_PlotRightEncCheckbox(lv_event_t * e) {
      plot_right_enc_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    // if (!plot_right_enc_enabled) {
-    //     clearSeries(series_RightEnc);
-    // }
 }
 // Show/Hide arm encoder series
 void ui_event_PlotArmEncCheckbox(lv_event_t * e) {
      plot_arm_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    // if (!plot_arm_enabled) {
-    //     clearSeries(series_ArmEnc);
-    // }
 }
 // Show/Hide left distance sensor series
 void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e) {
      plot_left_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    // if (!plot_left_dist_enabled) {
-    //     clearSeries(series_LeftDist);
-    // }
 }
 // Show/Hide Right distance sensor series
 void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
      plot_right_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-    // if (!plot_right_dist_enabled) {
-    //     clearSeries(series_RightDist);
-    // }
 }
 
 void ui_event_KpSlider(lv_event_t * e) {
@@ -136,10 +105,6 @@ void PlotData(int data_name) {
         lv_obj_add_state(ui_PlotRightEncCheckbox, LV_STATE_CHECKED);
     } else if (data_name == ArmEncoder) {
         lv_obj_add_state(ui_PlotArmEncCheckbox, LV_STATE_CHECKED);
-    } else if (data_name == ControlEffort) {
-        lv_obj_add_state(ui_PlotUCheckbox, LV_STATE_CHECKED);
-    } else if (data_name == Error) {
-        lv_obj_add_state(ui_PlotECheckbox, LV_STATE_CHECKED);
     }
 }
 
@@ -266,28 +231,13 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_align(ui_GraphSettings, LV_ALIGN_RIGHT_MID);
     lv_obj_remove_flag(ui_GraphSettings, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_PlotUCheckbox = lv_checkbox_create(ui_GraphSettings);
-    lv_checkbox_set_text(ui_PlotUCheckbox, "Plot Control Effort");
-    lv_obj_set_width(ui_PlotUCheckbox, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_PlotUCheckbox, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PlotUCheckbox, 20);
-    lv_obj_set_y(ui_PlotUCheckbox, 0);
-    lv_obj_add_flag(ui_PlotUCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-
-    ui_PlotECheckbox = lv_checkbox_create(ui_GraphSettings);
-    lv_checkbox_set_text(ui_PlotECheckbox, "Plot Error");
-    lv_obj_set_width(ui_PlotECheckbox, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_PlotECheckbox, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PlotECheckbox, 20);
-    lv_obj_set_y(ui_PlotECheckbox, 28);
-    lv_obj_add_flag(ui_PlotECheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotLeftEncCheckbox = lv_checkbox_create(ui_GraphSettings);
     lv_checkbox_set_text(ui_PlotLeftEncCheckbox, "Plot Left Encoder");
     lv_obj_set_width(ui_PlotLeftEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotLeftEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotLeftEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotLeftEncCheckbox, 56);
+    lv_obj_set_y(ui_PlotLeftEncCheckbox, 0);
     lv_obj_add_flag(ui_PlotLeftEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotRightEncCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -295,7 +245,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotRightEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotRightEncCheckbox, 84);
+    lv_obj_set_y(ui_PlotRightEncCheckbox, 28);
     lv_obj_add_flag(ui_PlotRightEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotArmEncCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -303,7 +253,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotArmEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotArmEncCheckbox, 112);
+    lv_obj_set_y(ui_PlotArmEncCheckbox, 56);
     lv_obj_add_flag(ui_PlotArmEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotLeftDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -311,7 +261,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotLeftDistanceCheckbox, 20);
-    lv_obj_set_y(ui_PlotLeftDistanceCheckbox, 140);
+    lv_obj_set_y(ui_PlotLeftDistanceCheckbox, 84);
     lv_obj_add_flag(ui_PlotLeftDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotRightDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
@@ -319,7 +269,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotRightDistanceCheckbox, 20);
-    lv_obj_set_y(ui_PlotRightDistanceCheckbox, 168);
+    lv_obj_set_y(ui_PlotRightDistanceCheckbox, 112);
     lv_obj_add_flag(ui_PlotRightDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
 
@@ -367,8 +317,6 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
 
     // Event callbacks for graph series checkboxes
-    lv_obj_add_event_cb(ui_PlotUCheckbox, ui_event_PlotUCheckbox, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PlotECheckbox, ui_event_PlotECheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotLeftEncCheckbox, ui_event_PlotLeftEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotRightEncCheckbox, ui_event_PlotRightEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotArmEncCheckbox, ui_event_PlotArmEncCheckbox, LV_EVENT_ALL, NULL);
@@ -399,8 +347,6 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_AdjustControllerGainsLabel = NULL;
     ui_GraphSettingsLabel = NULL;
     ui_GraphSettings = NULL;
-    ui_PlotUCheckbox = NULL;
-    ui_PlotECheckbox = NULL;
     ui_PlotLeftEncCheckbox = NULL;
     ui_PlotRightEncCheckbox = NULL;
     ui_PlotArmEncCheckbox = NULL;

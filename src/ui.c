@@ -46,7 +46,6 @@ void ui_init(void)
     lv_disp_load_scr(ui_MainScreen);
 
     //Custom initial actions & timers
-    // ui_create_chart_series();
     init_plot_series();
     init_plot_slots();
     graph_timer = lv_timer_create(graph_update_task, 100, NULL);

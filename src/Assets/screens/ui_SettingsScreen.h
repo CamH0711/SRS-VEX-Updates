@@ -27,8 +27,6 @@ extern lv_obj_t * ui_KiMax;
 extern lv_obj_t * ui_AdjustControllerGainsLabel;
 extern lv_obj_t * ui_GraphSettingsLabel;
 extern lv_obj_t * ui_GraphSettings;
-extern lv_obj_t * ui_PlotUCheckbox;
-extern lv_obj_t * ui_PlotECheckbox;
 extern lv_obj_t * ui_PlotLeftEncCheckbox;
 extern lv_obj_t * ui_PlotRightEncCheckbox;
 extern lv_obj_t * ui_PlotArmEncCheckbox;
