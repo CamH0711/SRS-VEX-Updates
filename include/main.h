@@ -125,14 +125,15 @@
  /* Global variables */
  extern int _stopflag;              //1 || 0 - Used to control whether or not robot is to be stopped or in stop mode.
  extern int _arm_State;             // Variable that defines the state of the robot arm (-1 at lower limit, 1 at upper limit, and 0 in between)
- 
+ extern volatile double Kp;         // Control systems global variables
+ extern volatile double Ki;
+
 // New functions/global variables for SRS
  extern volatile bool stop_requested;
  extern bool leftInitialised;
  extern bool rightInitialised;
  extern double filteredDistanceLeft;
  extern double filteredDistanceRight;
-
 
  /* Plotting Related */
  typedef enum {

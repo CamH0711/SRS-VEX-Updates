@@ -9,19 +9,9 @@
 #include "../src/Student_Code.h"
 
 lv_obj_t * ui_SettingsScreen = NULL;
-lv_obj_t * ui_AdjustKp = NULL;
-lv_obj_t * ui_KpSlider = NULL;
-lv_obj_t * ui_KpLabel = NULL;
-lv_obj_t * ui_KpMin = NULL;
-lv_obj_t * ui_KpMax = NULL;
-lv_obj_t * ui_AdjustKi = NULL;
-lv_obj_t * ui_KiSlider = NULL;
-lv_obj_t * ui_KiLabel = NULL;
-lv_obj_t * ui_KiMin = NULL;
-lv_obj_t * ui_KiMax = NULL;
 lv_obj_t * ui_AdjustControllerGainsLabel = NULL;
-lv_obj_t * ui_GraphSettingsLabel = NULL;
-lv_obj_t * ui_GraphSettings = NULL;
+lv_obj_t * ui_DisplaySeriesLabel = NULL;
+lv_obj_t * ui_CheckboxesContainer = NULL;
 lv_obj_t * ui_PlotLeftEncCheckbox = NULL;
 lv_obj_t * ui_PlotRightEncCheckbox = NULL;
 lv_obj_t * ui_PlotArmEncCheckbox = NULL;
@@ -29,6 +19,48 @@ lv_obj_t * ui_PlotLeftDistanceCheckbox = NULL;
 lv_obj_t * ui_PlotRightDistanceCheckbox = NULL;
 lv_obj_t * ui_BackToMainButton = NULL;
 lv_obj_t * ui_GoBackLabel = NULL;
+lv_obj_t * ui_AdjustGainsContainer = NULL;
+lv_obj_t * ui_KpLabel = NULL;
+lv_obj_t * ui_KiLabel = NULL;
+lv_obj_t * ui_AdjustKpButton = NULL;
+lv_obj_t * ui_AdjustKpButtonLabel = NULL;
+lv_obj_t * ui_AdjustKiButton = NULL;
+lv_obj_t * ui_AdjustKiButtonLabel = NULL;
+lv_obj_t * ui_NumPad = NULL;
+lv_obj_t * ui_Button1 = NULL;
+lv_obj_t * ui_ButtonText1 = NULL;
+lv_obj_t * ui_Button2 = NULL;
+lv_obj_t * ui_ButtonText2 = NULL;
+lv_obj_t * ui_Button3 = NULL;
+lv_obj_t * ui_ButtonText3 = NULL;
+lv_obj_t * ui_Button4 = NULL;
+lv_obj_t * ui_ButtonText4 = NULL;
+lv_obj_t * ui_Button5 = NULL;
+lv_obj_t * ui_ButtonText5 = NULL;
+lv_obj_t * ui_Button6 = NULL;
+lv_obj_t * ui_ButtonText6 = NULL;
+lv_obj_t * ui_Button7 = NULL;
+lv_obj_t * ui_ButtonText7 = NULL;
+lv_obj_t * ui_Button8 = NULL;
+lv_obj_t * ui_ButtonText8 = NULL;
+lv_obj_t * ui_Button9 = NULL;
+lv_obj_t * ui_ButtonText9 = NULL;
+lv_obj_t * ui_Button0 = NULL;
+lv_obj_t * ui_ButtonText0 = NULL;
+lv_obj_t * ui_ButtonDot = NULL;
+lv_obj_t * ui_ButtonTextDot = NULL;
+lv_obj_t * ui_ButtonDel = NULL;
+lv_obj_t * ui_ButtonTextDel = NULL;
+lv_obj_t * ui_ButtonDone = NULL;
+lv_obj_t * ui_ButtonTextDone = NULL;
+lv_obj_t * ui_GraphSettingsContainer = NULL;
+lv_obj_t * ui_GraphSettingsLabel = NULL;
+lv_obj_t * ui_PointCountLabel = NULL;
+lv_obj_t * ui_PlottingRateLabel = NULL;
+lv_obj_t * ui_AdjustPointCountButton = NULL;
+lv_obj_t * ui_AdjustPointCountButtonText = NULL;
+lv_obj_t * ui_AdjustPlottingRateButton = NULL;
+lv_obj_t * ui_AdjustPlottingRateButtonText = NULL;
 lv_obj_t * ui_StopPanel2 = NULL;
 lv_obj_t * ui_StopText2 = NULL;
 // Custom Variables
@@ -52,6 +84,71 @@ void ui_event_BackToMainButton(lv_event_t * e)
     }
 }
 
+void ui_event_AdjustKpButton(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_AdjustKiButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    }
+}
+
+void ui_event_AdjustKiButton(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustKiButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    }
+}
+
+void ui_event_ButtonDone(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_AdjustKiButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    }
+}
+
+void ui_event_AdjustPointCountButton(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_AdjustKiButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    }
+}
+
+void ui_event_AdjustPlottingRateButton(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_AdjustKiButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    }
+}
+
 // Show/Hide left wheel encoder series
 void ui_event_PlotLeftEncCheckbox(lv_event_t * e) {
      plot_left_enc_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
@@ -71,26 +168,6 @@ void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e) {
 // Show/Hide Right distance sensor series
 void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
      plot_right_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-}
-
-void ui_event_KpSlider(lv_event_t * e) {
-    if (lv_event_get_code(e) != LV_EVENT_VALUE_CHANGED) return;
-
-    double raw = lv_slider_get_value(ui_KpSlider); // raw's value is 0-100
-    raw *= 0.1; // Limit raw's value to 0-10
-    if (raw < 0.1) raw = 0.1; // Ensures Kp is never zero
-
-    Kp = raw; 
-}
-
-void ui_event_KiSlider(lv_event_t * e) {
-    if (lv_event_get_code(e) != LV_EVENT_VALUE_CHANGED) return;
-
-    double raw = lv_slider_get_value(ui_KiSlider); // raw's value is 0-100
-    raw *= 0.01; // Limit raw's value to 0-1
-    if (raw < 0.1) raw = 0.1; // Ensures Ki is never zero
-
-    Ki = raw; 
 }
 
 //Custom Functions
@@ -124,88 +201,10 @@ void clearSeries(lv_chart_series_t * series) {
 void ui_SettingsScreen_screen_init(void)
 {
     ui_SettingsScreen = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_SettingsScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_SettingsScreen, lv_color_hex(0x0c0c48), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_remove_flag(ui_SettingsScreen,
+                       LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM);    /// Flags
+    lv_obj_set_style_bg_color(ui_SettingsScreen, lv_color_hex(0x0C0C48), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_SettingsScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_AdjustKp = lv_obj_create(ui_SettingsScreen);
-    lv_obj_remove_style_all(ui_AdjustKp);
-    lv_obj_set_width(ui_AdjustKp, 240);
-    lv_obj_set_height(ui_AdjustKp, 60);
-    lv_obj_set_x(ui_AdjustKp, 0);
-    lv_obj_set_y(ui_AdjustKp, 45);
-    lv_obj_remove_flag(ui_AdjustKp, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_KpSlider = lv_slider_create(ui_AdjustKp);
-    lv_slider_set_value(ui_KpSlider, 0, LV_ANIM_OFF);
-    if(lv_slider_get_mode(ui_KpSlider) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_KpSlider, 0, LV_ANIM_OFF);
-    lv_obj_set_width(ui_KpSlider, 128);
-    lv_obj_set_height(ui_KpSlider, 10);
-    lv_obj_set_align(ui_KpSlider, LV_ALIGN_CENTER);
-
-    //Compensating for LVGL9.1 draw crash with bar/slider max value when top-padding is nonzero and right-padding is 0
-    if(lv_obj_get_style_pad_top(ui_KpSlider, LV_PART_MAIN) > 0) lv_obj_set_style_pad_right(ui_KpSlider,
-                                                                                               lv_obj_get_style_pad_right(ui_KpSlider, LV_PART_MAIN) + 1, LV_PART_MAIN);
-    ui_KpLabel = lv_label_create(ui_AdjustKp);
-    lv_obj_set_width(ui_KpLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KpLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_KpLabel, LV_ALIGN_TOP_MID);
-
-    ui_KpMin = lv_label_create(ui_AdjustKp);
-    lv_obj_set_width(ui_KpMin, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KpMin, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_KpMin, 20);
-    lv_obj_set_y(ui_KpMin, 0);
-    lv_obj_set_align(ui_KpMin, LV_ALIGN_LEFT_MID);
-    lv_label_set_text(ui_KpMin, "0.1");
-
-    ui_KpMax = lv_label_create(ui_AdjustKp);
-    lv_obj_set_width(ui_KpMax, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KpMax, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_KpMax, -30);
-    lv_obj_set_y(ui_KpMax, 0);
-    lv_obj_set_align(ui_KpMax, LV_ALIGN_RIGHT_MID);
-    lv_label_set_text(ui_KpMax, "10");
-
-    ui_AdjustKi = lv_obj_create(ui_SettingsScreen);
-    lv_obj_remove_style_all(ui_AdjustKi);
-    lv_obj_set_width(ui_AdjustKi, 240);
-    lv_obj_set_height(ui_AdjustKi, 60);
-    lv_obj_set_x(ui_AdjustKi, 0);
-    lv_obj_set_y(ui_AdjustKi, -80);
-    lv_obj_set_align(ui_AdjustKi, LV_ALIGN_BOTTOM_LEFT);
-    lv_obj_remove_flag(ui_AdjustKi, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_KiSlider = lv_slider_create(ui_AdjustKi);
-    lv_slider_set_value(ui_KiSlider, 0, LV_ANIM_OFF);
-    if(lv_slider_get_mode(ui_KiSlider) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_KiSlider, 0, LV_ANIM_OFF);
-    lv_obj_set_width(ui_KiSlider, 128);
-    lv_obj_set_height(ui_KiSlider, 10);
-    lv_obj_set_align(ui_KiSlider, LV_ALIGN_CENTER);
-
-    //Compensating for LVGL9.1 draw crash with bar/slider max value when top-padding is nonzero and right-padding is 0
-    if(lv_obj_get_style_pad_top(ui_KiSlider, LV_PART_MAIN) > 0) lv_obj_set_style_pad_right(ui_KiSlider,
-                                                                                               lv_obj_get_style_pad_right(ui_KiSlider, LV_PART_MAIN) + 1, LV_PART_MAIN);
-    ui_KiLabel = lv_label_create(ui_AdjustKi);
-    lv_obj_set_width(ui_KiLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KiLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_KiLabel, LV_ALIGN_TOP_MID);
-
-    ui_KiMin = lv_label_create(ui_AdjustKi);
-    lv_obj_set_width(ui_KiMin, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KiMin, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_KiMin, 20);
-    lv_obj_set_y(ui_KiMin, 0);
-    lv_obj_set_align(ui_KiMin, LV_ALIGN_LEFT_MID);
-    lv_label_set_text(ui_KiMin, "0.1");
-
-    ui_KiMax = lv_label_create(ui_AdjustKi);
-    lv_obj_set_width(ui_KiMax, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KiMax, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_KiMax, -35);
-    lv_obj_set_y(ui_KiMax, 0);
-    lv_obj_set_align(ui_KiMax, LV_ALIGN_RIGHT_MID);
-    lv_label_set_text(ui_KiMax, "1");
 
     ui_AdjustControllerGainsLabel = lv_label_create(ui_SettingsScreen);
     lv_obj_set_width(ui_AdjustControllerGainsLabel, LV_SIZE_CONTENT);   /// 1
@@ -214,25 +213,24 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_AdjustControllerGainsLabel, 10);
     lv_label_set_text(ui_AdjustControllerGainsLabel, "Adjust Controller Gains:");
 
-    ui_GraphSettingsLabel = lv_label_create(ui_SettingsScreen);
-    lv_obj_set_width(ui_GraphSettingsLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_GraphSettingsLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_GraphSettingsLabel, -60);
-    lv_obj_set_y(ui_GraphSettingsLabel, 10);
-    lv_obj_set_align(ui_GraphSettingsLabel, LV_ALIGN_TOP_RIGHT);
-    lv_label_set_text(ui_GraphSettingsLabel, "Graph Settings:");
+    ui_DisplaySeriesLabel = lv_label_create(ui_SettingsScreen);
+    lv_obj_set_width(ui_DisplaySeriesLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_DisplaySeriesLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_DisplaySeriesLabel, -65);
+    lv_obj_set_y(ui_DisplaySeriesLabel, 10);
+    lv_obj_set_align(ui_DisplaySeriesLabel, LV_ALIGN_TOP_RIGHT);
+    lv_label_set_text(ui_DisplaySeriesLabel, "Display Series:");
 
-     ui_GraphSettings = lv_obj_create(ui_SettingsScreen);
-    lv_obj_remove_style_all(ui_GraphSettings);
-    lv_obj_set_width(ui_GraphSettings, 240);
-    lv_obj_set_height(ui_GraphSettings, 200);
-    lv_obj_set_x(ui_GraphSettings, 0);
-    lv_obj_set_y(ui_GraphSettings, 15);
-    lv_obj_set_align(ui_GraphSettings, LV_ALIGN_RIGHT_MID);
-    lv_obj_remove_flag(ui_GraphSettings, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_CheckboxesContainer = lv_obj_create(ui_SettingsScreen);
+    lv_obj_remove_style_all(ui_CheckboxesContainer);
+    lv_obj_set_width(ui_CheckboxesContainer, 220);
+    lv_obj_set_height(ui_CheckboxesContainer, 200);
+    lv_obj_set_x(ui_CheckboxesContainer, 0);
+    lv_obj_set_y(ui_CheckboxesContainer, 15);
+    lv_obj_set_align(ui_CheckboxesContainer, LV_ALIGN_RIGHT_MID);
+    lv_obj_remove_flag(ui_CheckboxesContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-
-    ui_PlotLeftEncCheckbox = lv_checkbox_create(ui_GraphSettings);
+    ui_PlotLeftEncCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
     lv_checkbox_set_text(ui_PlotLeftEncCheckbox, "Plot Left Encoder");
     lv_obj_set_width(ui_PlotLeftEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotLeftEncCheckbox, LV_SIZE_CONTENT);    /// 1
@@ -240,7 +238,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotLeftEncCheckbox, 0);
     lv_obj_add_flag(ui_PlotLeftEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_PlotRightEncCheckbox = lv_checkbox_create(ui_GraphSettings);
+    ui_PlotRightEncCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
     lv_checkbox_set_text(ui_PlotRightEncCheckbox, "Plot Right Encoder");
     lv_obj_set_width(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);    /// 1
@@ -248,7 +246,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotRightEncCheckbox, 28);
     lv_obj_add_flag(ui_PlotRightEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_PlotArmEncCheckbox = lv_checkbox_create(ui_GraphSettings);
+    ui_PlotArmEncCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
     lv_checkbox_set_text(ui_PlotArmEncCheckbox, "Plot Arm Encoder");
     lv_obj_set_width(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);    /// 1
@@ -256,7 +254,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotArmEncCheckbox, 56);
     lv_obj_add_flag(ui_PlotArmEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_PlotLeftDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
+    ui_PlotLeftDistanceCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
     lv_checkbox_set_text(ui_PlotLeftDistanceCheckbox, "Plot Left Distance");
     lv_obj_set_width(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
@@ -264,7 +262,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotLeftDistanceCheckbox, 84);
     lv_obj_add_flag(ui_PlotLeftDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_PlotRightDistanceCheckbox = lv_checkbox_create(ui_GraphSettings);
+    ui_PlotRightDistanceCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
     lv_checkbox_set_text(ui_PlotRightDistanceCheckbox, "Plot Right Distance");
     lv_obj_set_width(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
@@ -272,13 +270,12 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotRightDistanceCheckbox, 112);
     lv_obj_add_flag(ui_PlotRightDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-
     ui_BackToMainButton = lv_button_create(ui_SettingsScreen);
     lv_obj_set_width(ui_BackToMainButton, 160);
     lv_obj_set_height(ui_BackToMainButton, 50);
-    lv_obj_set_x(ui_BackToMainButton, 40);
-    lv_obj_set_y(ui_BackToMainButton, -20);
-    lv_obj_set_align(ui_BackToMainButton, LV_ALIGN_BOTTOM_LEFT);
+    lv_obj_set_x(ui_BackToMainButton, -40);
+    lv_obj_set_y(ui_BackToMainButton, -10);
+    lv_obj_set_align(ui_BackToMainButton, LV_ALIGN_BOTTOM_RIGHT);
     lv_obj_add_flag(ui_BackToMainButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_remove_flag(ui_BackToMainButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_BackToMainButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -286,6 +283,353 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_BackToMainButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_BackToMainButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_BackToMainButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_GoBackLabel = lv_label_create(ui_BackToMainButton);
+    lv_obj_set_width(ui_GoBackLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_GoBackLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_GoBackLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_GoBackLabel, "Go Back");
+
+    ui_AdjustGainsContainer = lv_obj_create(ui_SettingsScreen);
+    lv_obj_remove_style_all(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_AdjustGainsContainer, 200);
+    lv_obj_set_height(ui_AdjustGainsContainer, 80);
+    lv_obj_set_x(ui_AdjustGainsContainer, 20);
+    lv_obj_set_y(ui_AdjustGainsContainer, 25);
+    lv_obj_remove_flag(ui_AdjustGainsContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_KpLabel = lv_label_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_KpLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_KpLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_KpLabel, 10);
+    lv_obj_set_y(ui_KpLabel, 10);
+    lv_label_set_text(ui_KpLabel, "Kp = 0.0");
+
+    ui_KiLabel = lv_label_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_KiLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_KiLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_KiLabel, -13);
+    lv_obj_set_y(ui_KiLabel, 10);
+    lv_obj_set_align(ui_KiLabel, LV_ALIGN_TOP_RIGHT);
+    lv_label_set_text(ui_KiLabel, "Ki = 0.0");
+
+    ui_AdjustKpButton = lv_button_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_AdjustKpButton, 80);
+    lv_obj_set_height(ui_AdjustKpButton, 40);
+    lv_obj_set_x(ui_AdjustKpButton, 0);
+    lv_obj_set_y(ui_AdjustKpButton, 30);
+    lv_obj_add_flag(ui_AdjustKpButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_AdjustKpButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_AdjustKpButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_AdjustKpButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_AdjustKpButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_AdjustKpButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_AdjustKpButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_AdjustKpButtonLabel = lv_label_create(ui_AdjustKpButton);
+    lv_obj_set_width(ui_AdjustKpButtonLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustKpButtonLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AdjustKpButtonLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AdjustKpButtonLabel, "Adjust");
+
+    ui_AdjustKiButton = lv_button_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_AdjustKiButton, 80);
+    lv_obj_set_height(ui_AdjustKiButton, 40);
+    lv_obj_set_x(ui_AdjustKiButton, 0);
+    lv_obj_set_y(ui_AdjustKiButton, 30);
+    lv_obj_set_align(ui_AdjustKiButton, LV_ALIGN_TOP_RIGHT);
+    lv_obj_add_flag(ui_AdjustKiButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_AdjustKiButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_AdjustKiButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_AdjustKiButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_AdjustKiButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_AdjustKiButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_AdjustKiButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_AdjustKiButtonLabel = lv_label_create(ui_AdjustKiButton);
+    lv_obj_set_width(ui_AdjustKiButtonLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustKiButtonLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AdjustKiButtonLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AdjustKiButtonLabel, "Adjust");
+
+    ui_NumPad = lv_obj_create(ui_SettingsScreen);
+    lv_obj_set_width(ui_NumPad, 220);
+    lv_obj_set_height(ui_NumPad, 230);
+    lv_obj_set_x(ui_NumPad, -10);
+    lv_obj_set_y(ui_NumPad, 0);
+    lv_obj_set_align(ui_NumPad, LV_ALIGN_RIGHT_MID);
+    lv_obj_add_flag(ui_NumPad, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_remove_flag(ui_NumPad, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_NumPad, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_NumPad, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_NumPad, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_NumPad, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_NumPad, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Button1 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button1, 65);
+    lv_obj_set_height(ui_Button1, 40);
+    lv_obj_set_x(ui_Button1, -10);
+    lv_obj_set_y(ui_Button1, -10);
+    lv_obj_add_flag(ui_Button1, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText1 = lv_label_create(ui_Button1);
+    lv_obj_set_width(ui_ButtonText1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText1, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText1, "1");
+
+    ui_Button2 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button2, 65);
+    lv_obj_set_height(ui_Button2, 40);
+    lv_obj_set_x(ui_Button2, 60);
+    lv_obj_set_y(ui_Button2, -10);
+    lv_obj_add_flag(ui_Button2, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText2 = lv_label_create(ui_Button2);
+    lv_obj_set_width(ui_ButtonText2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText2, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText2, "2");
+
+    ui_Button3 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button3, 65);
+    lv_obj_set_height(ui_Button3, 40);
+    lv_obj_set_x(ui_Button3, 130);
+    lv_obj_set_y(ui_Button3, -10);
+    lv_obj_add_flag(ui_Button3, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText3 = lv_label_create(ui_Button3);
+    lv_obj_set_width(ui_ButtonText3, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText3, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText3, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText3, "3");
+
+    ui_Button4 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button4, 65);
+    lv_obj_set_height(ui_Button4, 40);
+    lv_obj_set_x(ui_Button4, -10);
+    lv_obj_set_y(ui_Button4, 35);
+    lv_obj_add_flag(ui_Button4, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText4 = lv_label_create(ui_Button4);
+    lv_obj_set_width(ui_ButtonText4, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText4, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText4, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText4, "4");
+
+    ui_Button5 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button5, 65);
+    lv_obj_set_height(ui_Button5, 40);
+    lv_obj_set_x(ui_Button5, 60);
+    lv_obj_set_y(ui_Button5, 35);
+    lv_obj_add_flag(ui_Button5, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText5 = lv_label_create(ui_Button5);
+    lv_obj_set_width(ui_ButtonText5, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText5, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText5, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText5, "5");
+
+    ui_Button6 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button6, 65);
+    lv_obj_set_height(ui_Button6, 40);
+    lv_obj_set_x(ui_Button6, 130);
+    lv_obj_set_y(ui_Button6, 35);
+    lv_obj_add_flag(ui_Button6, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button6, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText6 = lv_label_create(ui_Button6);
+    lv_obj_set_width(ui_ButtonText6, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText6, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText6, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText6, "6");
+
+    ui_Button7 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button7, 65);
+    lv_obj_set_height(ui_Button7, 40);
+    lv_obj_set_x(ui_Button7, -10);
+    lv_obj_set_y(ui_Button7, 80);
+    lv_obj_add_flag(ui_Button7, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button7, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText7 = lv_label_create(ui_Button7);
+    lv_obj_set_width(ui_ButtonText7, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText7, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText7, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText7, "7");
+
+    ui_Button8 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button8, 65);
+    lv_obj_set_height(ui_Button8, 40);
+    lv_obj_set_x(ui_Button8, 60);
+    lv_obj_set_y(ui_Button8, 80);
+    lv_obj_add_flag(ui_Button8, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button8, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText8 = lv_label_create(ui_Button8);
+    lv_obj_set_width(ui_ButtonText8, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText8, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText8, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText8, "8");
+
+    ui_Button9 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button9, 65);
+    lv_obj_set_height(ui_Button9, 40);
+    lv_obj_set_x(ui_Button9, 130);
+    lv_obj_set_y(ui_Button9, 80);
+    lv_obj_add_flag(ui_Button9, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button9, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText9 = lv_label_create(ui_Button9);
+    lv_obj_set_width(ui_ButtonText9, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText9, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText9, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText9, "9");
+
+    ui_Button0 = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_Button0, 65);
+    lv_obj_set_height(ui_Button0, 40);
+    lv_obj_set_x(ui_Button0, 60);
+    lv_obj_set_y(ui_Button0, 125);
+    lv_obj_add_flag(ui_Button0, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Button0, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonText0 = lv_label_create(ui_Button0);
+    lv_obj_set_width(ui_ButtonText0, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonText0, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonText0, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonText0, "0");
+
+    ui_ButtonDot = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_ButtonDot, 65);
+    lv_obj_set_height(ui_ButtonDot, 40);
+    lv_obj_set_x(ui_ButtonDot, -10);
+    lv_obj_set_y(ui_ButtonDot, 125);
+    lv_obj_add_flag(ui_ButtonDot, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_ButtonDot, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonTextDot = lv_label_create(ui_ButtonDot);
+    lv_obj_set_width(ui_ButtonTextDot, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonTextDot, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonTextDot, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonTextDot, ".");
+
+    ui_ButtonDel = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_ButtonDel, 65);
+    lv_obj_set_height(ui_ButtonDel, 40);
+    lv_obj_set_x(ui_ButtonDel, 130);
+    lv_obj_set_y(ui_ButtonDel, 125);
+    lv_obj_add_flag(ui_ButtonDel, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_ButtonDel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonTextDel = lv_label_create(ui_ButtonDel);
+    lv_obj_set_width(ui_ButtonTextDel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonTextDel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonTextDel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonTextDel, "Del");
+
+    ui_ButtonDone = lv_button_create(ui_NumPad);
+    lv_obj_set_width(ui_ButtonDone, 205);
+    lv_obj_set_height(ui_ButtonDone, 30);
+    lv_obj_set_x(ui_ButtonDone, -10);
+    lv_obj_set_y(ui_ButtonDone, 170);
+    lv_obj_add_flag(ui_ButtonDone, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_ButtonDone, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_ButtonTextDone = lv_label_create(ui_ButtonDone);
+    lv_obj_set_width(ui_ButtonTextDone, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ButtonTextDone, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ButtonTextDone, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ButtonTextDone, "Done");
+
+    ui_GraphSettingsContainer = lv_obj_create(ui_SettingsScreen);
+    lv_obj_remove_style_all(ui_GraphSettingsContainer);
+    lv_obj_set_width(ui_GraphSettingsContainer, 200);
+    lv_obj_set_height(ui_GraphSettingsContainer, 140);
+    lv_obj_set_x(ui_GraphSettingsContainer, 20);
+    lv_obj_set_y(ui_GraphSettingsContainer, 0);
+    lv_obj_set_align(ui_GraphSettingsContainer, LV_ALIGN_BOTTOM_LEFT);
+    lv_obj_remove_flag(ui_GraphSettingsContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_GraphSettingsLabel = lv_label_create(ui_GraphSettingsContainer);
+    lv_obj_set_width(ui_GraphSettingsLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_GraphSettingsLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_GraphSettingsLabel, 0);
+    lv_obj_set_y(ui_GraphSettingsLabel, 8);
+    lv_obj_set_align(ui_GraphSettingsLabel, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_GraphSettingsLabel, "Graph Settings:");
+    lv_obj_set_style_text_decor(ui_GraphSettingsLabel, LV_TEXT_DECOR_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_PointCountLabel = lv_label_create(ui_GraphSettingsContainer);
+    lv_obj_set_width(ui_PointCountLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PointCountLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PointCountLabel, 0);
+    lv_obj_set_y(ui_PointCountLabel, 35);
+    lv_label_set_text(ui_PointCountLabel, "Point Count \n= 40");
+    lv_obj_set_style_text_align(ui_PointCountLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_PointCountLabel, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_PlottingRateLabel = lv_label_create(ui_GraphSettingsContainer);
+    lv_obj_set_width(ui_PlottingRateLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PlottingRateLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PlottingRateLabel, 5);
+    lv_obj_set_y(ui_PlottingRateLabel, 35);
+    lv_obj_set_align(ui_PlottingRateLabel, LV_ALIGN_TOP_RIGHT);
+    lv_label_set_text(ui_PlottingRateLabel, "Plotting Rate \n= 100ms");
+    lv_obj_set_style_text_align(ui_PlottingRateLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_AdjustPointCountButton = lv_button_create(ui_GraphSettingsContainer);
+    lv_obj_set_width(ui_AdjustPointCountButton, 80);
+    lv_obj_set_height(ui_AdjustPointCountButton, 40);
+    lv_obj_set_x(ui_AdjustPointCountButton, 5);
+    lv_obj_set_y(ui_AdjustPointCountButton, 71);
+    lv_obj_add_flag(ui_AdjustPointCountButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_AdjustPointCountButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_AdjustPointCountButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_AdjustPointCountButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_AdjustPointCountButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_AdjustPointCountButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_AdjustPointCountButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_AdjustPointCountButtonText = lv_label_create(ui_AdjustPointCountButton);
+    lv_obj_set_width(ui_AdjustPointCountButtonText, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustPointCountButtonText, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AdjustPointCountButtonText, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AdjustPointCountButtonText, "Adjust");
+
+    ui_AdjustPlottingRateButton = lv_button_create(ui_GraphSettingsContainer);
+    lv_obj_set_width(ui_AdjustPlottingRateButton, 80);
+    lv_obj_set_height(ui_AdjustPlottingRateButton, 40);
+    lv_obj_set_x(ui_AdjustPlottingRateButton, -5);
+    lv_obj_set_y(ui_AdjustPlottingRateButton, 71);
+    lv_obj_set_align(ui_AdjustPlottingRateButton, LV_ALIGN_TOP_RIGHT);
+    lv_obj_add_flag(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_AdjustPlottingRateButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_AdjustPlottingRateButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_AdjustPlottingRateButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_AdjustPlottingRateButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_AdjustPlottingRateButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_AdjustPlottingRateButtonText = lv_label_create(ui_AdjustPlottingRateButton);
+    lv_obj_set_width(ui_AdjustPlottingRateButtonText, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustPlottingRateButtonText, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AdjustPlottingRateButtonText, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AdjustPlottingRateButtonText, "Adjust");
+
+    lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_AdjustKpButton, ui_event_AdjustKpButton, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_AdjustKiButton, ui_event_AdjustKiButton, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ButtonDone, ui_event_ButtonDone, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_AdjustPointCountButton, ui_event_AdjustPointCountButton, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_AdjustPlottingRateButton, ui_event_AdjustPlottingRateButton, LV_EVENT_ALL, NULL);
+    //
 
     ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
     lv_obj_set_width(ui_StopPanel2, 480);
@@ -307,24 +651,12 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_text_color(ui_StopText2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_StopText2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_GoBackLabel = lv_label_create(ui_BackToMainButton);
-    lv_obj_set_width(ui_GoBackLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_GoBackLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_GoBackLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_GoBackLabel, "Go Back");
-
-
-    lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
-
     // Event callbacks for graph series checkboxes
     lv_obj_add_event_cb(ui_PlotLeftEncCheckbox, ui_event_PlotLeftEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotRightEncCheckbox, ui_event_PlotRightEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotArmEncCheckbox, ui_event_PlotArmEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotLeftDistanceCheckbox, ui_event_PlotLeftDistanceCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotRightDistanceCheckbox, ui_event_PlotRightDistanceCheckbox, LV_EVENT_ALL, NULL);
-    // Event callbacks for Gain Sliders
-    lv_obj_add_event_cb(ui_KpSlider, ui_event_KpSlider, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_KiSlider, ui_event_KiSlider, LV_EVENT_ALL, NULL);
 
 }
 
@@ -334,19 +666,9 @@ void ui_SettingsScreen_screen_destroy(void)
 
     // NULL screen variables
     ui_SettingsScreen = NULL;
-    ui_AdjustKp = NULL;
-    ui_KpSlider = NULL;
-    ui_KpLabel = NULL;
-    ui_KpMin = NULL;
-    ui_KpMax = NULL;
-    ui_AdjustKi = NULL;
-    ui_KiSlider = NULL;
-    ui_KiLabel = NULL;
-    ui_KiMin = NULL;
-    ui_KiMax = NULL;
     ui_AdjustControllerGainsLabel = NULL;
-    ui_GraphSettingsLabel = NULL;
-    ui_GraphSettings = NULL;
+    ui_DisplaySeriesLabel = NULL;
+    ui_CheckboxesContainer = NULL;
     ui_PlotLeftEncCheckbox = NULL;
     ui_PlotRightEncCheckbox = NULL;
     ui_PlotArmEncCheckbox = NULL;
@@ -354,6 +676,48 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_PlotRightDistanceCheckbox = NULL;
     ui_BackToMainButton = NULL;
     ui_GoBackLabel = NULL;
+    ui_AdjustGainsContainer = NULL;
+    ui_KpLabel = NULL;
+    ui_KiLabel = NULL;
+    ui_AdjustKpButton = NULL;
+    ui_AdjustKpButtonLabel = NULL;
+    ui_AdjustKiButton = NULL;
+    ui_AdjustKiButtonLabel = NULL;
+    ui_NumPad = NULL;
+    ui_Button1 = NULL;
+    ui_ButtonText1 = NULL;
+    ui_Button2 = NULL;
+    ui_ButtonText2 = NULL;
+    ui_Button3 = NULL;
+    ui_ButtonText3 = NULL;
+    ui_Button4 = NULL;
+    ui_ButtonText4 = NULL;
+    ui_Button5 = NULL;
+    ui_ButtonText5 = NULL;
+    ui_Button6 = NULL;
+    ui_ButtonText6 = NULL;
+    ui_Button7 = NULL;
+    ui_ButtonText7 = NULL;
+    ui_Button8 = NULL;
+    ui_ButtonText8 = NULL;
+    ui_Button9 = NULL;
+    ui_ButtonText9 = NULL;
+    ui_Button0 = NULL;
+    ui_ButtonText0 = NULL;
+    ui_ButtonDot = NULL;
+    ui_ButtonTextDot = NULL;
+    ui_ButtonDel = NULL;
+    ui_ButtonTextDel = NULL;
+    ui_ButtonDone = NULL;
+    ui_ButtonTextDone = NULL;
+    ui_GraphSettingsContainer = NULL;
+    ui_GraphSettingsLabel = NULL;
+    ui_PointCountLabel = NULL;
+    ui_PlottingRateLabel = NULL;
+    ui_AdjustPointCountButton = NULL;
+    ui_AdjustPointCountButtonText = NULL;
+    ui_AdjustPlottingRateButton = NULL;
+    ui_AdjustPlottingRateButtonText = NULL;
     ui_StopPanel2 = NULL;
     ui_StopText2 = NULL;
 }
