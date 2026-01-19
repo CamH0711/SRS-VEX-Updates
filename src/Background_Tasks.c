@@ -49,7 +49,6 @@ double filteredDistanceRight = 0;
          countR = motor_get_position(_encoderRight);
          countA = motor_get_position(_encoderArm);
  
-         // lcd_print(LCDLine7,"Arm = %d",powerArmMonitor);
          // DETERMINE CHANGE IN ENCODER VALUES AFTER 5 SECONDS.
          task_delay(10000); 
  
@@ -63,8 +62,6 @@ double filteredDistanceRight = 0;
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              lv_label_set_text(ui_StopText2, text);
              _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-             // Redundant - delete later
-             // lcd_print(LCDLine8, "%dmV-Low L motor pwr. Code stopped.", powerLMonitor);
          }
          // Check right motor
          if ((abs(powerRMonitor) > threshold)  && ((motor_get_position(_encoderRight) - countR) == 0) )
@@ -76,8 +73,6 @@ double filteredDistanceRight = 0;
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              lv_label_set_text(ui_StopText2, text);
              _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-             // Redundant - delete later
-             // lcd_print(LCDLine8, "%dmV-Low R motor pwr. Code stopped.", powerRMonitor);
          }
          // Check arm motor
          if ((abs(powerArmMonitor)> threshold) && ((motor_get_position(_encoderArm) - countA) == 0) )
@@ -89,8 +84,6 @@ double filteredDistanceRight = 0;
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              lv_label_set_text(ui_StopText2, text);
              _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-             // Redundant - delete later
-             // lcd_print(LCDLine8, "%dmV-Low arm motor pwr. Code stopped.", powerArmMonitor);
          }
  
      }
@@ -107,8 +100,6 @@ double filteredDistanceRight = 0;
      bool stopButton = adi_digital_read(_buttonStop);
      int arm_motorDir;
      task_delay(500); // this delay is necessary because for some reason it initialises with the Stop Button pressed. 
-     // Redundant - delete later
-     // lcd_print(LCDLine8, "    Running ...    ");
      while (1)
      {
  
@@ -116,7 +107,6 @@ double filteredDistanceRight = 0;
          stopButton = adi_digital_read(_buttonStop);
          if (stopButton == 1)
          {
-             // lcd_print(LCDLine8, "    STOP BUTTON PRESSED    ");  // Redundant - delete later
              motorStopAll();
              _stopflag = 1;
              stop_requested = true;

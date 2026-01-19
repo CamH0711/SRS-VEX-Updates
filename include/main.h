@@ -152,12 +152,22 @@ typedef struct {
     bool active;
 } plot_slot_t;
 
-extern plot_slot_t plot_slots[MAX_PLOT_SLOTS];
-extern lv_chart_series_t *slot_series[MAX_PLOT_SLOTS];
+ extern plot_slot_t plot_slots[MAX_PLOT_SLOTS];
+ extern lv_chart_series_t *slot_series[MAX_PLOT_SLOTS];
 
  int get_plot_value(plot_source_t src);
  bool is_source_enabled(plot_source_t src);
  void update_plot_slots(void);
+
+ /* Number Pad related */
+ typedef struct {
+    double *target_value;
+    lv_obj_t *target_label;
+    char *prefix;
+    char buffer[16];
+} numpad_ctx_t;
+
+ extern numpad_ctx_t numpad_ctx;
 
 
  #endif  // _PROS_MAIN_H_

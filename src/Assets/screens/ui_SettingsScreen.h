@@ -86,6 +86,9 @@ extern void PlotData(int sensor_name);
 extern void setKp(double Kp_value);
 extern void setKi(double Ki_value);
 extern void clearSeries(lv_chart_series_t *series);
+extern void NumpadOpen(double *value, lv_obj_t *label, const char *prefix);
+extern void NumpadButtonEvent(lv_event_t * e);
+extern void UpdateTargetLabel(void);
 // Custom Variables
 extern int current_y_min;
 extern int current_y_max;
@@ -96,6 +99,8 @@ extern bool plot_right_enc_enabled;
 extern bool plot_arm_enabled;
 extern bool plot_left_dist_enabled;
 extern bool plot_right_dist_enabled;
+extern int point_count;
+extern int plotting_rate;
 
 
 #ifdef __cplusplus

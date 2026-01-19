@@ -73,6 +73,10 @@ bool plot_right_enc_enabled = false;
 bool plot_arm_enabled = false;
 bool plot_left_dist_enabled = false;
 bool plot_right_dist_enabled = false;
+extern numpad_ctx_t numpad_ctx = {0};
+int point_count = 40;
+int plotting_rate = 100;
+
 
 // event functions
 void ui_event_BackToMainButton(lv_event_t * e)
@@ -94,6 +98,7 @@ void ui_event_AdjustKpButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        NumpadOpen(&Kp, ui_KpLabel, "Kp = ");
     }
 }
 
@@ -107,6 +112,7 @@ void ui_event_AdjustKiButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        NumpadOpen(&Ki, ui_KiLabel, "Ki = ");
     }
 }
 
@@ -133,6 +139,7 @@ void ui_event_AdjustPointCountButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        NumpadOpen((double *)&point_count, ui_PointCountLabel, "Point Count \n= ");
     }
 }
 
@@ -146,6 +153,7 @@ void ui_event_AdjustPlottingRateButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        NumpadOpen((double *)&plotting_rate, ui_PlottingRateLabel, "Plotting Rate \n= ");
     }
 }
 
@@ -195,6 +203,47 @@ void setKi(double Ki_value) {
 
 void clearSeries(lv_chart_series_t * series) {
     lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
+}
+
+void NumpadOpen(double *value, lv_obj_t *label, const char *prefix)
+{
+    numpad_ctx.target_value = value;
+    numpad_ctx.target_label = label;
+    numpad_ctx.prefix = prefix;
+
+    snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%.2f", *value);
+}
+
+void NumpadButtonEvent(lv_event_t *e)
+{
+    const char *key = lv_event_get_user_data(e);
+    size_t len = strlen(numpad_ctx.buffer);
+
+    if (strcmp(key, "DEL") == 0) {
+        if (len > 0) {
+            numpad_ctx.buffer[len - 1] = '\0';
+        }
+    } else {
+        if (len < sizeof(numpad_ctx.buffer) - 1) {
+            // Prevent multiple decimal points
+            if (key[0] == '.' && strchr(numpad_ctx.buffer, '.')) {
+                return;
+            }
+            strcat(numpad_ctx.buffer, key);
+        }
+    }
+    UpdateTargetLabel();
+}
+
+void UpdateTargetLabel(void)
+{
+    static char text[32];
+
+    snprintf(text, sizeof(text), "%s%s",
+             numpad_ctx.prefix,
+             numpad_ctx.buffer);
+
+    lv_label_set_text(numpad_ctx.target_label, text);
 }
 
 // build functions
@@ -581,7 +630,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_x(ui_PlottingRateLabel, 5);
     lv_obj_set_y(ui_PlottingRateLabel, 35);
     lv_obj_set_align(ui_PlottingRateLabel, LV_ALIGN_TOP_RIGHT);
-    lv_label_set_text(ui_PlottingRateLabel, "Plotting Rate \n= 100ms");
+    lv_label_set_text(ui_PlottingRateLabel, "Plotting Rate \n= 100");
     lv_obj_set_style_text_align(ui_PlottingRateLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_AdjustPointCountButton = lv_button_create(ui_GraphSettingsContainer);
@@ -657,7 +706,19 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_add_event_cb(ui_PlotArmEncCheckbox, ui_event_PlotArmEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotLeftDistanceCheckbox, ui_event_PlotLeftDistanceCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotRightDistanceCheckbox, ui_event_PlotRightDistanceCheckbox, LV_EVENT_ALL, NULL);
-
+    // Event callbacks for numpad buttons
+    lv_obj_add_event_cb(ui_Button0,   NumpadButtonEvent, LV_EVENT_CLICKED, "0");
+    lv_obj_add_event_cb(ui_Button1,   NumpadButtonEvent, LV_EVENT_CLICKED, "1");
+    lv_obj_add_event_cb(ui_Button2,   NumpadButtonEvent, LV_EVENT_CLICKED, "2");
+    lv_obj_add_event_cb(ui_Button3,   NumpadButtonEvent, LV_EVENT_CLICKED, "3");
+    lv_obj_add_event_cb(ui_Button4,   NumpadButtonEvent, LV_EVENT_CLICKED, "4");
+    lv_obj_add_event_cb(ui_Button5,   NumpadButtonEvent, LV_EVENT_CLICKED, "5");
+    lv_obj_add_event_cb(ui_Button6,   NumpadButtonEvent, LV_EVENT_CLICKED, "6");
+    lv_obj_add_event_cb(ui_Button7,   NumpadButtonEvent, LV_EVENT_CLICKED, "7");
+    lv_obj_add_event_cb(ui_Button8,   NumpadButtonEvent, LV_EVENT_CLICKED, "8");
+    lv_obj_add_event_cb(ui_Button9,   NumpadButtonEvent, LV_EVENT_CLICKED, "9");
+    lv_obj_add_event_cb(ui_ButtonDot, NumpadButtonEvent, LV_EVENT_CLICKED, ".");
+    lv_obj_add_event_cb(ui_ButtonDel, NumpadButtonEvent, LV_EVENT_CLICKED, "DEL");
 }
 
 void ui_SettingsScreen_screen_destroy(void)
