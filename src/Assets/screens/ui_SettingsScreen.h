@@ -74,21 +74,6 @@ extern lv_obj_t * ui_AdjustPlottingRateButton;
 extern lv_obj_t * ui_AdjustPlottingRateButtonText;
 extern lv_obj_t * ui_StopPanel2;
 extern lv_obj_t * ui_StopText2;
-// Custom Functions
-extern void ui_event_PlotUCheckbox(lv_event_t * e);
-extern void ui_event_PlotECheckbox(lv_event_t * e);
-extern void ui_event_PlotLeftEncCheckbox(lv_event_t * e);
-extern void ui_event_PlotRightEncCheckbox(lv_event_t * e);
-extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
-extern void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e);
-extern void ui_event_PlotRightDistanceCheckbox(lv_event_t * e);
-extern void PlotData(int sensor_name);
-extern void setKp(double Kp_value);
-extern void setKi(double Ki_value);
-extern void clearSeries(lv_chart_series_t *series);
-extern void NumpadOpen(double *value, lv_obj_t *label, const char *prefix);
-extern void NumpadButtonEvent(lv_event_t * e);
-extern void UpdateTargetLabel(void);
 // Custom Variables
 extern int current_y_min;
 extern int current_y_max;
@@ -101,7 +86,38 @@ extern bool plot_left_dist_enabled;
 extern bool plot_right_dist_enabled;
 extern int point_count;
 extern int plotting_rate;
+extern double Kp;
+extern double Ki;
+/* Number Pad related */
+typedef enum {
+    NUMPAD_TYPE_DOUBLE,
+    NUMPAD_TYPE_INT
+} numpad_data_type_t;
+typedef struct {
+    void *target_value;       // Void pointer can hold int* OR double*
+    numpad_data_type_t type;  // Remembers which type it is
+    lv_obj_t *target_label;
+    char *prefix;
+    char buffer[16];
+} numpad_ctx_t;
 
+ extern numpad_ctx_t numpad_ctx;
+
+// Custom Functions
+extern void ui_event_PlotUCheckbox(lv_event_t * e);
+extern void ui_event_PlotECheckbox(lv_event_t * e);
+extern void ui_event_PlotLeftEncCheckbox(lv_event_t * e);
+extern void ui_event_PlotRightEncCheckbox(lv_event_t * e);
+extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
+extern void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e);
+extern void ui_event_PlotRightDistanceCheckbox(lv_event_t * e);
+extern void PlotData(int sensor_name);
+extern void setKp(double Kp_value);
+extern void setKi(double Ki_value);
+extern void clearSeries(lv_chart_series_t *series);
+extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix);
+extern void NumpadButtonEvent(lv_event_t * e);
+extern void UpdateTargetLabel(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

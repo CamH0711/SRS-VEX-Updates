@@ -5,6 +5,7 @@
 
 #include "ui.h"
 #include <stdlib.h>
+#include <string.h>
 #include "main.h"
 #include "../src/Student_Code.h"
 
@@ -73,9 +74,11 @@ bool plot_right_enc_enabled = false;
 bool plot_arm_enabled = false;
 bool plot_left_dist_enabled = false;
 bool plot_right_dist_enabled = false;
-extern numpad_ctx_t numpad_ctx = {0};
+numpad_ctx_t numpad_ctx;
 int point_count = 40;
 int plotting_rate = 100;
+double Kp = 1.0;
+double Ki = 0.1;
 
 
 // event functions
@@ -98,7 +101,7 @@ void ui_event_AdjustKpButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen(&Kp, ui_KpLabel, "Kp = ");
+        NumpadOpen(&Kp, NUMPAD_TYPE_DOUBLE, ui_KpLabel, "Kp = ");
     }
 }
 
@@ -112,7 +115,7 @@ void ui_event_AdjustKiButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen(&Ki, ui_KiLabel, "Ki = ");
+        NumpadOpen(&Ki, NUMPAD_TYPE_DOUBLE, ui_KiLabel, "Ki = ");
     }
 }
 
@@ -126,6 +129,18 @@ void ui_event_ButtonDone(lv_event_t * e)
         _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+
+        // Safety check: ensure we have a valid pointer
+    if (numpad_ctx.target_value == NULL) return;
+
+    if (numpad_ctx.type == NUMPAD_TYPE_DOUBLE) {
+        double *val = (double *)numpad_ctx.target_value;
+        *val = atof(numpad_ctx.buffer); // Convert string to double
+    } 
+    else if (numpad_ctx.type == NUMPAD_TYPE_INT) {
+        int *val = (int *)numpad_ctx.target_value;
+        *val = atoi(numpad_ctx.buffer); // Convert string to int
+    }
     }
 }
 
@@ -139,7 +154,7 @@ void ui_event_AdjustPointCountButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen((double *)&point_count, ui_PointCountLabel, "Point Count \n= ");
+        NumpadOpen(&point_count, NUMPAD_TYPE_INT, ui_PointCountLabel, "Point Count \n= ");
     }
 }
 
@@ -153,7 +168,7 @@ void ui_event_AdjustPlottingRateButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen((double *)&plotting_rate, ui_PlottingRateLabel, "Plotting Rate \n= ");
+        NumpadOpen(&plotting_rate, NUMPAD_TYPE_INT, ui_PlottingRateLabel, "Plotting Rate \n= ");
     }
 }
 
@@ -205,13 +220,24 @@ void clearSeries(lv_chart_series_t * series) {
     lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
 }
 
-void NumpadOpen(double *value, lv_obj_t *label, const char *prefix)
+void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix)
 {
     numpad_ctx.target_value = value;
+    numpad_ctx.type = type; // Store the type
     numpad_ctx.target_label = label;
     numpad_ctx.prefix = prefix;
 
-    snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%.2f", *value);
+    // formatting based on type
+    if (type == NUMPAD_TYPE_DOUBLE) {
+        double *d_ptr = (double *)value;
+        snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%.2f", *d_ptr);
+    } 
+    else if (type == NUMPAD_TYPE_INT) {
+        int *i_ptr = (int *)value;
+        snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%d", *i_ptr);
+    }
+
+    UpdateTargetLabel();
 }
 
 void NumpadButtonEvent(lv_event_t *e)
@@ -237,7 +263,7 @@ void NumpadButtonEvent(lv_event_t *e)
 
 void UpdateTargetLabel(void)
 {
-    static char text[32];
+    char text[32];
 
     snprintf(text, sizeof(text), "%s%s",
              numpad_ctx.prefix,

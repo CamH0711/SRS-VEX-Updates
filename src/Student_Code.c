@@ -32,10 +32,8 @@ double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of 
 //New for SRS
 int sensorWidth = 139;              // Distance between the left and right distance sensor
 // ---------------------- Initialising Controller Parameters ------------------------------
-volatile double Kp;                 // Proportional Controller gain
-volatile double Ki;                 // Integral Controller gain
-volatile double u;                  // Control Effort
-volatile int error;                 // Controller Error
+// volatile double Kp;               // Proportional Controller gain
+// volatile double Ki;               // Integral Controller gain
 // ------------------------------------------------------------------------------------
 
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
@@ -49,6 +47,9 @@ void student_Main()
 
     // delay(1000);
     // driveToObject(200);
+
+    // setKp(1.0);
+    // setKi(0.1);
 
     while(true) {
         lvgl_print(2, "Filtered Distance = %d mm", readSensor(LeftDistance));

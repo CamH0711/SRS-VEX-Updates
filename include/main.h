@@ -125,8 +125,6 @@
  /* Global variables */
  extern int _stopflag;              //1 || 0 - Used to control whether or not robot is to be stopped or in stop mode.
  extern int _arm_State;             // Variable that defines the state of the robot arm (-1 at lower limit, 1 at upper limit, and 0 in between)
- extern volatile double Kp;         // Control systems global variables
- extern volatile double Ki;
 
 // New functions/global variables for SRS
  extern volatile bool stop_requested;
@@ -158,16 +156,6 @@ typedef struct {
  int get_plot_value(plot_source_t src);
  bool is_source_enabled(plot_source_t src);
  void update_plot_slots(void);
-
- /* Number Pad related */
- typedef struct {
-    double *target_value;
-    lv_obj_t *target_label;
-    char *prefix;
-    char buffer[16];
-} numpad_ctx_t;
-
- extern numpad_ctx_t numpad_ctx;
 
 
  #endif  // _PROS_MAIN_H_
