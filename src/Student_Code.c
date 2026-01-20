@@ -52,7 +52,11 @@ void student_Main()
     // setKi(0.1);
 
     while(true) {
-        lvgl_print(2, "Filtered Distance = %d mm", readSensor(LeftDistance));
+        lvgl_print(2, "Kp = %f mm", Kp);
+        lvgl_print(3, "Ki = %f mm", Ki);
+        lvgl_print(4, "Point Count = %d", point_count);
+        lvgl_print(5, "Plotting Rate = %d", plotting_rate);
+
         delay(100);
     }
 }
