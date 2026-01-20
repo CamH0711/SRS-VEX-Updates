@@ -101,7 +101,7 @@ void ui_event_AdjustKpButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen(&Kp, NUMPAD_TYPE_DOUBLE, ui_KpLabel, "Kp = ");
+        NumpadOpen(&Kp, NUMPAD_TYPE_DOUBLE, ui_KpLabel, "Kp = ", 5, 2);
     }
 }
 
@@ -115,7 +115,7 @@ void ui_event_AdjustKiButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen(&Ki, NUMPAD_TYPE_DOUBLE, ui_KiLabel, "Ki = ");
+        NumpadOpen(&Ki, NUMPAD_TYPE_DOUBLE, ui_KiLabel, "Ki = ", 5, 2);
     }
 }
 
@@ -130,8 +130,17 @@ void ui_event_ButtonDone(lv_event_t * e)
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
 
-        // Safety check: ensure we have a valid pointer
+    // Safety check: ensure we have a valid pointer
     if (numpad_ctx.target_value == NULL) return;
+
+    // If the student deleted everything, force it to zero
+    if (strlen(numpad_ctx.buffer) == 0) {
+        strcpy(numpad_ctx.buffer, "0");
+        
+        // Optional: Update the label one last time so it visually shows "0" 
+        // just before the numpad closes (or if you decide to keep it open).
+        UpdateTargetLabel();
+    }
 
     if (numpad_ctx.type == NUMPAD_TYPE_DOUBLE) {
         double *val = (double *)numpad_ctx.target_value;
@@ -154,7 +163,7 @@ void ui_event_AdjustPointCountButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen(&point_count, NUMPAD_TYPE_INT, ui_PointCountLabel, "Point Count \n= ");
+        NumpadOpen(&point_count, NUMPAD_TYPE_INT, ui_PointCountLabel, "Point Count \n= ", 4, 0);
     }
 }
 
@@ -168,7 +177,7 @@ void ui_event_AdjustPlottingRateButton(lv_event_t * e)
         _ui_flag_modify(ui_AdjustPlottingRateButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustPointCountButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_flag_modify(ui_AdjustKpButton, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        NumpadOpen(&plotting_rate, NUMPAD_TYPE_INT, ui_PlottingRateLabel, "Plotting Rate \n= ");
+        NumpadOpen(&plotting_rate, NUMPAD_TYPE_INT, ui_PlottingRateLabel, "Plotting Rate \n(ms) = ", 4, 0);
     }
 }
 
@@ -220,12 +229,16 @@ void clearSeries(lv_chart_series_t * series) {
     lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
 }
 
-void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix)
-{
+void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec){
+    // Store the label data
     numpad_ctx.target_value = value;
-    numpad_ctx.type = type; // Store the type
+    numpad_ctx.type = type;
     numpad_ctx.target_label = label;
     numpad_ctx.prefix = prefix;
+
+    // Store the limits
+    numpad_ctx.max_length = max_len;
+    numpad_ctx.max_decimals = max_dec;
 
     // formatting based on type
     if (type == NUMPAD_TYPE_DOUBLE) {
@@ -244,20 +257,45 @@ void NumpadButtonEvent(lv_event_t *e)
 {
     const char *key = lv_event_get_user_data(e);
     size_t len = strlen(numpad_ctx.buffer);
+    char *decimal_ptr = strchr(numpad_ctx.buffer, '.');
 
+    // --- HANDLE DELETE ---
     if (strcmp(key, "DEL") == 0) {
         if (len > 0) {
             numpad_ctx.buffer[len - 1] = '\0';
         }
-    } else {
-        if (len < sizeof(numpad_ctx.buffer) - 1) {
-            // Prevent multiple decimal points
-            if (key[0] == '.' && strchr(numpad_ctx.buffer, '.')) {
+    } 
+    // --- HANDLE INPUT ---
+    else {
+        // 1. TOTAL LENGTH CHECK
+        // If we reached the max length, do nothing.
+        if (len >= numpad_ctx.max_length) {
+            return; 
+        }
+        // 2. DECIMAL POINT CHECK
+        if (key[0] == '.') {
+            // If we already have a decimal, do nothing
+            if (decimal_ptr != NULL) return;
+            
+            // If this is an Integer type variable, block decimals entirely
+            if (numpad_ctx.type == NUMPAD_TYPE_INT) return;
+        }
+        // 3. DECIMAL PRECISION CHECK
+        // If we are currently typing digits AFTER the decimal point
+        if (decimal_ptr != NULL && key[0] != '.') {
+            // Calculate how many digits are currently after the dot
+            // ptr points to '.', so ptr+1 is the first digit after it
+            int decimals_existing = strlen(decimal_ptr + 1);
+
+            if (decimals_existing >= numpad_ctx.max_decimals) {
                 return;
             }
+        }
+        // 4. APPEND IF SAFE
+        if (len < sizeof(numpad_ctx.buffer) - 1) {
             strcat(numpad_ctx.buffer, key);
         }
-    }
+    } 
     UpdateTargetLabel();
 }
 
@@ -656,7 +694,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_x(ui_PlottingRateLabel, 5);
     lv_obj_set_y(ui_PlottingRateLabel, 35);
     lv_obj_set_align(ui_PlottingRateLabel, LV_ALIGN_TOP_RIGHT);
-    lv_label_set_text(ui_PlottingRateLabel, "Plotting Rate \n= 100");
+    lv_label_set_text(ui_PlottingRateLabel, "Plotting Rate \n(ms) = 100");
     lv_obj_set_style_text_align(ui_PlottingRateLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_AdjustPointCountButton = lv_button_create(ui_GraphSettingsContainer);

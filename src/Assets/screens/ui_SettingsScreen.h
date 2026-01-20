@@ -99,6 +99,9 @@ typedef struct {
     lv_obj_t *target_label;
     char *prefix;
     char buffer[16];
+
+    int max_length;
+    int max_decimals;
 } numpad_ctx_t;
 
  extern numpad_ctx_t numpad_ctx;
@@ -115,7 +118,7 @@ extern void PlotData(int sensor_name);
 extern void setKp(double Kp_value);
 extern void setKi(double Ki_value);
 extern void clearSeries(lv_chart_series_t *series);
-extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix);
+extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
 extern void NumpadButtonEvent(lv_event_t * e);
 extern void UpdateTargetLabel(void);
 

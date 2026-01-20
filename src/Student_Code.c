@@ -48,8 +48,8 @@ void student_Main()
     // delay(1000);
     // driveToObject(200);
 
-    // setKp(1.0);
-    // setKi(0.1);
+    setKp(4.0);
+    setKi(0.5);
 
     while(true) {
         lvgl_print(2, "Kp = %f mm", Kp);
