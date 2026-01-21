@@ -128,16 +128,17 @@ void ui_event_ButtonDone(lv_event_t * e)
         _ui_state_modify(ui_AdjustKiButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
         _ui_state_modify(ui_AdjustKpButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
 
+    //Reset the label color to White
+    if (numpad_ctx.target_label != NULL) {
+        lv_obj_set_style_text_color(numpad_ctx.target_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+
     // Safety check: ensure we have a valid pointer
     if (numpad_ctx.target_value == NULL) return;
 
     // If the student deleted everything, force it to zero
     if (strlen(numpad_ctx.buffer) == 0) {
         strcpy(numpad_ctx.buffer, "0");
-        
-        // Optional: Update the label one last time so it visually shows "0" 
-        // just before the numpad closes (or if you decide to keep it open).
-        UpdateTargetLabel();
     }
 
     if (numpad_ctx.type == NUMPAD_TYPE_DOUBLE) {
@@ -243,6 +244,8 @@ void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const cha
         int *i_ptr = (int *)value;
         snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%d", *i_ptr);
     }
+
+    lv_obj_set_style_text_color(numpad_ctx.target_label, lv_color_hex(0xF44336), LV_PART_MAIN | LV_STATE_DEFAULT);
 
     UpdateTargetLabel();
 }
