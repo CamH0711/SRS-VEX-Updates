@@ -519,20 +519,24 @@ int shrink_counter = 0;
 }
 
 void CustomPlot(int slot, int value, const char * name) {
-    if (slot < 0 || slot >= MAX_PLOT_SLOTS) return;
+
+    int index = slot - 1;
+
+    if (index < 0 || index >= MAX_PLOT_SLOTS) return;
 
     // Set source to external so UpdatePlotSlots() knows to leave it alone
-    plot_slots[slot].source = PLOT_CUSTOM;
-    plot_slots[slot].active = true;
-    plot_slots[slot].custom_value = value;
+    plot_slots[index].source = PLOT_CUSTOM;
+    plot_slots[index].active = true;
+    plot_slots[index].custom_value = value;
 
 // Copy the string safely into our buffer
-    strncpy(plot_slots[slot].custom_name, name, 31);
-    plot_slots[slot].custom_name[31] = '\0'; // Ensure null termination
+    strncpy(plot_slots[index].custom_name, name, 31);
+    plot_slots[index].custom_name[31] = '\0'; // Ensure null termination
 
     // Tell the UI task it needs to update the label text
-    plot_slots[slot].needs_ui_refresh = true;
+    plot_slots[index].needs_ui_refresh = true;
 }
+
 /**
   * @brief A timer task that updates the data being graphed on the main screen chart, and automatically
   * scales the Y axis according to the values being plotted.

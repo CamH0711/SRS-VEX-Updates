@@ -41,7 +41,10 @@ void student_Main()
 { 
 
     ShowChart();
+    PlotData(LeftDistance);
     driveStraight(1000);
+    delay(1000);
+    driveStraight(-1000);
 
     // delay(1000);
     // driveToObject(200);
@@ -135,7 +138,7 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -60, 60);
+        u = saturate(u, -40, 40);
     
         //For the 1st second, ramp up voltage to stop twitching
         if (k < 70) {	
@@ -162,8 +165,7 @@ void driveStraight(int distance) {
         lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
 
 
-        CustomPlot(0, (int) u, "Control Effort");
-        CustomPlot(1, error, "Error");
+        CustomPlot(4, (int) u, "Control Effort");
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
     

@@ -154,9 +154,9 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_bg_opa(ui_MainScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Chart = lv_chart_create(ui_MainScreen);
-    lv_obj_set_width(ui_Chart, 430);
+    lv_obj_set_width(ui_Chart, 420);
     lv_obj_set_height(ui_Chart, 158);
-    lv_obj_set_x(ui_Chart, 25);
+    lv_obj_set_x(ui_Chart, 30);
     lv_obj_set_y(ui_Chart, 32);
     lv_obj_add_flag(ui_Chart, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_OVERFLOW_VISIBLE);     /// Flags
     lv_obj_remove_flag(ui_Chart, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -351,7 +351,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_align(ui_SettingsButton, LV_ALIGN_BOTTOM_RIGHT);
 
     ui_Legend = lv_obj_create(ui_MainScreen);
-    lv_obj_set_width(ui_Legend, 430);
+    lv_obj_set_width(ui_Legend, 420);
     lv_obj_set_height(ui_Legend, 22);
     lv_obj_set_x(ui_Legend, 0);
     lv_obj_set_y(ui_Legend, 5);
