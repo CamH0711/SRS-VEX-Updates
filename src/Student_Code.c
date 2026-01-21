@@ -48,12 +48,12 @@ void student_Main()
     // delay(1000);
     // driveToObject(200);
 
-    setKp(4.0);
-    setKi(0.5);
+    setKp(1.0);
+    setKi(0.1);
 
     while(true) {
-        lvgl_print(2, "Kp = %f mm", Kp);
-        lvgl_print(3, "Ki = %f mm", Ki);
+        lvgl_print(2, "Kp = %.2f mm", Kp);
+        lvgl_print(3, "Ki = %.2f mm", Ki);
         lvgl_print(4, "Point Count = %d", point_count);
         lvgl_print(5, "Plotting Rate = %d", plotting_rate);
 

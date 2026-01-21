@@ -66,12 +66,8 @@ extern lv_obj_t * ui_GraphSettingsContainer;
 extern lv_obj_t * ui_GraphSettingsLabel;
 extern lv_obj_t * ui_PointCountLabel;
 extern lv_obj_t * ui_PlottingRateLabel;
-extern void ui_event_AdjustPointCountButton(lv_event_t * e);
-extern lv_obj_t * ui_AdjustPointCountButton;
-extern lv_obj_t * ui_AdjustPointCountButtonText;
-extern void ui_event_AdjustPlottingRateButton(lv_event_t * e);
-extern lv_obj_t * ui_AdjustPlottingRateButton;
-extern lv_obj_t * ui_AdjustPlottingRateButtonText;
+extern lv_obj_t * ui_PointCountDropdown;
+extern lv_obj_t * ui_PlottingRateDropdown;
 extern lv_obj_t * ui_StopPanel2;
 extern lv_obj_t * ui_StopText2;
 // Custom Variables
@@ -121,6 +117,10 @@ extern void clearSeries(lv_chart_series_t *series);
 extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
 extern void NumpadButtonEvent(lv_event_t * e);
 extern void UpdateTargetLabel(void);
+extern void UpdatePointCount(lv_timer_t *t);
+// extern void ui_event_PointCountDropdown(lv_event_t * e);
+// extern void ui_event_PlottingRateDropdown(lv_event_t * e);
+
 
 #ifdef __cplusplus
 } /*extern "C"*/

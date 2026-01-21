@@ -31,6 +31,7 @@ lv_timer_t *chart_resize_timer = NULL;
 lv_timer_t *slider_labels_timer = NULL;
 lv_timer_t *print_update_timer = NULL;
 lv_timer_t *stop_button_timer = NULL;
+lv_timer_t *update_point_count_timer = NULL;
 lv_chart_series_t *slot_series[MAX_PLOT_SLOTS] = {NULL};
 plot_slot_t plot_slots[MAX_PLOT_SLOTS];
 
@@ -53,6 +54,7 @@ void ui_init(void)
     slider_labels_timer = lv_timer_create(update_gain_labels, 50, NULL);
     print_update_timer = lv_timer_create(print_update_task, 50, NULL);
     stop_button_timer = lv_timer_create(stop_button_task, 50, NULL);
+    update_point_count_timer = lv_timer_create(UpdatePointCount, 500, NULL);
 }
 
 void ui_destroy(void)
