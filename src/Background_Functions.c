@@ -9,6 +9,7 @@
  *
  */
 
+ #include <string.h>
  #include "main.h"
  #include "pros/adi.h"
  #include "pros/distance.h"
@@ -329,7 +330,7 @@ int shrink_counter = 0;
         lv_label_set_text(ui_StopText2, "Program ended normally");
         lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
     }
-    lv_timer_t * t = lv_timer_create(exit_program, 5000, NULL);
+    lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
     lv_timer_set_repeat_count(t, 1);
  }
  
@@ -417,7 +418,13 @@ int shrink_counter = 0;
  
  // ----------------------------------- New Functions - SRS ----------------------------------------
  
- int get_plot_value(plot_source_t src) {
+ int GetPlotValue(int slot_index) {
+    plot_source_t src = plot_slots[slot_index].source;
+
+    if (src == PLOT_CUSTOM) {
+        return plot_slots[slot_index].custom_value;
+    }
+
     switch (src) {
         case PLOT_LEFT_ENC:    return readSensor(LeftEncoder);
         case PLOT_RIGHT_ENC:   return readSensor(RightEncoder);
@@ -428,7 +435,7 @@ int shrink_counter = 0;
     }
 }
 
- bool is_source_enabled(plot_source_t src) {
+ bool IsSourceEnabled(plot_source_t src) {
     switch (src) {
         case PLOT_LEFT_ENC:    return plot_left_enc_enabled;
         case PLOT_RIGHT_ENC:   return plot_right_enc_enabled;
@@ -439,7 +446,18 @@ int shrink_counter = 0;
     }
 }
 
- void update_plot_slots(void) {
+ char *PlotSourceName(plot_source_t src) {
+    switch (src) {
+        case PLOT_LEFT_ENC:    return "Left Encoder";
+        case PLOT_RIGHT_ENC:   return "Right Encoder";
+        case PLOT_ARM_ENC:     return "Arm Encoder";
+        case PLOT_LEFT_DIST:   return "Left Distance";
+        case PLOT_RIGHT_DIST:  return "Right Distance";
+        default:               return "";
+    }
+}
+
+ void UpdatePlotSlots(void) {
 
     plot_source_t requested[] = {
         PLOT_LEFT_ENC,
@@ -449,12 +467,19 @@ int shrink_counter = 0;
         PLOT_RIGHT_DIST
     };
 
-    /* Remove sources that are no longer enabled */
+    /* Remove non-custom sources that are no longer enabled */
     for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
-        if (plot_slots[i].active &&
-            !is_source_enabled(plot_slots[i].source)) {
+        if (plot_slots[i].active && plot_slots[i].source != PLOT_CUSTOM) {
+            if (!IsSourceEnabled(plot_slots[i].source)) {
+            clearSeries(plot_slots[i].series);
+
+            /* Hide legend elements */
+            lv_obj_add_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(plot_slots[i].legend_colour_box,  LV_OBJ_FLAG_HIDDEN);
+
             plot_slots[i].active = false;
             plot_slots[i].source = PLOT_NONE;
+            }
         }
     }
 
@@ -462,7 +487,7 @@ int shrink_counter = 0;
     for (int r = 0; r < (int)(sizeof(requested)/sizeof(requested[0])); r++) {
         plot_source_t src = requested[r];
 
-        if (!is_source_enabled(src))
+        if (!IsSourceEnabled(src))
             continue;
 
         bool already_assigned = false;
@@ -481,38 +506,61 @@ int shrink_counter = 0;
             if (!plot_slots[i].active) {
                 plot_slots[i].source = src;
                 plot_slots[i].active = true;
+
+                /* Update legend text */
+                lv_label_set_text(plot_slots[i].legend_label, PlotSourceName(src));
+                /* Show legend elements */
+                lv_obj_clear_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(plot_slots[i].legend_colour_box,  LV_OBJ_FLAG_HIDDEN);
                 break;
             }
         }
     }
 }
 
+void CustomPlot(int slot, int value, const char * name) {
+    if (slot < 0 || slot >= MAX_PLOT_SLOTS) return;
+
+    // Set source to external so UpdatePlotSlots() knows to leave it alone
+    plot_slots[slot].source = PLOT_CUSTOM;
+    plot_slots[slot].active = true;
+    plot_slots[slot].custom_value = value;
+
+// Copy the string safely into our buffer
+    strncpy(plot_slots[slot].custom_name, name, 31);
+    plot_slots[slot].custom_name[31] = '\0'; // Ensure null termination
+
+    // Tell the UI task it needs to update the label text
+    plot_slots[slot].needs_ui_refresh = true;
+}
 /**
   * @brief A timer task that updates the data being graphed on the main screen chart, and automatically
   * scales the Y axis according to the values being plotted.
   * @param timer (lv_timer_t) Pointer to the timer object
   */
- void graph_update_task(lv_timer_t * timer) {
+ void GraphUpdateTask(lv_timer_t * timer) {
 
     int local_min = INT32_MAX;
     int local_max = INT32_MIN;
 
     if (!ui_Chart) return;
 
-    update_plot_slots();
+    UpdatePlotSlots();
 
     for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
 
         if (!plot_slots[i].active || !plot_slots[i].series)
             continue;
 
-        int value = get_plot_value(plot_slots[i].source);
+        if (plot_slots[i].source == PLOT_CUSTOM && plot_slots[i].needs_ui_refresh) {
+            lv_label_set_text(plot_slots[i].legend_label, plot_slots[i].custom_name);
+            lv_obj_clear_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(plot_slots[i].legend_colour_box, LV_OBJ_FLAG_HIDDEN);
+            plot_slots[i].needs_ui_refresh = false; // Task complete
+        }
 
-        lv_chart_set_next_value(
-            ui_Chart,
-            plot_slots[i].series,
-            value
-        );
+        int value = GetPlotValue(i);
+        lv_chart_set_next_value(ui_Chart, plot_slots[i].series, value);
 
         chart_needs_resize = true;
         local_min = min(local_min, value);
@@ -579,7 +627,7 @@ int shrink_counter = 0;
   * @brief A timer task that displays the "Program Ended Normally" banner when called.
   * @param timer (lv_timer_t) Pointer to the timer object
   */
-void program_ended_banner(lv_timer_t *timer) {
+void ProgramEndedBanner(lv_timer_t *timer) {
     static int ticks = 0;
     
     // First call: show the message
@@ -603,7 +651,7 @@ void program_ended_banner(lv_timer_t *timer) {
   * @brief A timer task that updates the Y axes of the graph when called.
   * @param timer (lv_timer_t) Pointer to the timer object
   */
-void chart_update_task(lv_timer_t* timer) {
+void ChartUpdateTask(lv_timer_t* timer) {
     if (chart_needs_resize) {
         chart_needs_resize = false;
         lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, current_y_min, current_y_max);
@@ -614,14 +662,14 @@ void chart_update_task(lv_timer_t* timer) {
   * @brief A timer task that exits the program when called.
   * @param t (lv_timer_t) Pointer to the timer object
   */
-void exit_program(lv_timer_t * t) { exit(0); }
+void ExitProgram(lv_timer_t * t) { exit(0); }
 
 /**
   * @brief A function that resets the Distance sensors.
   * @param sensor_name (int) An integer that represents either the
   * left or right distance sensor.
   */
-void resetDistance(int sensor_name) {
+void ResetDistance(int sensor_name) {
     if (sensor_name == LeftDistance) {
         leftInitialised = false;
     } else if (sensor_name == RightDistance) {
@@ -635,7 +683,7 @@ void resetDistance(int sensor_name) {
   * reflects the current Kp and Ki values. 
   * @param t (lv_timer_t) Pointer to the timer object
   */
-void update_gain_labels(lv_timer_t * t)
+void UpdateGainLabels(lv_timer_t * t)
 {
     static char buf[32];
 
@@ -653,7 +701,7 @@ void update_gain_labels(lv_timer_t * t)
   * are being updated.
   * @param t (lv_timer_t) Pointer to the timer object
   */
-void print_update_task(lv_timer_t * t)
+void PrintUpdateTask(lv_timer_t * t)
 {
     if (!print_panel_visible) return;
 
@@ -670,7 +718,7 @@ void print_update_task(lv_timer_t * t)
     }
 }
 
-void stop_button_task(lv_timer_t *t) {
+void StopButtonTask(lv_timer_t *t) {
      static bool handled = false;
 
     if (stop_requested && !handled) {

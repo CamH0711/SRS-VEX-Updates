@@ -106,15 +106,15 @@
  double max(double num1, double num2);
  int sgn(double input);
  // New functions/global variables for SRS
- void graph_update_task(lv_timer_t * timer);
- void program_ended_banner(lv_timer_t *timer);
- void chart_update_task(lv_timer_t* timer);
- extern void exit_program(lv_timer_t * t);
+ void GraphUpdateTask(lv_timer_t * timer);
+ void ProgramEndedBanner(lv_timer_t *timer);
+ void ChartUpdateTask(lv_timer_t* timer);
+ extern void ExitProgram(lv_timer_t * t);
  extern bool chart_needs_resize;
- void resetDistance(int sensor_name);
- void update_gain_labels(lv_timer_t * t);
- void print_update_task(lv_timer_t * t);
- void stop_button_task(lv_timer_t *t);
+ void ResetDistance(int sensor_name);
+ void UpdateGainLabels(lv_timer_t * t);
+ void PrintUpdateTask(lv_timer_t * t);
+ void StopButtonTask(lv_timer_t *t);
 
  /* Function declarations from Background_Tasks.c */
  void monitorMotorPower(void* param);
@@ -148,14 +148,21 @@ typedef struct {
     lv_chart_series_t *series;
     plot_source_t source;
     bool active;
+    lv_obj_t *legend_label;
+    lv_obj_t *legend_colour_box;
+    int custom_value;
+    char custom_name[32];
+    bool needs_ui_refresh;
 } plot_slot_t;
 
  extern plot_slot_t plot_slots[MAX_PLOT_SLOTS];
  extern lv_chart_series_t *slot_series[MAX_PLOT_SLOTS];
 
- int get_plot_value(plot_source_t src);
- bool is_source_enabled(plot_source_t src);
- void update_plot_slots(void);
+ int GetPlotValue(int slot_index);
+ bool IsSourceEnabled(plot_source_t src);
+ void UpdatePlotSlots(void);
+ char *PlotSourceName(plot_source_t src);
+ void CustomPlot(int slot, int value, const char * name);
 
 
  #endif  // _PROS_MAIN_H_

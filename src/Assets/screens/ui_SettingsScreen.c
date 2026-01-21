@@ -73,7 +73,7 @@ bool plot_arm_enabled = false;
 bool plot_left_dist_enabled = false;
 bool plot_right_dist_enabled = false;
 numpad_ctx_t numpad_ctx;
-int point_count = 40;
+int point_count = 50;
 int plotting_rate = 100;
 double Kp = 1.0;
 double Ki = 0.1;
@@ -719,6 +719,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_PointCountDropdown, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_PointCountDropdown, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_PointCountDropdown, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_dropdown_set_selected(ui_PointCountDropdown, 3);
 
     ui_PlottingRateDropdown = lv_dropdown_create(ui_GraphSettingsContainer);
     lv_dropdown_set_options(ui_PlottingRateDropdown, "50\n100\n200\n300\n400\n500\n1000");
@@ -731,6 +732,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_PlottingRateDropdown, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_PlottingRateDropdown, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_PlottingRateDropdown, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_dropdown_set_selected(ui_PlottingRateDropdown, 1);
 
     ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
     lv_obj_set_width(ui_StopPanel2, 480);

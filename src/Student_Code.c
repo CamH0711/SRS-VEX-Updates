@@ -40,25 +40,23 @@ int sensorWidth = 139;              // Distance between the left and right dista
 void student_Main()
 { 
 
-    // showChart();
-    // PlotData(ControlEffort);
-    // PlotData(Error);
-    // driveStraight(1000);
+    ShowChart();
+    driveStraight(1000);
 
     // delay(1000);
     // driveToObject(200);
 
-    setKp(1.0);
-    setKi(0.1);
+    // setKp(1.0);
+    // setKi(0.1);
 
-    while(true) {
-        lvgl_print(2, "Kp = %.2f mm", Kp);
-        lvgl_print(3, "Ki = %.2f mm", Ki);
-        lvgl_print(4, "Point Count = %d", point_count);
-        lvgl_print(5, "Plotting Rate = %d", plotting_rate);
+    // while(true) {
+    //     lvgl_print(2, "Kp = %.2f", Kp);
+    //     lvgl_print(3, "Ki = %.2f", Ki);
+    //     lvgl_print(4, "Point Count = %d", point_count);
+    //     lvgl_print(5, "Plotting Rate = %d", plotting_rate);
 
-        delay(100);
-    }
+    //     delay(100);
+    // }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
@@ -137,7 +135,7 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -40, 40);
+        u = saturate(u, -60, 60);
     
         //For the 1st second, ramp up voltage to stop twitching
         if (k < 70) {	
@@ -163,6 +161,9 @@ void driveStraight(int distance) {
         lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
         lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
 
+
+        CustomPlot(0, (int) u, "Control Effort");
+        CustomPlot(1, error, "Error");
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
     

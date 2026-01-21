@@ -49,11 +49,11 @@ void ui_init(void)
     //Custom initial actions & timers
     init_plot_series();
     init_plot_slots();
-    graph_timer = lv_timer_create(graph_update_task, 100, NULL);
-    chart_resize_timer = lv_timer_create(chart_update_task, 200, NULL);
-    slider_labels_timer = lv_timer_create(update_gain_labels, 50, NULL);
-    print_update_timer = lv_timer_create(print_update_task, 50, NULL);
-    stop_button_timer = lv_timer_create(stop_button_task, 50, NULL);
+    graph_timer = lv_timer_create(GraphUpdateTask, 100, NULL);
+    chart_resize_timer = lv_timer_create(ChartUpdateTask, 200, NULL);
+    slider_labels_timer = lv_timer_create(UpdateGainLabels, 50, NULL);
+    print_update_timer = lv_timer_create(PrintUpdateTask, 50, NULL);
+    stop_button_timer = lv_timer_create(StopButtonTask, 50, NULL);
     update_point_count_timer = lv_timer_create(UpdatePointCount, 500, NULL);
 }
 
@@ -91,6 +91,16 @@ void init_plot_series(void) {
 }
 
 void init_plot_slots(void) {
+    plot_slots[0].legend_label = ui_Plot1Label;
+    plot_slots[1].legend_label = ui_Plot2Label;
+    plot_slots[2].legend_label = ui_Plot3Label;
+    plot_slots[3].legend_label = ui_Plot4Label;
+
+    plot_slots[0].legend_colour_box = ui_Plot1Colour;
+    plot_slots[1].legend_colour_box = ui_Plot2Colour;
+    plot_slots[2].legend_colour_box = ui_Plot3Colour;
+    plot_slots[3].legend_colour_box = ui_Plot4Colour;
+
     for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
         plot_slots[i].series = slot_series[i];
         plot_slots[i].active = false;

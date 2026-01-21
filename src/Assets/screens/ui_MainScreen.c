@@ -101,7 +101,7 @@ void ui_event_OnScreenStopButton(lv_event_t * e) {
     _stopflag = 1;
 
     // Schedule program exit AFTER 5 seconds
-    lv_timer_t * t = lv_timer_create(exit_program, 5000, NULL);
+    lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
     lv_timer_set_repeat_count(t, 1);
 }
 
@@ -367,6 +367,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_width(ui_Plot1Colour, 10);
     lv_obj_set_height(ui_Plot1Colour, 10);
     lv_obj_set_align(ui_Plot1Colour, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot1Colour, LV_OBJ_FLAG_HIDDEN);
     lv_obj_remove_flag(ui_Plot1Colour, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_Plot1Colour, lv_color_hex(0xF44336), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Plot1Colour, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -380,6 +381,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_Plot2Colour, 100);
     lv_obj_set_y(ui_Plot2Colour, 0);
     lv_obj_set_align(ui_Plot2Colour, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot2Colour, LV_OBJ_FLAG_HIDDEN);
     lv_obj_remove_flag(ui_Plot2Colour, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_Plot2Colour, lv_color_hex(0x4CAF50), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Plot2Colour, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -393,6 +395,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_Plot3Colour, 200);
     lv_obj_set_y(ui_Plot3Colour, 0);
     lv_obj_set_align(ui_Plot3Colour, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot3Colour, LV_OBJ_FLAG_HIDDEN);
     lv_obj_remove_flag(ui_Plot3Colour, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_Plot3Colour, lv_color_hex(0x2196F3), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Plot3Colour, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -406,6 +409,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_Plot4Colour, 300);
     lv_obj_set_y(ui_Plot4Colour, 0);
     lv_obj_set_align(ui_Plot4Colour, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot4Colour, LV_OBJ_FLAG_HIDDEN);
     lv_obj_remove_flag(ui_Plot4Colour, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_Plot4Colour, lv_color_hex(0xFF9800), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Plot4Colour, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -419,6 +423,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_Plot1Label, 15);
     lv_obj_set_y(ui_Plot1Label, 0);
     lv_obj_set_align(ui_Plot1Label, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot1Label, LV_OBJ_FLAG_HIDDEN);
     lv_label_set_text(ui_Plot1Label, "Plot 1 Label");
     lv_obj_set_style_text_font(ui_Plot1Label, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -428,6 +433,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_Plot2Label, 115);
     lv_obj_set_y(ui_Plot2Label, 0);
     lv_obj_set_align(ui_Plot2Label, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot2Label, LV_OBJ_FLAG_HIDDEN);
     lv_label_set_text(ui_Plot2Label, "Plot 2 Label");
     lv_obj_set_style_text_font(ui_Plot2Label, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -437,6 +443,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_Plot3Label, 215);
     lv_obj_set_y(ui_Plot3Label, 0);
     lv_obj_set_align(ui_Plot3Label, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot3Label, LV_OBJ_FLAG_HIDDEN);
     lv_label_set_text(ui_Plot3Label, "Plot 3 Label");
     lv_obj_set_style_text_font(ui_Plot3Label, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -446,6 +453,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_Plot4Label, 315);
     lv_obj_set_y(ui_Plot4Label, 0);
     lv_obj_set_align(ui_Plot4Label, LV_ALIGN_LEFT_MID);
+    lv_obj_add_flag(ui_Plot4Label, LV_OBJ_FLAG_HIDDEN);
     lv_label_set_text(ui_Plot4Label, "Plot 4 Label");
     lv_obj_set_style_text_font(ui_Plot4Label, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
