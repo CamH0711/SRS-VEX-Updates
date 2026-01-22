@@ -26,6 +26,8 @@
  int plot_divider = 0;
  int observed_min = INT32_MAX;
  int observed_max = INT32_MIN;
+ logger_ctx_t current_log = {0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}};
+ int log_rate = 100;
 
 int shrink_counter = 0;
 
@@ -418,6 +420,11 @@ int shrink_counter = 0;
  
  // ----------------------------------- New Functions - SRS ----------------------------------------
  
+ /**
+  * @brief A function that retrieves the value to be plotted for a given plot slot.
+  * @param slot_index (int) Index of the plot slot (0 to MAX_PLOT_SLOTS - 1)
+  * @return (int) Value to be plotted
+  */
  int GetPlotValue(int slot_index) {
     plot_source_t src = plot_slots[slot_index].source;
 
@@ -435,6 +442,11 @@ int shrink_counter = 0;
     }
 }
 
+/**
+  * @brief A function that checks if a data source is enabled for plotting.
+  * @param src (plot_source_t) Data source
+  * @return (bool) True if the data source is enabled, false otherwise
+  */
  bool IsSourceEnabled(plot_source_t src) {
     switch (src) {
         case PLOT_LEFT_ENC:    return plot_left_enc_enabled;
@@ -446,6 +458,12 @@ int shrink_counter = 0;
     }
 }
 
+/**
+  * @brief A function that returns the name of the data source in order to 
+  * display it in the legend label.
+  * @param src (plot_source_t) Data source
+  * @return (char *) Name of the data source
+  */
  char *PlotSourceName(plot_source_t src) {
     switch (src) {
         case PLOT_LEFT_ENC:    return "Left Encoder";
@@ -457,6 +475,10 @@ int shrink_counter = 0;
     }
 }
 
+/**
+  * @brief A function that updates the plot slots based on which data sources are enabled.
+  * @param none
+  */
  void UpdatePlotSlots(void) {
 
     plot_source_t requested[] = {
@@ -518,6 +540,12 @@ int shrink_counter = 0;
     }
 }
 
+/**
+  * @brief A function that allows custom data to be plotted on the main screen chart.
+  * @param slot (int) Plot slot number (1 to MAX_PLOT_SLOTS)
+  * @param value (int) Value to plot
+  * @param name (const char *) Name to display in the legend label
+  */
 void CustomPlot(int slot, int value, const char * name) {
 
     int index = slot - 1;
@@ -529,9 +557,14 @@ void CustomPlot(int slot, int value, const char * name) {
     plot_slots[index].active = true;
     plot_slots[index].custom_value = value;
 
-// Copy the string safely into our buffer
+    // Copy the string safely into our buffer
     strncpy(plot_slots[index].custom_name, name, 31);
     plot_slots[index].custom_name[31] = '\0'; // Ensure null termination
+
+    // Also update the current_log for logging purposes
+    if (index >= 0 && index < 4) {
+        current_log.custom[index] = value;
+    }
 
     // Tell the UI task it needs to update the label text
     plot_slots[index].needs_ui_refresh = true;
@@ -722,6 +755,11 @@ void PrintUpdateTask(lv_timer_t * t)
     }
 }
 
+/**
+  * @brief A timer task that checks if the stop button has been pressed, and if so,
+  * displays the "STOP BUTTON PRESSED!" banner and ends the program.
+  * @param none
+  */
 void StopButtonTask(lv_timer_t *t) {
      static bool handled = false;
 
@@ -735,4 +773,45 @@ void StopButtonTask(lv_timer_t *t) {
 
         endOfProgram();
     }
+}
+
+void SDLoggerTask(void* param) {
+    // V5 SD card path starts with /usd/
+    FILE* file = fopen("/usd/robot_log.csv", "w");
+    if (file == NULL) return; // SD card missing
+
+    // Write CSV Header
+    fprintf(file, "Time,Left Encoder,Right Encoder,Arm Encoder,Left Distance,Right Distance,Left Light,Middle Light,Right Light,Custom1,Custom2,Custom3,Custom4\n");
+
+    uint32_t start_time = millis();
+    uint32_t now;
+
+    while (true) {
+        now = millis() - start_time;
+
+        // Automatically update standard sensors
+        current_log.left_enc = readSensor(LeftEncoder);
+        current_log.right_enc = readSensor(RightEncoder);
+        current_log.arm_enc = readSensor(ArmEncoder);
+        current_log.left_dist = readSensor(LeftDistance);
+        current_log.right_dist = readSensor(RightDistance);
+        current_log.left_light = readSensor(LeftLight);
+        current_log.mid_light = readSensor(MidLight);
+        current_log.right_light = readSensor(RightLight);
+
+        // Write the row
+        fprintf(file, "%u,%d,%d,%d,%d,%d,%d,%d\n",
+                now,
+                current_log.left_enc,
+                current_log.right_enc,
+                current_log.arm_enc,
+                current_log.custom[0],
+                current_log.custom[1],
+                current_log.custom[2],
+                current_log.custom[3]);
+
+        fflush(file); // Ensure data is actually saved to the card
+        delay(log_rate);
+    }
+    fclose(file);
 }

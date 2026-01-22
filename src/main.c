@@ -22,6 +22,7 @@
  task_t monitorMotors_Task;
  task_t check_sensors;
  task_t low_pass_filter;
+ task_t data_logging_task;
  int _stopflag = 0;
  int _arm_State = 0;
  bool gui_running = true;
@@ -54,6 +55,8 @@
 	 check_sensors = task_create(checkSensors, NULL, TASK_PRIORITY_DEFAULT+2, TASK_STACK_DEPTH_DEFAULT, "Check sensors");
 	 delay(200);
 	 monitorMotors_Task = task_create(monitorMotorPower, NULL, TASK_PRIORITY_DEFAULT+1, TASK_STACK_DEPTH_DEFAULT, "Monitor Motor Power");
+	 delay(200);
+	 data_logging_task = task_create(SDLoggerTask, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Data Logging Task");
 	 delay(200);
 
 	 //initialise left wheel motor

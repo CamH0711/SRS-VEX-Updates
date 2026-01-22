@@ -164,5 +164,23 @@ typedef struct {
  char *PlotSourceName(plot_source_t src);
  void CustomPlot(int slot, int value, const char * name);
 
+/* Data logging with SD card related*/
+typedef struct {
+    int left_enc;
+    int right_enc;
+    int arm_enc;
+    int left_dist;
+    int right_dist;
+    int left_light;
+    int mid_light;
+    int right_light;
+    int custom[4]; 
+} logger_ctx_t;
+
+extern logger_ctx_t current_log;
+extern int log_rate;
+
+void SDLoggerTask(void* param);
+
 
  #endif  // _PROS_MAIN_H_
