@@ -40,11 +40,15 @@ int sensorWidth = 139;              // Distance between the left and right dista
 void student_Main()
 { 
 
+    StartDataLogging("Stop_Button_Test3");
+    // SetLogRate(200);
     ShowChart();
     PlotData(LeftDistance);
-    driveStraight(1000);
-    delay(1000);
-    driveStraight(-1000);
+    driveStraight(500);
+
+    // StopDataLogging();
+
+    driveStraight(-500);
 
     // delay(1000);
     // driveToObject(200);
@@ -138,7 +142,7 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -40, 40);
+        u = saturate(u, -50, 50);
     
         //For the 1st second, ramp up voltage to stop twitching
         if (k < 70) {	

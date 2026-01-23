@@ -92,6 +92,9 @@ void ui_event_OnScreenStopButton(lv_event_t * e) {
         graph_timer = NULL;
     }
 
+    // Stop logging if active
+    StopDataLogging();
+
     // Show STOP banner
     lv_label_set_text(ui_StopText, "STOP BUTTON PRESSED!");
     lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");

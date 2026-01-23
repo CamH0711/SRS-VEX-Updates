@@ -179,8 +179,16 @@ typedef struct {
 
 extern logger_ctx_t current_log;
 extern int log_rate;
+extern FILE *log_file;
+extern bool is_logging;
+extern char current_filename[64];
+extern bool logger_is_busy;
+extern uint32_t log_start_timestamp;
 
+void StartDataLogging(const char* name);
+void StopDataLogging();
 void SDLoggerTask(void* param);
+void SetLogRate(int ms);
 
 
  #endif  // _PROS_MAIN_H_

@@ -49,15 +49,15 @@
 	 success = adi_port_set_config(_buttonStop, E_ADI_DIGITAL_IN);
  
 	//begin background processing tasks
-	 delay(200);
+	 delay(100);
 	 low_pass_filter = task_create(lowPassFilter, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Low Pass Filter");
-	 delay(200);
+	 delay(100);
 	 check_sensors = task_create(checkSensors, NULL, TASK_PRIORITY_DEFAULT+2, TASK_STACK_DEPTH_DEFAULT, "Check sensors");
-	 delay(200);
+	 delay(100);
 	 monitorMotors_Task = task_create(monitorMotorPower, NULL, TASK_PRIORITY_DEFAULT+1, TASK_STACK_DEPTH_DEFAULT, "Monitor Motor Power");
-	 delay(200);
+	 delay(100);
 	 data_logging_task = task_create(SDLoggerTask, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Data Logging Task");
-	 delay(200);
+	 delay(100);
 
 	 //initialise left wheel motor
 	   motor_set_gearing(_motorLeft, E_MOTOR_GEARSET_18);

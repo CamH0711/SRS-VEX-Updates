@@ -26,10 +26,14 @@
  int plot_divider = 0;
  int observed_min = INT32_MAX;
  int observed_max = INT32_MIN;
+ int shrink_counter = 0;
  logger_ctx_t current_log = {0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}};
  int log_rate = 100;
-
-int shrink_counter = 0;
+ FILE *log_file = NULL;
+ bool is_logging = false;
+ char current_filename[64];
+ bool logger_is_busy = false;
+ uint32_t log_start_timestamp = 0;
 
  #define SHRINK_DELAY_TICKS 50   // ~1 second if timer = 50ms
  #define CHART_GROW_STEP 50
@@ -331,6 +335,10 @@ int shrink_counter = 0;
         lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
         lv_label_set_text(ui_StopText2, "Program ended normally");
         lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
+    }
+
+    if (is_logging) {
+        StopDataLogging(); 
     }
     lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
     lv_timer_set_repeat_count(t, 1);
@@ -775,43 +783,90 @@ void StopButtonTask(lv_timer_t *t) {
     }
 }
 
+void StartDataLogging(const char* name) {
+    if (is_logging) return; // Already logging
+
+    // Construct the path: /usd/ + user name + .csv
+    snprintf(current_filename, sizeof(current_filename), "/usd/%s.csv", name);
+
+    log_file = fopen(current_filename, "w");
+    
+    if (log_file != NULL) {
+
+        // Write the Header immediately
+        fprintf(log_file, "Time,Left Enc,Right Enc,Arm Enc,Left Dist,Right Dist,Left Light,Mid Light,Right Light,Custom1,Custom2,Custom3,Custom4\n");
+        fflush(log_file);
+
+        log_start_timestamp = millis();
+
+        is_logging = true;
+    }
+}
+
+void StopDataLogging() {
+    if (!is_logging) return;
+    
+    is_logging = false;
+
+    uint32_t timeout = millis();
+    while (logger_is_busy && (millis() - timeout < 500)) {
+        delay(5); // Give it a few ms to finish
+    }
+    
+    if (log_file != NULL) {
+        fclose(log_file);
+        log_file = NULL;
+    }
+}
+
 void SDLoggerTask(void* param) {
-    // V5 SD card path starts with /usd/
-    FILE* file = fopen("/usd/robot_log.csv", "w");
-    if (file == NULL) return; // SD card missing
-
-    // Write CSV Header
-    fprintf(file, "Time,Left Encoder,Right Encoder,Arm Encoder,Left Distance,Right Distance,Left Light,Middle Light,Right Light,Custom1,Custom2,Custom3,Custom4\n");
-
     uint32_t start_time = millis();
-    uint32_t now;
+    uint32_t last_wake_time = start_time;
 
     while (true) {
-        now = millis() - start_time;
+        if (is_logging && log_file != NULL) {
+            logger_is_busy = true;
 
-        // Automatically update standard sensors
-        current_log.left_enc = readSensor(LeftEncoder);
-        current_log.right_enc = readSensor(RightEncoder);
-        current_log.arm_enc = readSensor(ArmEncoder);
-        current_log.left_dist = readSensor(LeftDistance);
-        current_log.right_dist = readSensor(RightDistance);
-        current_log.left_light = readSensor(LeftLight);
-        current_log.mid_light = readSensor(MidLight);
-        current_log.right_light = readSensor(RightLight);
+            uint32_t current_time = millis();
+            uint32_t relative_time = (current_time <= log_start_timestamp) ? 0 : (current_time - log_start_timestamp);
 
-        // Write the row
-        fprintf(file, "%u,%d,%d,%d,%d,%d,%d,%d\n",
-                now,
-                current_log.left_enc,
-                current_log.right_enc,
-                current_log.arm_enc,
-                current_log.custom[0],
-                current_log.custom[1],
-                current_log.custom[2],
-                current_log.custom[3]);
+            relative_time = (relative_time / log_rate) * log_rate;
 
-        fflush(file); // Ensure data is actually saved to the card
-        delay(log_rate);
+            // 1. Update standard sensors
+            current_log.left_enc   = readSensor(LeftEncoder);
+            current_log.right_enc  = readSensor(RightEncoder);
+            current_log.arm_enc    = readSensor(ArmEncoder);
+            current_log.left_dist  = readSensor(LeftDistance);
+            current_log.right_dist = readSensor(RightDistance);
+            current_log.left_light = readSensor(LeftLight);
+            current_log.mid_light  = readSensor(MidLight);
+            current_log.right_light = readSensor(RightLight);
+
+            // 2. Write the row
+            fprintf(log_file, "%u,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
+                    relative_time,
+                    current_log.left_enc, current_log.right_enc, current_log.arm_enc,
+                    current_log.left_dist, current_log.right_dist,
+                    current_log.left_light, current_log.mid_light, current_log.right_light,
+                    current_log.custom[0], current_log.custom[1],
+                    current_log.custom[2], current_log.custom[3]);
+            
+            fflush(log_file); 
+
+            // Check if the SD card was pulled out mid-run
+            if (!usd_is_installed()) {
+                StopDataLogging(); // Emergency stop
+                continue;
+            }
+        logger_is_busy = false;
+        }
+
+        task_delay_until(&last_wake_time, log_rate);
     }
-    fclose(file);
+}
+
+void SetLogRate(int ms) {
+    if (ms < 50) ms = 50;
+    
+    log_rate = ms;
 }
