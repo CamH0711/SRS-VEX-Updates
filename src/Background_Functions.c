@@ -426,7 +426,7 @@
      }
  }
  
- // ----------------------------------- New Functions - SRS ----------------------------------------
+ // ----------------------------------- New Functions - UI Updates -----------------------------------
  
  /**
   * @brief A function that retrieves the value to be plotted for a given plot slot.
@@ -501,7 +501,7 @@
     for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
         if (plot_slots[i].active && plot_slots[i].source != PLOT_CUSTOM) {
             if (!IsSourceEnabled(plot_slots[i].source)) {
-            clearSeries(plot_slots[i].series);
+            ClearSeries(plot_slots[i].series);
 
             /* Hide legend elements */
             lv_obj_add_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
@@ -710,19 +710,6 @@ void ChartUpdateTask(lv_timer_t* timer) {
 void ExitProgram(lv_timer_t * t) { exit(0); }
 
 /**
-  * @brief A function that resets the Distance sensors.
-  * @param sensor_name (int) An integer that represents either the
-  * left or right distance sensor.
-  */
-void ResetDistance(int sensor_name) {
-    if (sensor_name == LeftDistance) {
-        leftInitialised = false;
-    } else if (sensor_name == RightDistance) {
-        rightInitialised = false;
-    }
-}
-
-/**
   * @brief A function that constantly checks the Kp and Ki slider labels, making sure they display 
   * the correct text.  It also checks the sliders themselves, making sure their position correctly
   * reflects the current Kp and Ki values. 
@@ -766,7 +753,7 @@ void PrintUpdateTask(lv_timer_t * t)
 /**
   * @brief A timer task that checks if the stop button has been pressed, and if so,
   * displays the "STOP BUTTON PRESSED!" banner and ends the program.
-  * @param none
+  * @param t (lv_timer_t) Pointer to the timer object
   */
 void StopButtonTask(lv_timer_t *t) {
      static bool handled = false;
@@ -783,6 +770,10 @@ void StopButtonTask(lv_timer_t *t) {
     }
 }
 
+/**
+  * @brief A function that starts data logging to a CSV file on the SD card.
+  * @param name (const char*) The user-defined name for the log file
+  */
 void StartDataLogging(const char* name) {
     if (is_logging) return; // Already logging
 
@@ -803,6 +794,10 @@ void StartDataLogging(const char* name) {
     }
 }
 
+/**
+  * @brief A function that stops data logging.
+  * @param none
+  */
 void StopDataLogging() {
     if (!is_logging) return;
     
@@ -819,6 +814,10 @@ void StopDataLogging() {
     }
 }
 
+/**
+  * @brief A task that runs in the background to log data to the SD card at regular intervals.
+  * @param none
+  */
 void SDLoggerTask(void* param) {
     uint32_t start_time = millis();
     uint32_t last_wake_time = start_time;
@@ -865,6 +864,10 @@ void SDLoggerTask(void* param) {
     }
 }
 
+/**
+  * @brief A function that sets the data logging rate.
+  * @param ms (int) Desired logging rate in milliseconds (minimum 50ms)
+  */
 void SetLogRate(int ms) {
     if (ms < 50) ms = 50;
     

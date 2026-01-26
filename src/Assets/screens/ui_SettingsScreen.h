@@ -111,15 +111,18 @@ extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
 extern void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e);
 extern void ui_event_PlotRightDistanceCheckbox(lv_event_t * e);
 extern void PlotData(int sensor_name);
-extern void setKp(double Kp_value);
-extern void setKi(double Ki_value);
-extern void clearSeries(lv_chart_series_t *series);
+extern void SetKp(double Kp_value);
+extern void SetKi(double Ki_value);
+extern void ClearSeries(lv_chart_series_t *series);
 extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
 extern void NumpadButtonEvent(lv_event_t * e);
 extern void UpdateTargetLabel(void);
 extern void UpdatePointCount(lv_timer_t *t);
-// extern void ui_event_PointCountDropdown(lv_event_t * e);
-// extern void ui_event_PlottingRateDropdown(lv_event_t * e);
+extern void ui_event_PointCountDropdown(lv_event_t * e);
+extern void ui_event_PlottingRateDropdown(lv_event_t * e);
+extern int FindClosestDropdownIndex(lv_obj_t * dropdown, int target_value);
+extern void SetPlottingRate(int rate_ms);
+extern void SetPointCount(int count);
 
 
 #ifdef __cplusplus

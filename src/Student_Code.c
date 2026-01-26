@@ -29,41 +29,38 @@ int wheelWidth = 22;				// width of the driving wheel [mm]
 double drivingWheelRatio = 1;	    // ratio of wheel shaft rotations to wheel motor shaft rotations
 double armRatio = 7;				// ratio of arm shaft rotations to arm motor shaft rotations
 double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of the motor shaft
-//New for SRS
-int sensorWidth = 139;              // Distance between the left and right distance sensor
-// ---------------------- Initialising Controller Parameters ------------------------------
-// volatile double Kp;               // Proportional Controller gain
-// volatile double Ki;               // Integral Controller gain
+// REMOVE IF ONLY ONE DISTANCE SENSOR IS USED
+int sensorWidth = 139;              // Distance between the left and right distance sensors [mm]
 // ------------------------------------------------------------------------------------
 
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
 
-    StartDataLogging("Stop_Button_Test3");
-    // SetLogRate(200);
-    ShowChart();
-    PlotData(LeftDistance);
-    driveStraight(500);
+    // StartDataLogging("Robot_Test");
+    // // SetLogRate(200);
+    // ShowChart();
+    // PlotData(LeftDistance);
+    // driveStraight(500);
 
-    // StopDataLogging();
+    // // StopDataLogging();
 
-    driveStraight(-500);
+    // driveStraight(-500);
 
-    // delay(1000);
-    // driveToObject(200);
+    // SetPointCount(-9999);
+    // SetPlottingRate(-9999);
+    // ShowChart();
+    // PlotData(LeftDistance);
 
     // setKp(1.0);
     // setKi(0.1);
 
-    // while(true) {
-    //     lvgl_print(2, "Kp = %.2f", Kp);
-    //     lvgl_print(3, "Ki = %.2f", Ki);
-    //     lvgl_print(4, "Point Count = %d", point_count);
-    //     lvgl_print(5, "Plotting Rate = %d", plotting_rate);
+    while(true) {
 
-    //     delay(100);
-    // }
+        // lvgl_print(2, "Point Count: %d", point_count);
+        // lvgl_print(3, "Plotting Rate: %d ms", plotting_rate);
+        delay(100);
+    }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
@@ -177,15 +174,12 @@ void driveStraight(int distance) {
     }
 
 int driveToObject(int finalDistance) {
-	
-    //Reset Left and Right distance sensors
-    resetDistance(LeftDistance);
-    resetDistance(RightDistance);
 
 	//Ensure Arm is not blocking the sonar
 	armUp(4000);
 
     /* For Distance Sensors */
+    delay(200);	//Give time for distance sensors to stabilise
     //Initialise Variables
     int left_distance = readSensor(LeftDistance);
     int right_distance = readSensor(RightDistance);

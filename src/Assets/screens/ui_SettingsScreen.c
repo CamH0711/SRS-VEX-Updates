@@ -212,15 +212,15 @@ void PlotData(int data_name) {
     }
 }
 
-void setKp(double Kp_value) {
+void SetKp(double Kp_value) {
     Kp = Kp_value;
 }
 
-void setKi(double Ki_value) {
+void SetKi(double Ki_value) {
     Ki = Ki_value;
 }
 
-void clearSeries(lv_chart_series_t * series) {
+void ClearSeries(lv_chart_series_t * series) {
     lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
 }
 
@@ -314,6 +314,77 @@ void UpdatePointCount(lv_timer_t *t) {
     int point_count_prev = lv_chart_get_point_count(ui_Chart);
     if (point_count != point_count_prev) {
         lv_chart_set_point_count(ui_Chart, point_count);
+    }
+}
+
+// A helper function - for finding the closest value in the dropdown to the target value
+int FindClosestDropdownIndex(lv_obj_t * dropdown, int target_value) {
+    const char * options = lv_dropdown_get_options(dropdown);
+    if (options == NULL) return 0;
+
+    // Create a local copy because strtok modifies the string
+    char options_copy[256]; 
+    strncpy(options_copy, options, sizeof(options_copy) - 1);
+    options_copy[sizeof(options_copy) - 1] = '\0';
+
+    int closest_index = 0;
+    int current_index = 0;
+    int min_diff = INT32_MAX;
+
+    // Split the string by the newline character
+    char * token = strtok(options_copy, "\n");
+    while (token != NULL) {
+        int option_val = atoi(token);
+        int diff = abs(option_val - target_value);
+
+        if (diff < min_diff) {
+            min_diff = diff;
+            closest_index = current_index;
+        }
+
+        token = strtok(NULL, "\n");
+        current_index++;
+    }
+
+    return closest_index;
+}
+
+// A function to set the plotting rate based on a given value
+void SetPlottingRate(int rate_ms) {
+    if (!ui_PlottingRateDropdown) return;
+
+    // 1. Find the closest index and snap the UI to it
+    int idx = FindClosestDropdownIndex(ui_PlottingRateDropdown, rate_ms);
+    lv_dropdown_set_selected(ui_PlottingRateDropdown, idx);
+
+    // 2. Get the actual string value of that index to update our variable
+    char buf[16];
+    lv_dropdown_get_selected_str(ui_PlottingRateDropdown, buf, sizeof(buf));
+    plotting_rate = atoi(buf);
+
+    // 3. Update the hardware timer
+    if (graph_timer) {
+        lv_timer_set_period(graph_timer, plotting_rate);
+    }
+}
+
+// A function to set the point count based on a given value
+void SetPointCount(int count) {
+    if (!ui_PointCountDropdown) return;
+
+    // 1. Find closest index and update UI
+    int idx = FindClosestDropdownIndex(ui_PointCountDropdown, count);
+    lv_dropdown_set_selected(ui_PointCountDropdown, idx);
+
+    // 2. Get the string of the snapped value
+    char buf[16];
+    lv_dropdown_get_selected_str(ui_PointCountDropdown, buf, sizeof(buf));
+    point_count = atoi(buf);
+
+    // 3. Update the chart hardware
+    if (ui_Chart) {
+        lv_chart_set_point_count(ui_Chart, point_count);
+        lv_chart_refresh(ui_Chart); // Force a redraw to show the new size
     }
 }
 

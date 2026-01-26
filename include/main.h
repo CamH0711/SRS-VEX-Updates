@@ -111,7 +111,6 @@
  void ChartUpdateTask(lv_timer_t* timer);
  extern void ExitProgram(lv_timer_t * t);
  extern bool chart_needs_resize;
- void ResetDistance(int sensor_name);
  void UpdateGainLabels(lv_timer_t * t);
  void PrintUpdateTask(lv_timer_t * t);
  void StopButtonTask(lv_timer_t *t);
