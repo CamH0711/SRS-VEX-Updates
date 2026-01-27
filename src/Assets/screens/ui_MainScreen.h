@@ -49,6 +49,10 @@ extern lv_obj_t * ui_Plot1Label;
 extern lv_obj_t * ui_Plot2Label;
 extern lv_obj_t * ui_Plot3Label;
 extern lv_obj_t * ui_Plot4Label;
+extern lv_obj_t * ui_PausedPanel;
+extern lv_obj_t * ui_PausedText;
+extern lv_obj_t * ui_ResumeButton;
+extern lv_obj_t * ui_ResumeText;
 
 // CUSTOM VARIABLES & FUNCTIONS
 extern lv_chart_series_t *series_U;

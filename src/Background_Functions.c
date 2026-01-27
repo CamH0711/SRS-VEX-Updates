@@ -710,25 +710,6 @@ void ChartUpdateTask(lv_timer_t* timer) {
 void ExitProgram(lv_timer_t * t) { exit(0); }
 
 /**
-  * @brief A function that constantly checks the Kp and Ki slider labels, making sure they display 
-  * the correct text.  It also checks the sliders themselves, making sure their position correctly
-  * reflects the current Kp and Ki values. 
-  * @param t (lv_timer_t) Pointer to the timer object
-  */
-void UpdateGainLabels(lv_timer_t * t)
-{
-    static char buf[32];
-
-    if (lv_obj_has_flag(ui_NumPad, LV_OBJ_FLAG_HIDDEN)) {
-        snprintf(buf, sizeof(buf), "Kp = %.2f", Kp);
-        lv_label_set_text(ui_KpLabel, buf);
-
-        snprintf(buf, sizeof(buf), "Ki = %.2f", Ki);
-        lv_label_set_text(ui_KiLabel, buf);
-    }
-}
-
-/**
   * @brief A timer function that constantly makes sure the print lines
   * are being updated.
   * @param t (lv_timer_t) Pointer to the timer object

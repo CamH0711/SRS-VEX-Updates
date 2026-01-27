@@ -37,11 +37,12 @@ int sensorWidth = 139;              // Distance between the left and right dista
 void student_Main()
 { 
 
+
     // StartDataLogging("Robot_Test");
     // // SetLogRate(200);
     // ShowChart();
     // PlotData(LeftDistance);
-    // driveStraight(500);
+    driveStraight(10000);
 
     // // StopDataLogging();
 
@@ -55,12 +56,9 @@ void student_Main()
     // setKp(1.0);
     // setKi(0.1);
 
-    while(true) {
-
-        // lvgl_print(2, "Point Count: %d", point_count);
-        // lvgl_print(3, "Plotting Rate: %d ms", plotting_rate);
-        delay(100);
-    }
+    // while(true) {
+    //     delay(100);
+    // }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
@@ -107,13 +105,14 @@ void driveStraight(int distance) {
     int error, errorIntSum = 0, encError;
     int k = 50, errorArray[1000] = {0}; 
     double currentPosition = 0;
-    double Kp_straight = 1.0;
     double u, uL, uR, uDiff;
     double encoderAverage;
     double tolerance = 0.1;
+    double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
     
-    setKp(1.0);
-    setKi(0.1);
+    ConfigSlot(1, &Kp, "Kp");
+    ConfigSlot(2, &Ki, "Ki");
+    ConfigSlot(3, &Kp_straight, "Kp_Straight");
 
     int i;
     

@@ -10,7 +10,7 @@
 #include "../src/Student_Code.h"
 
 lv_obj_t * ui_SettingsScreen = NULL;
-lv_obj_t * ui_AdjustControllerGainsLabel = NULL;
+lv_obj_t * ui_AdjustValuesLabel = NULL;
 lv_obj_t * ui_DisplaySeriesLabel = NULL;
 lv_obj_t * ui_CheckboxesContainer = NULL;
 lv_obj_t * ui_PlotLeftEncCheckbox = NULL;
@@ -21,12 +21,15 @@ lv_obj_t * ui_PlotRightDistanceCheckbox = NULL;
 lv_obj_t * ui_BackToMainButton = NULL;
 lv_obj_t * ui_GoBackLabel = NULL;
 lv_obj_t * ui_AdjustGainsContainer = NULL;
-lv_obj_t * ui_KpLabel = NULL;
-lv_obj_t * ui_KiLabel = NULL;
-lv_obj_t * ui_AdjustKpButton = NULL;
-lv_obj_t * ui_AdjustKpButtonLabel = NULL;
-lv_obj_t * ui_AdjustKiButton = NULL;
-lv_obj_t * ui_AdjustKiButtonLabel = NULL;
+lv_obj_t * ui_Slot1Label = NULL;
+lv_obj_t * ui_Slot2Label = NULL;
+lv_obj_t * ui_Slot3Label = NULL;
+lv_obj_t * ui_Slot1Button = NULL;
+lv_obj_t * ui_AdjustSlot1Label = NULL;
+lv_obj_t * ui_Slot2Button = NULL;
+lv_obj_t * ui_AdjustSlot2Label = NULL;
+lv_obj_t * ui_Slot3Button = NULL;
+lv_obj_t * ui_AdjustSlot3Label = NULL;
 lv_obj_t * ui_NumPad = NULL;
 lv_obj_t * ui_Button1 = NULL;
 lv_obj_t * ui_ButtonText1 = NULL;
@@ -55,13 +58,10 @@ lv_obj_t * ui_ButtonTextDel = NULL;
 lv_obj_t * ui_ButtonDone = NULL;
 lv_obj_t * ui_ButtonTextDone = NULL;
 lv_obj_t * ui_GraphSettingsContainer = NULL;
-lv_obj_t * ui_GraphSettingsLabel = NULL;
-lv_obj_t * ui_PointCountLabel = NULL;
 lv_obj_t * ui_PlottingRateLabel = NULL;
+lv_obj_t * ui_PlottingRateDropdown = NULL;
 lv_obj_t * ui_StopPanel2 = NULL;
 lv_obj_t * ui_StopText2 = NULL;
-lv_obj_t * ui_PointCountDropdown = NULL;
-lv_obj_t * ui_PlottingRateDropdown = NULL;
 // Custom Variables
 int current_y_min = 0;
 int current_y_max = 100;
@@ -75,8 +75,9 @@ bool plot_right_dist_enabled = false;
 numpad_ctx_t numpad_ctx;
 int point_count = 50;
 int plotting_rate = 100;
-double Kp = 1.0;
-double Ki = 0.1;
+variable_slot_t variable_slots[3];
+bool numpad_is_open = false;       // Tracks if the Numpad is on screen
+void * current_target_ptr = NULL;  // Tracks exactly which variable we are editing
 
 
 // event functions
@@ -89,31 +90,78 @@ void ui_event_BackToMainButton(lv_event_t * e)
     }
 }
 
-void ui_event_AdjustKpButton(lv_event_t * e)
+// UPDATE ALL SLOT BUTTONS TO NEW SYSTEM
+
+void ui_event_Slot1Button(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_state_modify(ui_PointCountDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
         _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_AdjustKpButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_AdjustKiButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        NumpadOpen(&Kp, NUMPAD_TYPE_DOUBLE, ui_KpLabel, "Kp = ", 5, 2);
+        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        
+        if (variable_slots[0].active) {
+        // Open the Numpad targeting the stored pointer
+        NumpadOpen(
+            variable_slots[0].var_ptr, 
+            NUMPAD_TYPE_DOUBLE, 
+            variable_slots[0].slot_label, 
+            variable_slots[0].name, 
+            6, 2
+        );
+    }
+
     }
 }
 
-void ui_event_AdjustKiButton(lv_event_t * e)
+void ui_event_Slot2Button(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_PointCountDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_AdjustKiButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_AdjustKpButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        NumpadOpen(&Ki, NUMPAD_TYPE_DOUBLE, ui_KiLabel, "Ki = ", 5, 2);
+        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+
+        if (variable_slots[1].active) {
+        // Open the Numpad targeting the stored pointer
+        NumpadOpen(
+            variable_slots[1].var_ptr, 
+            NUMPAD_TYPE_DOUBLE, 
+            variable_slots[1].slot_label, 
+            variable_slots[1].name, 
+            6, 2
+        );
+    }
+    }
+}
+
+void ui_event_Slot3Button(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        
+        if (variable_slots[2].active) {
+        // Open the Numpad targeting the stored pointer
+        NumpadOpen(
+            variable_slots[2].var_ptr, 
+            NUMPAD_TYPE_DOUBLE, 
+            variable_slots[2].slot_label, 
+            variable_slots[2].name, 
+            6, 2
+        );
+    }
     }
 }
 
@@ -124,10 +172,10 @@ void ui_event_ButtonDone(lv_event_t * e)
     if(event_code == LV_EVENT_CLICKED) {
         _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_PointCountDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_AdjustKiButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_AdjustKpButton, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-
+        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        
     //Reset the label color to White
     if (numpad_ctx.target_label != NULL) {
         lv_obj_set_style_text_color(numpad_ctx.target_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -149,16 +197,9 @@ void ui_event_ButtonDone(lv_event_t * e)
         int *val = (int *)numpad_ctx.target_value;
         *val = atoi(numpad_ctx.buffer); // Convert string to int
     }
-    }
-}
 
-void ui_event_PointCountDropdown(lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_VALUE_CHANGED) {
-        char selected[8];
-        lv_dropdown_get_selected_str(ui_PointCountDropdown, selected, sizeof(selected));
-        point_count = atoi(selected);
+    numpad_is_open = false;      // Reset the flag
+    current_target_ptr = NULL;   // Clear the pointer
     }
 }
 
@@ -197,7 +238,9 @@ void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
      plot_right_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
 }
 
-//Custom Functions
+/* CUSTOM FUNCTIONS*/
+
+// A function that can be used to check a box automatically to plot data
 void PlotData(int data_name) {
     if (data_name == LeftDistance) {
         lv_obj_add_state(ui_PlotLeftDistanceCheckbox, LV_STATE_CHECKED);
@@ -210,14 +253,6 @@ void PlotData(int data_name) {
     } else if (data_name == ArmEncoder) {
         lv_obj_add_state(ui_PlotArmEncCheckbox, LV_STATE_CHECKED);
     }
-}
-
-void SetKp(double Kp_value) {
-    Kp = Kp_value;
-}
-
-void SetKi(double Ki_value) {
-    Ki = Ki_value;
 }
 
 void ClearSeries(lv_chart_series_t * series) {
@@ -244,6 +279,9 @@ void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const cha
         int *i_ptr = (int *)value;
         snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%d", *i_ptr);
     }
+
+    current_target_ptr = value;  // Set the target pointer
+    numpad_is_open = true;       // Set the flag
 
     lv_obj_set_style_text_color(numpad_ctx.target_label, lv_color_hex(0xF44336), LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -368,23 +406,37 @@ void SetPlottingRate(int rate_ms) {
     }
 }
 
-// A function to set the point count based on a given value
-void SetPointCount(int count) {
-    if (!ui_PointCountDropdown) return;
+// A function students can use to configure a variable adjustment slot
+void ConfigSlot(int slot_num, double * var, const char * name) {
+    int index = slot_num - 1;
+    if (index < 0 || index >= 3) return;
 
-    // 1. Find closest index and update UI
-    int idx = FindClosestDropdownIndex(ui_PointCountDropdown, count);
-    lv_dropdown_set_selected(ui_PointCountDropdown, idx);
+    variable_slots[index].var_ptr = var;
+    strncpy(variable_slots[index].name, name, 31);
+    variable_slots[index].active = true;
 
-    // 2. Get the string of the snapped value
-    char buf[16];
-    lv_dropdown_get_selected_str(ui_PointCountDropdown, buf, sizeof(buf));
-    point_count = atoi(buf);
+    // Only update the label if it's already been linked to a UI object
+    if (variable_slots[index].slot_label != NULL) {
+        // %f works for doubles in printf/fmt, but %lf is more explicit
+        lv_label_set_text_fmt(variable_slots[index].slot_label, "%s: %.3lf", name, *var);
+    }
+}
 
-    // 3. Update the chart hardware
-    if (ui_Chart) {
-        lv_chart_set_point_count(ui_Chart, point_count);
-        lv_chart_refresh(ui_Chart); // Force a redraw to show the new size
+void RefreshVariableLabels(lv_timer_t * t) {
+for (int i = 0; i < 3; i++) {
+        if (!variable_slots[i].active || 
+            variable_slots[i].var_ptr == NULL || 
+            variable_slots[i].slot_label == NULL) {
+            continue; 
+        }
+
+        if (numpad_is_open && (current_target_ptr == (void*)variable_slots[i].var_ptr)) {
+            continue; 
+        }
+
+        // Dereference as double
+        lv_label_set_text_fmt(variable_slots[i].slot_label, "%s: %.3lf", 
+                             variable_slots[i].name, *variable_slots[i].var_ptr);
     }
 }
 
@@ -397,12 +449,13 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_bg_color(ui_SettingsScreen, lv_color_hex(0x0C0C48), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_SettingsScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_AdjustControllerGainsLabel = lv_label_create(ui_SettingsScreen);
-    lv_obj_set_width(ui_AdjustControllerGainsLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_AdjustControllerGainsLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_AdjustControllerGainsLabel, 35);
-    lv_obj_set_y(ui_AdjustControllerGainsLabel, 10);
-    lv_label_set_text(ui_AdjustControllerGainsLabel, "Adjust Controller Gains:");
+    ui_AdjustValuesLabel = lv_label_create(ui_SettingsScreen);
+    lv_obj_set_width(ui_AdjustValuesLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustValuesLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_AdjustValuesLabel, -115);
+    lv_obj_set_y(ui_AdjustValuesLabel, 10);
+    lv_obj_set_align(ui_AdjustValuesLabel, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_AdjustValuesLabel, "Adjust Values:");
 
     ui_DisplaySeriesLabel = lv_label_create(ui_SettingsScreen);
     lv_obj_set_width(ui_DisplaySeriesLabel, LV_SIZE_CONTENT);   /// 1
@@ -464,7 +517,7 @@ void ui_SettingsScreen_screen_init(void)
     ui_BackToMainButton = lv_button_create(ui_SettingsScreen);
     lv_obj_set_width(ui_BackToMainButton, 160);
     lv_obj_set_height(ui_BackToMainButton, 50);
-    lv_obj_set_x(ui_BackToMainButton, -40);
+    lv_obj_set_x(ui_BackToMainButton, -35);
     lv_obj_set_y(ui_BackToMainButton, -10);
     lv_obj_set_align(ui_BackToMainButton, LV_ALIGN_BOTTOM_RIGHT);
     lv_obj_add_flag(ui_BackToMainButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
@@ -483,65 +536,95 @@ void ui_SettingsScreen_screen_init(void)
 
     ui_AdjustGainsContainer = lv_obj_create(ui_SettingsScreen);
     lv_obj_remove_style_all(ui_AdjustGainsContainer);
-    lv_obj_set_width(ui_AdjustGainsContainer, 200);
-    lv_obj_set_height(ui_AdjustGainsContainer, 80);
-    lv_obj_set_x(ui_AdjustGainsContainer, 20);
-    lv_obj_set_y(ui_AdjustGainsContainer, 25);
+    lv_obj_set_width(ui_AdjustGainsContainer, 250);
+    lv_obj_set_height(ui_AdjustGainsContainer, 160);
+    lv_obj_set_x(ui_AdjustGainsContainer, 0);
+    lv_obj_set_y(ui_AdjustGainsContainer, 20);
     lv_obj_remove_flag(ui_AdjustGainsContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_KpLabel = lv_label_create(ui_AdjustGainsContainer);
-    lv_obj_set_width(ui_KpLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KpLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_KpLabel, 10);
-    lv_obj_set_y(ui_KpLabel, 10);
-    lv_label_set_text(ui_KpLabel, "Kp = 0.0");
+    ui_Slot1Label = lv_label_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_Slot1Label, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Slot1Label, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Slot1Label, -40);
+    lv_obj_set_y(ui_Slot1Label, 27);
+    lv_obj_set_align(ui_Slot1Label, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_Slot1Label, "Slot1 = 0.0");
 
-    ui_KiLabel = lv_label_create(ui_AdjustGainsContainer);
-    lv_obj_set_width(ui_KiLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_KiLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_KiLabel, -13);
-    lv_obj_set_y(ui_KiLabel, 10);
-    lv_obj_set_align(ui_KiLabel, LV_ALIGN_TOP_RIGHT);
-    lv_label_set_text(ui_KiLabel, "Ki = 0.0");
+    ui_Slot2Label = lv_label_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_Slot2Label, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Slot2Label, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Slot2Label, -40);
+    lv_obj_set_y(ui_Slot2Label, 77);
+    lv_obj_set_align(ui_Slot2Label, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_Slot2Label, "Slot2 = 0.0");
 
-    ui_AdjustKpButton = lv_button_create(ui_AdjustGainsContainer);
-    lv_obj_set_width(ui_AdjustKpButton, 80);
-    lv_obj_set_height(ui_AdjustKpButton, 40);
-    lv_obj_set_x(ui_AdjustKpButton, 0);
-    lv_obj_set_y(ui_AdjustKpButton, 30);
-    lv_obj_add_flag(ui_AdjustKpButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_remove_flag(ui_AdjustKpButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_AdjustKpButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_AdjustKpButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(ui_AdjustKpButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(ui_AdjustKpButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(ui_AdjustKpButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_Slot3Label = lv_label_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_Slot3Label, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Slot3Label, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Slot3Label, -40);
+    lv_obj_set_y(ui_Slot3Label, 127);
+    lv_obj_set_align(ui_Slot3Label, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_Slot3Label, "Slot3 = 0.0");
 
-    ui_AdjustKpButtonLabel = lv_label_create(ui_AdjustKpButton);
-    lv_obj_set_width(ui_AdjustKpButtonLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_AdjustKpButtonLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_AdjustKpButtonLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_AdjustKpButtonLabel, "Adjust");
+    ui_Slot1Button = lv_button_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_Slot1Button, 80);
+    lv_obj_set_height(ui_Slot1Button, 40);
+    lv_obj_set_x(ui_Slot1Button, 0);
+    lv_obj_set_y(ui_Slot1Button, 15);
+    lv_obj_set_align(ui_Slot1Button, LV_ALIGN_TOP_RIGHT);
+    lv_obj_add_flag(ui_Slot1Button, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Slot1Button, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Slot1Button, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Slot1Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_Slot1Button, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_Slot1Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Slot1Button, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_AdjustKiButton = lv_button_create(ui_AdjustGainsContainer);
-    lv_obj_set_width(ui_AdjustKiButton, 80);
-    lv_obj_set_height(ui_AdjustKiButton, 40);
-    lv_obj_set_x(ui_AdjustKiButton, 0);
-    lv_obj_set_y(ui_AdjustKiButton, 30);
-    lv_obj_set_align(ui_AdjustKiButton, LV_ALIGN_TOP_RIGHT);
-    lv_obj_add_flag(ui_AdjustKiButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_remove_flag(ui_AdjustKiButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_AdjustKiButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_AdjustKiButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(ui_AdjustKiButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(ui_AdjustKiButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(ui_AdjustKiButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_AdjustSlot1Label = lv_label_create(ui_Slot1Button);
+    lv_obj_set_width(ui_AdjustSlot1Label, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustSlot1Label, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AdjustSlot1Label, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AdjustSlot1Label, "Adjust");
 
-    ui_AdjustKiButtonLabel = lv_label_create(ui_AdjustKiButton);
-    lv_obj_set_width(ui_AdjustKiButtonLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_AdjustKiButtonLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_AdjustKiButtonLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_AdjustKiButtonLabel, "Adjust");
+    ui_Slot2Button = lv_button_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_Slot2Button, 80);
+    lv_obj_set_height(ui_Slot2Button, 40);
+    lv_obj_set_x(ui_Slot2Button, 0);
+    lv_obj_set_y(ui_Slot2Button, 65);
+    lv_obj_set_align(ui_Slot2Button, LV_ALIGN_TOP_RIGHT);
+    lv_obj_add_flag(ui_Slot2Button, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Slot2Button, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Slot2Button, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Slot2Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_Slot2Button, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_Slot2Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Slot2Button, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_AdjustSlot2Label = lv_label_create(ui_Slot2Button);
+    lv_obj_set_width(ui_AdjustSlot2Label, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustSlot2Label, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AdjustSlot2Label, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AdjustSlot2Label, "Adjust");
+
+    ui_Slot3Button = lv_button_create(ui_AdjustGainsContainer);
+    lv_obj_set_width(ui_Slot3Button, 80);
+    lv_obj_set_height(ui_Slot3Button, 40);
+    lv_obj_set_x(ui_Slot3Button, 0);
+    lv_obj_set_y(ui_Slot3Button, 115);
+    lv_obj_set_align(ui_Slot3Button, LV_ALIGN_TOP_RIGHT);
+    lv_obj_add_flag(ui_Slot3Button, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_Slot3Button, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Slot3Button, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Slot3Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_Slot3Button, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_Slot3Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Slot3Button, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_AdjustSlot3Label = lv_label_create(ui_Slot3Button);
+    lv_obj_set_width(ui_AdjustSlot3Label, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AdjustSlot3Label, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AdjustSlot3Label, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AdjustSlot3Label, "Adjust");
 
     ui_NumPad = lv_obj_create(ui_SettingsScreen);
     lv_obj_set_width(ui_NumPad, 220);
@@ -741,69 +824,31 @@ void ui_SettingsScreen_screen_init(void)
 
     ui_GraphSettingsContainer = lv_obj_create(ui_SettingsScreen);
     lv_obj_remove_style_all(ui_GraphSettingsContainer);
-    lv_obj_set_width(ui_GraphSettingsContainer, 200);
-    lv_obj_set_height(ui_GraphSettingsContainer, 140);
-    lv_obj_set_x(ui_GraphSettingsContainer, 20);
-    lv_obj_set_y(ui_GraphSettingsContainer, 0);
+    lv_obj_set_width(ui_GraphSettingsContainer, 250);
+    lv_obj_set_height(ui_GraphSettingsContainer, 60);
     lv_obj_set_align(ui_GraphSettingsContainer, LV_ALIGN_BOTTOM_LEFT);
     lv_obj_remove_flag(ui_GraphSettingsContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_GraphSettingsLabel = lv_label_create(ui_GraphSettingsContainer);
-    lv_obj_set_width(ui_GraphSettingsLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_GraphSettingsLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_GraphSettingsLabel, 0);
-    lv_obj_set_y(ui_GraphSettingsLabel, 8);
-    lv_obj_set_align(ui_GraphSettingsLabel, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_GraphSettingsLabel, "Graph Settings:");
-    lv_obj_set_style_text_decor(ui_GraphSettingsLabel, LV_TEXT_DECOR_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_PointCountLabel = lv_label_create(ui_GraphSettingsContainer);
-    lv_obj_set_width(ui_PointCountLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_PointCountLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PointCountLabel, 17);
-    lv_obj_set_y(ui_PointCountLabel, 35);
-    lv_label_set_text(ui_PointCountLabel, "Point \nCount:");
-    lv_obj_set_style_text_align(ui_PointCountLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_PointCountLabel, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_PlottingRateLabel = lv_label_create(ui_GraphSettingsContainer);
     lv_obj_set_width(ui_PlottingRateLabel, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlottingRateLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PlottingRateLabel, -3);
-    lv_obj_set_y(ui_PlottingRateLabel, 35);
-    lv_obj_set_align(ui_PlottingRateLabel, LV_ALIGN_TOP_RIGHT);
-    lv_label_set_text(ui_PlottingRateLabel, "Plotting \nRate (ms):");
+    lv_obj_set_x(ui_PlottingRateLabel, -40);
+    lv_obj_set_y(ui_PlottingRateLabel, 15);
+    lv_obj_set_align(ui_PlottingRateLabel, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_PlottingRateLabel, "Plotting Rate (ms):");
     lv_obj_set_style_text_align(ui_PlottingRateLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_AdjustKpButton, ui_event_AdjustKpButton, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_AdjustKiButton, ui_event_AdjustKiButton, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ButtonDone, ui_event_ButtonDone, LV_EVENT_ALL, NULL);
-
-    ui_PointCountDropdown = lv_dropdown_create(ui_GraphSettingsContainer);
-    lv_dropdown_set_options(ui_PointCountDropdown, "10\n20\n40\n50\n60\n80\n100");
-    lv_obj_set_width(ui_PointCountDropdown, 80);
-    lv_obj_set_height(ui_PointCountDropdown, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PointCountDropdown, 0);
-    lv_obj_set_y(ui_PointCountDropdown, 70);
-    lv_obj_add_flag(ui_PointCountDropdown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_set_style_border_color(ui_PointCountDropdown, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(ui_PointCountDropdown, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(ui_PointCountDropdown, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_dropdown_set_selected(ui_PointCountDropdown, 3);
-
     ui_PlottingRateDropdown = lv_dropdown_create(ui_GraphSettingsContainer);
-    lv_dropdown_set_options(ui_PlottingRateDropdown, "50\n100\n200\n300\n400\n500\n1000");
+    lv_dropdown_set_options(ui_PlottingRateDropdown, "50\n100\n200\n500\n1000");
     lv_obj_set_width(ui_PlottingRateDropdown, 80);
     lv_obj_set_height(ui_PlottingRateDropdown, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlottingRateDropdown, 0);
-    lv_obj_set_y(ui_PlottingRateDropdown, 70);
+    lv_obj_set_y(ui_PlottingRateDropdown, 5);
     lv_obj_set_align(ui_PlottingRateDropdown, LV_ALIGN_TOP_RIGHT);
     lv_obj_add_flag(ui_PlottingRateDropdown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_set_style_border_color(ui_PlottingRateDropdown, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_PlottingRateDropdown, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_PlottingRateDropdown, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_dropdown_set_selected(ui_PlottingRateDropdown, 1);
 
     ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
     lv_obj_set_width(ui_StopPanel2, 480);
@@ -844,18 +889,24 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_add_event_cb(ui_Button9,   NumpadButtonEvent, LV_EVENT_CLICKED, "9");
     lv_obj_add_event_cb(ui_ButtonDot, NumpadButtonEvent, LV_EVENT_CLICKED, ".");
     lv_obj_add_event_cb(ui_ButtonDel, NumpadButtonEvent, LV_EVENT_CLICKED, "DEL");
-    //Event callback for dropdowns
-    lv_obj_add_event_cb(ui_PointCountDropdown, ui_event_PointCountDropdown, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(ui_ButtonDone, ui_event_ButtonDone, LV_EVENT_ALL, NULL);
+    //Event callback for dropdown
     lv_obj_add_event_cb(ui_PlottingRateDropdown, ui_event_PlottingRateDropdown, LV_EVENT_VALUE_CHANGED, NULL);
+    //Event callbacks for adjust buttons
+    lv_obj_add_event_cb(ui_Slot1Button, ui_event_Slot1Button, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Slot2Button, ui_event_Slot2Button, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Slot3Button, ui_event_Slot3Button, LV_EVENT_ALL, NULL);
+
+    lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
 }
 
 void ui_SettingsScreen_screen_destroy(void)
 {
     if(ui_SettingsScreen) lv_obj_del(ui_SettingsScreen);
 
-    // NULL screen variables
+// NULL screen variables
     ui_SettingsScreen = NULL;
-    ui_AdjustControllerGainsLabel = NULL;
+    ui_AdjustValuesLabel = NULL;
     ui_DisplaySeriesLabel = NULL;
     ui_CheckboxesContainer = NULL;
     ui_PlotLeftEncCheckbox = NULL;
@@ -866,12 +917,15 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_BackToMainButton = NULL;
     ui_GoBackLabel = NULL;
     ui_AdjustGainsContainer = NULL;
-    ui_KpLabel = NULL;
-    ui_KiLabel = NULL;
-    ui_AdjustKpButton = NULL;
-    ui_AdjustKpButtonLabel = NULL;
-    ui_AdjustKiButton = NULL;
-    ui_AdjustKiButtonLabel = NULL;
+    ui_Slot1Label = NULL;
+    ui_Slot2Label = NULL;
+    ui_Slot3Label = NULL;
+    ui_Slot1Button = NULL;
+    ui_AdjustSlot1Label = NULL;
+    ui_Slot2Button = NULL;
+    ui_AdjustSlot2Label = NULL;
+    ui_Slot3Button = NULL;
+    ui_AdjustSlot3Label = NULL;
     ui_NumPad = NULL;
     ui_Button1 = NULL;
     ui_ButtonText1 = NULL;
@@ -900,11 +954,8 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_ButtonDone = NULL;
     ui_ButtonTextDone = NULL;
     ui_GraphSettingsContainer = NULL;
-    ui_GraphSettingsLabel = NULL;
-    ui_PointCountLabel = NULL;
     ui_PlottingRateLabel = NULL;
+    ui_PlottingRateDropdown = NULL;
     ui_StopPanel2 = NULL;
     ui_StopText2 = NULL;
-    ui_PointCountDropdown = NULL;
-    ui_PlottingRateDropdown = NULL;
 }

@@ -41,6 +41,10 @@ lv_obj_t * ui_Plot1Label = NULL;
 lv_obj_t * ui_Plot2Label = NULL;
 lv_obj_t * ui_Plot3Label = NULL;
 lv_obj_t * ui_Plot4Label = NULL;
+lv_obj_t * ui_PausedPanel =  NULL;
+lv_obj_t * ui_PausedText = NULL;
+lv_obj_t * ui_ResumeButton = NULL;
+lv_obj_t * ui_ResumeText = NULL;
 
 
 // CUSTOM VARIABLES
@@ -502,6 +506,50 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_color(ui_StopText, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_StopText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+
+    ui_PausedPanel = lv_obj_create(ui_MainScreen);
+    lv_obj_set_width(ui_PausedPanel, 480);
+    lv_obj_set_height(ui_PausedPanel, 30);
+    lv_obj_set_x(ui_PausedPanel, 0);
+    lv_obj_set_y(ui_PausedPanel, -25);
+    lv_obj_set_align(ui_PausedPanel, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PausedPanel, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_remove_flag(ui_PausedPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_PausedPanel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_PausedPanel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_PausedPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_PausedText = lv_label_create(ui_PausedPanel);
+    lv_obj_set_width(ui_PausedText, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PausedText, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_PausedText, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_PausedText, "Program Paused");
+    lv_obj_set_style_text_color(ui_PausedText, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_PausedText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ResumeButton = lv_button_create(ui_MainScreen);
+    lv_obj_set_width(ui_ResumeButton, 95);
+    lv_obj_set_height(ui_ResumeButton, 40);
+    lv_obj_set_x(ui_ResumeButton, 25);
+    lv_obj_set_y(ui_ResumeButton, -5);
+    lv_obj_set_align(ui_ResumeButton, LV_ALIGN_BOTTOM_LEFT);
+    lv_obj_add_flag(ui_ResumeButton, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_ResumeButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ResumeButton, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ResumeButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_ResumeButton, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_ResumeButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_ResumeButton, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ResumeText = lv_label_create(ui_ResumeButton);
+    lv_obj_set_width(ui_ResumeText, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ResumeText, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ResumeText, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ResumeText, "Resume");
+    lv_obj_set_style_text_align(ui_ResumeText, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ResumeText, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    //Event callbacks for buttons and switch
     lv_obj_add_event_cb(ui_Switch, ui_event_Switch, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingsButton, ui_event_SettingsButton, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_OnScreenStopButton, ui_event_OnScreenStopButton, LV_EVENT_ALL, NULL);
@@ -543,4 +591,8 @@ void ui_MainScreen_screen_destroy(void)
      ui_Plot2Label = NULL;
      ui_Plot3Label = NULL;
      ui_Plot4Label = NULL;
+     ui_PausedPanel =  NULL;
+     ui_PausedText = NULL;
+     ui_ResumeButton = NULL;
+     ui_ResumeText = NULL;
 }

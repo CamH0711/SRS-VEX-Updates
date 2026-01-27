@@ -28,7 +28,7 @@ lv_obj_t * ui____initial_actions0;
 
 lv_timer_t *graph_timer = NULL;
 lv_timer_t *chart_resize_timer = NULL;
-lv_timer_t *slider_labels_timer = NULL;
+lv_timer_t *adjustment_labels_timer = NULL;
 lv_timer_t *print_update_timer = NULL;
 lv_timer_t *stop_button_timer = NULL;
 lv_timer_t *update_point_count_timer = NULL;
@@ -46,12 +46,17 @@ void ui_init(void)
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_MainScreen);
 
+    // Initialize variable adjustment slots
+    variable_slots[0].slot_label = ui_Slot1Label;
+    variable_slots[1].slot_label = ui_Slot2Label;
+    variable_slots[2].slot_label = ui_Slot3Label;
+
     //Custom initial actions & timers
     init_plot_series();
     init_plot_slots();
     graph_timer = lv_timer_create(GraphUpdateTask, 100, NULL);
     chart_resize_timer = lv_timer_create(ChartUpdateTask, 200, NULL);
-    slider_labels_timer = lv_timer_create(UpdateGainLabels, 50, NULL);
+    adjustment_labels_timer = lv_timer_create(RefreshVariableLabels, 50, NULL);
     print_update_timer = lv_timer_create(PrintUpdateTask, 50, NULL);
     stop_button_timer = lv_timer_create(StopButtonTask, 50, NULL);
     update_point_count_timer = lv_timer_create(UpdatePointCount, 500, NULL);

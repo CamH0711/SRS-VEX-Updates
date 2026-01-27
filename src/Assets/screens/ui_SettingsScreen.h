@@ -14,7 +14,7 @@ extern "C" {
 extern void ui_SettingsScreen_screen_init(void);
 extern void ui_SettingsScreen_screen_destroy(void);
 extern lv_obj_t * ui_SettingsScreen;
-extern lv_obj_t * ui_AdjustControllerGainsLabel;
+extern lv_obj_t * ui_AdjustValuesLabel;
 extern lv_obj_t * ui_DisplaySeriesLabel;
 extern lv_obj_t * ui_CheckboxesContainer;
 extern lv_obj_t * ui_PlotLeftEncCheckbox;
@@ -26,14 +26,18 @@ extern void ui_event_BackToMainButton(lv_event_t * e);
 extern lv_obj_t * ui_BackToMainButton;
 extern lv_obj_t * ui_GoBackLabel;
 extern lv_obj_t * ui_AdjustGainsContainer;
-extern lv_obj_t * ui_KpLabel;
-extern lv_obj_t * ui_KiLabel;
-extern void ui_event_AdjustKpButton(lv_event_t * e);
-extern lv_obj_t * ui_AdjustKpButton;
-extern lv_obj_t * ui_AdjustKpButtonLabel;
-extern void ui_event_AdjustKiButton(lv_event_t * e);
-extern lv_obj_t * ui_AdjustKiButton;
-extern lv_obj_t * ui_AdjustKiButtonLabel;
+extern lv_obj_t * ui_Slot1Label;
+extern lv_obj_t * ui_Slot2Label;
+extern lv_obj_t * ui_Slot3Label;
+extern void ui_event_Slot1Button(lv_event_t * e);
+extern lv_obj_t * ui_Slot1Button;
+extern lv_obj_t * ui_AdjustSlot1Label;
+extern void ui_event_Slot2Button(lv_event_t * e);
+extern lv_obj_t * ui_Slot2Button;
+extern lv_obj_t * ui_AdjustSlot2Label;
+extern void ui_event_Slot3Button(lv_event_t * e);
+extern lv_obj_t * ui_Slot3Button;
+extern lv_obj_t * ui_AdjustSlot3Label;
 extern lv_obj_t * ui_NumPad;
 extern lv_obj_t * ui_Button1;
 extern lv_obj_t * ui_ButtonText1;
@@ -63,10 +67,7 @@ extern void ui_event_ButtonDone(lv_event_t * e);
 extern lv_obj_t * ui_ButtonDone;
 extern lv_obj_t * ui_ButtonTextDone;
 extern lv_obj_t * ui_GraphSettingsContainer;
-extern lv_obj_t * ui_GraphSettingsLabel;
-extern lv_obj_t * ui_PointCountLabel;
 extern lv_obj_t * ui_PlottingRateLabel;
-extern lv_obj_t * ui_PointCountDropdown;
 extern lv_obj_t * ui_PlottingRateDropdown;
 extern lv_obj_t * ui_StopPanel2;
 extern lv_obj_t * ui_StopText2;
@@ -82,13 +83,14 @@ extern bool plot_left_dist_enabled;
 extern bool plot_right_dist_enabled;
 extern int point_count;
 extern int plotting_rate;
-extern double Kp;
-extern double Ki;
+
+
 /* Number Pad related */
 typedef enum {
-    NUMPAD_TYPE_DOUBLE,
-    NUMPAD_TYPE_INT
+    NUMPAD_TYPE_INT,
+    NUMPAD_TYPE_DOUBLE
 } numpad_data_type_t;
+
 typedef struct {
     void *target_value;       // Void pointer can hold int* OR double*
     numpad_data_type_t type;  // Remembers which type it is
@@ -100,7 +102,20 @@ typedef struct {
     int max_decimals;
 } numpad_ctx_t;
 
- extern numpad_ctx_t numpad_ctx;
+extern numpad_ctx_t numpad_ctx;
+
+/* Adjust Slots Related */
+typedef struct {
+    double * var_ptr;        // Pointer to the student's variable
+    char name[32];          // Name to display (e.g., "Kp", "Arm Target")
+    lv_obj_t * slot_label;  // The UI label showing "Name: Value"
+    bool active;            // Whether this slot is in use
+} variable_slot_t;
+
+extern variable_slot_t variable_slots[3];
+extern bool numpad_is_open;       // Tracks if the Numpad is on screen
+extern void * current_target_ptr;  // Tracks exactly which variable we are editing
+
 
 // Custom Functions
 extern void ui_event_PlotUCheckbox(lv_event_t * e);
@@ -111,19 +126,16 @@ extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
 extern void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e);
 extern void ui_event_PlotRightDistanceCheckbox(lv_event_t * e);
 extern void PlotData(int sensor_name);
-extern void SetKp(double Kp_value);
-extern void SetKi(double Ki_value);
 extern void ClearSeries(lv_chart_series_t *series);
 extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
 extern void NumpadButtonEvent(lv_event_t * e);
 extern void UpdateTargetLabel(void);
 extern void UpdatePointCount(lv_timer_t *t);
-extern void ui_event_PointCountDropdown(lv_event_t * e);
 extern void ui_event_PlottingRateDropdown(lv_event_t * e);
 extern int FindClosestDropdownIndex(lv_obj_t * dropdown, int target_value);
 extern void SetPlottingRate(int rate_ms);
-extern void SetPointCount(int count);
-
+extern void ConfigSlot(int slot_num, double * var, const char * name);
+void RefreshVariableLabels(lv_timer_t * t);
 
 #ifdef __cplusplus
 } /*extern "C"*/
