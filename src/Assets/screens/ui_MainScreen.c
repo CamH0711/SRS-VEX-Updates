@@ -57,7 +57,7 @@ lv_chart_series_t *series_LeftDist = NULL;
 lv_chart_series_t *series_RightDist = NULL;
 // Global Variables for printing
 volatile bool print_panel_visible = true;
-char print_buffers[8][64];
+char print_buffers[8][51];
 bool print_dirty[8];
 
 
@@ -133,16 +133,29 @@ void update_y_axis(int min, int max)
 }
 
 void lvgl_print(int line_number, char* text, ...) {
-   if (line_number < 1 || line_number > 8) return;
+if (line_number < 1 || line_number > 8) return;
+    int index = line_number - 1;
 
     va_list args;
     va_start(args, text);
-    vsnprintf(print_buffers[line_number - 1],
-              sizeof(print_buffers[0]),
-              text, args);
+
+    // 1. Attempt to format the string into the buffer.
+    // result = total length the string WANTED to be.
+    int result = vsnprintf(print_buffers[index], 51, text, args);
+    
     va_end(args);
 
-    print_dirty[line_number - 1] = true;
+    // 2. If result is >= our limit, the string was truncated.
+    if (result >= 51) {
+        // Overwrite the last 3 visible spots with dots.
+        // Index [MAX_PRINT_CHARS] is the \0, so we go back 3 from there.
+        print_buffers[index][47] = '.';
+        print_buffers[index][48] = '.';
+        print_buffers[index][49] = '.';
+        print_buffers[index][50]     = '\0'; 
+    }
+
+    print_dirty[index] = true;
 }
 
 void ShowChart() {

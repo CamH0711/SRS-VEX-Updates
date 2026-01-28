@@ -42,7 +42,7 @@ void student_Main()
     // // SetLogRate(200);
     // ShowChart();
     // PlotData(LeftDistance);
-    driveStraight(500);
+    // driveStraight(500);
 
     // // StopDataLogging();
 
@@ -56,9 +56,10 @@ void student_Main()
     // setKp(1.0);
     // setKi(0.1);
 
-    // while(true) {
-    //     delay(100);
-    // }
+    while(true) {
+        lvgl_print(1, "Hello, this string is more than fifty characters long!! thats crazy!!!!!s");
+        delay(100);
+    }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
