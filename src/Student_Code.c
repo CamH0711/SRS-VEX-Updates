@@ -42,7 +42,7 @@ void student_Main()
     // // SetLogRate(200);
     // ShowChart();
     // PlotData(LeftDistance);
-    driveStraight(10000);
+    driveStraight(500);
 
     // // StopDataLogging();
 
@@ -108,13 +108,13 @@ void driveStraight(int distance) {
     double u, uL, uR, uDiff;
     double encoderAverage;
     double tolerance = 0.1;
-    double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
+    static double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
     
-    int gg = 10;
+    static int gg = 10;
 
     ConfigSlot(1, &Kp, TYPE_DOUBLE, "Kp");
     ConfigSlot(2, &Ki, TYPE_DOUBLE, "Ki");
-    ConfigSlot(3, &gg, TYPE_INT, "gg (test int)");
+    ConfigSlot(3, &gg, TYPE_INT, "gg (integer for testing purposes)");
 
     int i;
     

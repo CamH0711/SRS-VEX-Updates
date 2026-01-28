@@ -338,7 +338,7 @@ void UpdateTargetLabel(void)
 {
 if (numpad_ctx.target_label == NULL) return;
 
-    lv_label_set_text_fmt(numpad_ctx.target_label, "%s: %s", 
+    lv_label_set_text_fmt(numpad_ctx.target_label, "%s = %s", 
                          numpad_ctx.prefix, numpad_ctx.buffer);
 }
 
@@ -411,15 +411,22 @@ void ConfigSlot(int slot_num, void * var, numpad_data_type_t type, const char * 
 
     variable_slots[index].var_ptr = var;
     variable_slots[index].type = type;
-    strncpy(variable_slots[index].name, name, 31);
     variable_slots[index].active = true;
+
+if (strlen(name) > 16) {
+    strncpy(variable_slots[index].name, name, 13);
+    variable_slots[index].name[13] = '\0';
+    strcat(variable_slots[index].name, "...");
+} else {
+    strcpy(variable_slots[index].name, name);
+}
 
     // Initial update
     char buffer[64];
     if (type == TYPE_DOUBLE) {
-        snprintf(buffer, sizeof(buffer), "%s: %.2f", name, *(double*)var);
+        snprintf(buffer, sizeof(buffer), "%s = %.2f", name, *(double*)var);
     } else {
-        snprintf(buffer, sizeof(buffer), "%s: %d", name, *(int*)var);
+        snprintf(buffer, sizeof(buffer), "%s = %d", name, *(int*)var);
     }
     
     if (variable_slots[index].slot_label) {
@@ -429,6 +436,8 @@ void ConfigSlot(int slot_num, void * var, numpad_data_type_t type, const char * 
 
 // A timer function to refresh all variable labels
 void RefreshVariableLabels(lv_timer_t * t) {
+    if (_stopflag == 1) return; // Do not update if in stop mode
+
     for (int i = 0; i < 3; i++) {
         // Safety: skip if not active, no pointer, or no label
         if (!variable_slots[i].active || variable_slots[i].var_ptr == NULL || variable_slots[i].slot_label == NULL) {
@@ -444,11 +453,11 @@ void RefreshVariableLabels(lv_timer_t * t) {
         if (variable_slots[i].type == TYPE_DOUBLE) {
             // Cast the void pointer to double* then dereference
             double val = *(double*)variable_slots[i].var_ptr;
-            snprintf(buffer, sizeof(buffer), "%s: %.2f", variable_slots[i].name, val);
+            snprintf(buffer, sizeof(buffer), "%s = %.2f", variable_slots[i].name, val);
         } else {
             // Cast the void pointer to int* then dereference
             int val = *(int*)variable_slots[i].var_ptr;
-            snprintf(buffer, sizeof(buffer), "%s: %d", variable_slots[i].name, val);
+            snprintf(buffer, sizeof(buffer), "%s = %d", variable_slots[i].name, val);
         }
 
         lv_label_set_text(variable_slots[i].slot_label, buffer);

@@ -108,7 +108,7 @@ extern numpad_ctx_t numpad_ctx;
 typedef struct {
     void *var_ptr;        // Pointer to the student's variable
     numpad_data_type_t type; // Your enum: NUMPAD_TYPE_DOUBLE or NUMPAD_TYPE_INT
-    char name[32];          // Name to display (e.g., "Kp", "Arm Target")
+    char name[17];          // Name to display (e.g., "Kp", "Arm Target")
     lv_obj_t * slot_label;  // The UI label showing "Name: Value"
     bool active;            // Whether this slot is in use
 } variable_slot_t;
