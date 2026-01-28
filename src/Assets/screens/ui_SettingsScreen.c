@@ -107,7 +107,7 @@ void ui_event_Slot1Button(lv_event_t * e)
         // Open the Numpad targeting the stored pointer
         NumpadOpen(
             variable_slots[0].var_ptr, 
-            NUMPAD_TYPE_DOUBLE, 
+            variable_slots[0].type, 
             variable_slots[0].slot_label, 
             variable_slots[0].name, 
             6, 2
@@ -132,7 +132,7 @@ void ui_event_Slot2Button(lv_event_t * e)
         // Open the Numpad targeting the stored pointer
         NumpadOpen(
             variable_slots[1].var_ptr, 
-            NUMPAD_TYPE_DOUBLE, 
+            variable_slots[1].type, 
             variable_slots[1].slot_label, 
             variable_slots[1].name, 
             6, 2
@@ -156,7 +156,7 @@ void ui_event_Slot3Button(lv_event_t * e)
         // Open the Numpad targeting the stored pointer
         NumpadOpen(
             variable_slots[2].var_ptr, 
-            NUMPAD_TYPE_DOUBLE, 
+            variable_slots[2].type, 
             variable_slots[2].slot_label, 
             variable_slots[2].name, 
             6, 2
@@ -189,11 +189,11 @@ void ui_event_ButtonDone(lv_event_t * e)
         strcpy(numpad_ctx.buffer, "0");
     }
 
-    if (numpad_ctx.type == NUMPAD_TYPE_DOUBLE) {
+    if (numpad_ctx.type == TYPE_DOUBLE) {
         double *val = (double *)numpad_ctx.target_value;
         *val = atof(numpad_ctx.buffer); // Convert string to double
     } 
-    else if (numpad_ctx.type == NUMPAD_TYPE_INT) {
+    else if (numpad_ctx.type == TYPE_INT) {
         int *val = (int *)numpad_ctx.target_value;
         *val = atoi(numpad_ctx.buffer); // Convert string to int
     }
@@ -271,11 +271,11 @@ void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const cha
     numpad_ctx.max_decimals = max_dec;
 
     // formatting based on type
-    if (type == NUMPAD_TYPE_DOUBLE) {
+    if (type == TYPE_DOUBLE) {
         double *d_ptr = (double *)value;
         snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%.2f", *d_ptr);
     } 
-    else if (type == NUMPAD_TYPE_INT) {
+    else if (type == TYPE_INT) {
         int *i_ptr = (int *)value;
         snprintf(numpad_ctx.buffer, sizeof(numpad_ctx.buffer), "%d", *i_ptr);
     }
@@ -313,7 +313,7 @@ void NumpadButtonEvent(lv_event_t *e)
             if (decimal_ptr != NULL) return;
             
             // If this is an Integer type variable, block decimals entirely
-            if (numpad_ctx.type == NUMPAD_TYPE_INT) return;
+            if (numpad_ctx.type == TYPE_INT) return;
         }
         // 3. DECIMAL PRECISION CHECK
         // If we are currently typing digits AFTER the decimal point
@@ -336,13 +336,10 @@ void NumpadButtonEvent(lv_event_t *e)
 
 void UpdateTargetLabel(void)
 {
-    char text[32];
+if (numpad_ctx.target_label == NULL) return;
 
-    snprintf(text, sizeof(text), "%s%s",
-             numpad_ctx.prefix,
-             numpad_ctx.buffer);
-
-    lv_label_set_text(numpad_ctx.target_label, text);
+    lv_label_set_text_fmt(numpad_ctx.target_label, "%s: %s", 
+                         numpad_ctx.prefix, numpad_ctx.buffer);
 }
 
 //Timer that updates the point count based on dropdown selection
@@ -407,36 +404,54 @@ void SetPlottingRate(int rate_ms) {
 }
 
 // A function students can use to configure a variable adjustment slot
-void ConfigSlot(int slot_num, double * var, const char * name) {
+void ConfigSlot(int slot_num, void * var, numpad_data_type_t type, const char * name) {
+    
     int index = slot_num - 1;
     if (index < 0 || index >= 3) return;
 
     variable_slots[index].var_ptr = var;
+    variable_slots[index].type = type;
     strncpy(variable_slots[index].name, name, 31);
     variable_slots[index].active = true;
 
-    // Only update the label if it's already been linked to a UI object
-    if (variable_slots[index].slot_label != NULL) {
-        // %f works for doubles in printf/fmt, but %lf is more explicit
-        lv_label_set_text_fmt(variable_slots[index].slot_label, "%s: %.3lf", name, *var);
+    // Initial update
+    char buffer[64];
+    if (type == TYPE_DOUBLE) {
+        snprintf(buffer, sizeof(buffer), "%s: %.2f", name, *(double*)var);
+    } else {
+        snprintf(buffer, sizeof(buffer), "%s: %d", name, *(int*)var);
+    }
+    
+    if (variable_slots[index].slot_label) {
+        lv_label_set_text(variable_slots[index].slot_label, buffer);
     }
 }
 
+// A timer function to refresh all variable labels
 void RefreshVariableLabels(lv_timer_t * t) {
-for (int i = 0; i < 3; i++) {
-        if (!variable_slots[i].active || 
-            variable_slots[i].var_ptr == NULL || 
-            variable_slots[i].slot_label == NULL) {
+    for (int i = 0; i < 3; i++) {
+        // Safety: skip if not active, no pointer, or no label
+        if (!variable_slots[i].active || variable_slots[i].var_ptr == NULL || variable_slots[i].slot_label == NULL) {
             continue; 
         }
 
+        // GUARDRAIL: Do not overwrite the label if the student is currently typing!
         if (numpad_is_open && (current_target_ptr == (void*)variable_slots[i].var_ptr)) {
             continue; 
         }
 
-        // Dereference as double
-        lv_label_set_text_fmt(variable_slots[i].slot_label, "%s: %.3lf", 
-                             variable_slots[i].name, *variable_slots[i].var_ptr);
+        char buffer[64];
+        if (variable_slots[i].type == TYPE_DOUBLE) {
+            // Cast the void pointer to double* then dereference
+            double val = *(double*)variable_slots[i].var_ptr;
+            snprintf(buffer, sizeof(buffer), "%s: %.2f", variable_slots[i].name, val);
+        } else {
+            // Cast the void pointer to int* then dereference
+            int val = *(int*)variable_slots[i].var_ptr;
+            snprintf(buffer, sizeof(buffer), "%s: %d", variable_slots[i].name, val);
+        }
+
+        lv_label_set_text(variable_slots[i].slot_label, buffer);
     }
 }
 
@@ -869,6 +884,12 @@ void ui_SettingsScreen_screen_init(void)
     lv_label_set_text(ui_StopText2, "STOP BUTTON PRESSED!");
     lv_obj_set_style_text_color(ui_StopText2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_StopText2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+
+    // Initialize variable adjustment slots
+    variable_slots[0].slot_label = ui_Slot1Label;
+    variable_slots[1].slot_label = ui_Slot2Label;
+    variable_slots[2].slot_label = ui_Slot3Label;
 
     // Event callbacks for graph series checkboxes
     lv_obj_add_event_cb(ui_PlotLeftEncCheckbox, ui_event_PlotLeftEncCheckbox, LV_EVENT_ALL, NULL);

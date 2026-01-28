@@ -110,9 +110,11 @@ void driveStraight(int distance) {
     double tolerance = 0.1;
     double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
     
-    ConfigSlot(1, &Kp, "Kp");
-    ConfigSlot(2, &Ki, "Ki");
-    ConfigSlot(3, &Kp_straight, "Kp_Straight");
+    int gg = 10;
+
+    ConfigSlot(1, &Kp, TYPE_DOUBLE, "Kp");
+    ConfigSlot(2, &Ki, TYPE_DOUBLE, "Ki");
+    ConfigSlot(3, &gg, TYPE_INT, "gg (test int)");
 
     int i;
     

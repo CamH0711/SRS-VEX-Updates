@@ -46,11 +46,6 @@ void ui_init(void)
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_MainScreen);
 
-    // Initialize variable adjustment slots
-    variable_slots[0].slot_label = ui_Slot1Label;
-    variable_slots[1].slot_label = ui_Slot2Label;
-    variable_slots[2].slot_label = ui_Slot3Label;
-
     //Custom initial actions & timers
     init_plot_series();
     init_plot_slots();
