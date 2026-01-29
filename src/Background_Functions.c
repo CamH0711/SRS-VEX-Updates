@@ -28,8 +28,9 @@
  int observed_min = INT32_MAX;
  int observed_max = INT32_MIN;
  int shrink_counter = 0;
+ bool program_ended_normally_flag = false;
 
- // State variables
+ // State variables for data logging
  bool is_logging = false;
  bool logger_is_busy = false;
  uint32_t log_start_timestamp = 0;
@@ -38,13 +39,6 @@
  plot_registry_t session_plots[MAX_CUSTOM_PLOTS];
  int session_plot_count = 0;
  FILE* temp_log_file = NULL;
-
-//  logger_ctx_t current_log = {0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}};
-//  int log_rate = 100;
-//  FILE *log_file = NULL;
-//  bool is_logging = false;
-//  bool logger_is_busy = false;
-//  uint32_t log_start_timestamp = 0;
 
 
 
@@ -345,12 +339,7 @@
 
     if (is_logging) StopDataLogging();
 
-    if (_stopflag == 0) {
-        lv_label_set_text(ui_StopText, "Program ended normally");
-        lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
-        lv_label_set_text(ui_StopText2, "Program ended normally");
-        lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
-    }
+    program_ended_normally_flag = true;
 
     lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
     lv_timer_set_repeat_count(t, 1);
@@ -521,6 +510,33 @@
             }
         }
 
+        if (plot_slots[i].active && plot_slots[i].source == PLOT_CUSTOM) {
+            // Increment the counter every time the UI task runs
+            plot_slots[i].cycles_since_update++;
+
+            // If 10 UI cycles pass without a CustomPlot() call, the slot is abandoned
+            if (plot_slots[i].cycles_since_update >= 2) {
+                
+                // 1. Clear UI
+                ClearSeries(plot_slots[i].series);
+                // lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
+                lv_obj_add_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(plot_slots[i].legend_colour_box, LV_OBJ_FLAG_HIDDEN);
+
+                // 2. Deactivate Slot
+                plot_slots[i].active = false;
+                plot_slots[i].source = PLOT_NONE;
+                
+                // 3. Sync with Logger: Tell it this name is no longer recording
+                RegisterPlot(plot_slots[i].last_recorded_name, &plot_slots[i].custom_value, false, i);
+                
+                // Clear the cached name so it can be re-registered fresh later
+                memset(plot_slots[i].last_recorded_name, 0, 32);
+                
+                continue; 
+            }
+        }
+
         /* SYNC WITH LOGGER:
            Whenever we encounter a custom plot slot, we update the session registry.
            If 'active' is true, the logger records the value. 
@@ -570,10 +586,26 @@ void CustomPlot(int slot, int value, const char * name) {
 
     if (index < 0 || index >= MAX_PLOT_SLOTS) return;
 
-    // Set source to external so UpdatePlotSlots() knows to leave it alone
+    // Reset the abandonment counter
+    plot_slots[index].cycles_since_update = 0;
+
+    // Immediate Reset if the Name Changed
+    if (strcmp(plot_slots[index].last_recorded_name, name) != 0) {
+        ClearSeries(plot_slots[index].series);
+        strncpy(plot_slots[index].last_recorded_name, name, 31);
+        
+        // Reset Y Axis to default range
+        // lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
+
+        // Sync with logger: tell it the OLD name is now inactive
+        RegisterPlot(name, &plot_slots[index].custom_value, true, index);
+    }
+
+    // Update the plot_slots fields
     plot_slots[index].source = PLOT_CUSTOM;
     plot_slots[index].active = true;
     plot_slots[index].custom_value = value;
+    plot_slots[index].needs_ui_refresh = true;
 
     // Copy the string safely into our buffer
     strncpy(plot_slots[index].custom_name, name, 31);
@@ -581,9 +613,6 @@ void CustomPlot(int slot, int value, const char * name) {
 
     // Register new variable for data logging
     RegisterPlot(name, &plot_slots[index].custom_value, true, index);
-
-    // Tell the UI task it needs to update the label text
-    plot_slots[index].needs_ui_refresh = true;
 }
 
 /**
@@ -716,6 +745,21 @@ void ChartUpdateTask(lv_timer_t* timer) {
   * @param t (lv_timer_t) Pointer to the timer object
   */
 void ExitProgram(lv_timer_t * t) { exit(0); }
+
+/**
+  * @brief A timer task that displays the Program ended banner.
+  * @param t (lv_timer_t) Pointer to the timer object
+  */
+void ProgramEndedBannerTask(lv_timer_t * t) {
+
+    if (_stopflag == 0 && program_ended_normally_flag) {
+        lv_label_set_text(ui_StopText, "Program ended normally");
+        lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
+        lv_label_set_text(ui_StopText2, "Program ended normally");
+        lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
+    }
+
+}
 
 /**
   * @brief A timer function that constantly makes sure the print lines

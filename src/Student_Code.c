@@ -43,7 +43,7 @@ void student_Main()
     ShowChart();
     // PlotData(LeftDistance);
     driveStraight(1000);
-    turnAngle(90, 3, 1);
+    turnAngle(180, 2, 1);
     driveStraight(1000);
 
 

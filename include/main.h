@@ -113,6 +113,7 @@
  extern bool chart_needs_resize;
  void PrintUpdateTask(lv_timer_t * t);
  void StopButtonTask(lv_timer_t *t);
+ void ProgramEndedBannerTask(lv_timer_t * t);
 
  /* Function declarations from Background_Tasks.c */
  void monitorMotorPower(void* param);
@@ -123,6 +124,7 @@
  /* Global variables */
  extern int _stopflag;              //1 || 0 - Used to control whether or not robot is to be stopped or in stop mode.
  extern int _arm_State;             // Variable that defines the state of the robot arm (-1 at lower limit, 1 at upper limit, and 0 in between)
+ extern bool program_ended_normally_flag;
 
 // New functions/global variables for SRS
  extern volatile bool stop_requested;
@@ -151,6 +153,8 @@ typedef struct {
     int custom_value;
     char custom_name[32];
     bool needs_ui_refresh;
+    char last_recorded_name[32];
+    int cycles_since_update;
 } plot_slot_t;
 
  extern plot_slot_t plot_slots[MAX_PLOT_SLOTS];
