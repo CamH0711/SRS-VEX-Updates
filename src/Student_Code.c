@@ -38,15 +38,14 @@ void student_Main()
 { 
 
 
-    // StartDataLogging("Robot_Test");
+    StartDataLogging("New_Logging_Method_Testing");
     // // SetLogRate(200);
-    // ShowChart();
+    ShowChart();
     // PlotData(LeftDistance);
-    // driveStraight(500);
+    driveStraight(1000);
+    turnAngle(90, 3, 1);
+    driveStraight(1000);
 
-    // // StopDataLogging();
-
-    // driveStraight(-500);
 
     // SetPointCount(-9999);
     // SetPlottingRate(-9999);
@@ -56,10 +55,10 @@ void student_Main()
     // setKp(1.0);
     // setKi(0.1);
 
-    while(true) {
-        lvgl_print(1, "Hello, this string is more than fifty characters long!! thats crazy!!!!!s");
-        delay(100);
-    }
+    // while(true) {
+    //     lvgl_print(1, "Hello, this string is more than fifty characters long!! thats crazy!!!!!s");
+    //     delay(100);
+    // }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
@@ -167,7 +166,8 @@ void driveStraight(int distance) {
         lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
         lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
 
-        CustomPlot(4, (int) u, "Control Effort");
+        CustomPlot(1, (int) u, "Control Effort");
+        CustomPlot(2, error, "Error");
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
     
@@ -193,6 +193,57 @@ int driveToObject(int finalDistance) {
 	driveStraight(distance);
 
 	return distance;
+}
+
+void turnAngle(int targetAngle, int Kp, int tolerance){
+    
+	//Initialise Variables
+    double error = 0, controlEffort, currentAngle;
+    double averageCount;
+	double uL, uR;
+	double errorSum = 0, Ki = 0.1;
+	double encError;
+	double Kpe = 0.1;	
+	double uDiff;
+	double prevError = 0, errorChange;
+
+    // reset encoder counts
+    resetEncoder(LeftEncoder);
+    resetEncoder(RightEncoder);
+
+    do{
+		prevError = error;
+        // get average of encoder counts and use to estimate current angle
+        averageCount = (double)(readSensor(RightEncoder) - readSensor(LeftEncoder))/2.0;
+        currentAngle = 0.17 * averageCount;
+
+		// calculate u (PI Controller)
+        error = targetAngle - currentAngle;
+        controlEffort = Kp * error + Ki * errorSum;
+		controlEffort = saturate(controlEffort, -60, 60);
+
+		errorChange = prevError - error;
+
+		//If Controller is not saturated, add integral
+		if (abs(controlEffort) < 60) { 
+			errorSum = errorSum + error;
+		}
+
+		//Account for different wheel speeds (P Controller)
+		encError = readSensor(RightEncoder) + readSensor(LeftEncoder);
+        uDiff = Kpe * encError;
+		uL = controlEffort + uDiff;
+		uR = controlEffort - uDiff;
+		uL = -convertPower(saturate(uL, -80, 80));
+		uR = convertPower(saturate(uR, -80, 80));
+		
+		//Use uL and uR to drive the motors
+		motorPower(LeftMotor, uL);
+        motorPower(RightMotor, uR);
+
+        delay(50);
+        CustomPlot(1, error, "Turn Error");
+    } while(errorChange && (abs(error) > tolerance));
 }
 
 

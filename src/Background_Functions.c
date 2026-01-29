@@ -10,6 +10,7 @@
  */
 
  #include <string.h>
+ #include <sys/stat.h>
  #include "main.h"
  #include "pros/adi.h"
  #include "pros/distance.h"
@@ -27,13 +28,25 @@
  int observed_min = INT32_MAX;
  int observed_max = INT32_MIN;
  int shrink_counter = 0;
- logger_ctx_t current_log = {0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}};
- int log_rate = 100;
- FILE *log_file = NULL;
+
+ // State variables
  bool is_logging = false;
- char current_filename[64];
  bool logger_is_busy = false;
  uint32_t log_start_timestamp = 0;
+ int log_rate = 100; // default 100ms sampling rate
+ char current_filename[128];
+ plot_registry_t session_plots[MAX_CUSTOM_PLOTS];
+ int session_plot_count = 0;
+ FILE* temp_log_file = NULL;
+
+//  logger_ctx_t current_log = {0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}};
+//  int log_rate = 100;
+//  FILE *log_file = NULL;
+//  bool is_logging = false;
+//  bool logger_is_busy = false;
+//  uint32_t log_start_timestamp = 0;
+
+
 
  #define SHRINK_DELAY_TICKS 50   // ~1 second if timer = 50ms
  #define CHART_GROW_STEP 50
@@ -330,6 +343,8 @@
         graph_timer = NULL;
     }
 
+    if (is_logging) StopDataLogging();
+
     if (_stopflag == 0) {
         lv_label_set_text(ui_StopText, "Program ended normally");
         lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
@@ -337,9 +352,6 @@
         lv_obj_clear_flag(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN);
     }
 
-    if (is_logging) {
-        StopDataLogging(); 
-    }
     lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
     lv_timer_set_repeat_count(t, 1);
  }
@@ -488,7 +500,6 @@
   * @param none
   */
  void UpdatePlotSlots(void) {
-
     plot_source_t requested[] = {
         PLOT_LEFT_ENC,
         PLOT_RIGHT_ENC,
@@ -497,31 +508,34 @@
         PLOT_RIGHT_DIST
     };
 
-    /* Remove non-custom sources that are no longer enabled */
+    /* 1. Cleanup and Logger Sync */
     for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
+        // Handle standard sources deactivation
         if (plot_slots[i].active && plot_slots[i].source != PLOT_CUSTOM) {
             if (!IsSourceEnabled(plot_slots[i].source)) {
-            ClearSeries(plot_slots[i].series);
-
-            /* Hide legend elements */
-            lv_obj_add_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(plot_slots[i].legend_colour_box,  LV_OBJ_FLAG_HIDDEN);
-
-            plot_slots[i].active = false;
-            plot_slots[i].source = PLOT_NONE;
+                ClearSeries(plot_slots[i].series);
+                lv_obj_add_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(plot_slots[i].legend_colour_box, LV_OBJ_FLAG_HIDDEN);
+                plot_slots[i].active = false;
+                plot_slots[i].source = PLOT_NONE;
             }
+        }
+
+        /* SYNC WITH LOGGER:
+           Whenever we encounter a custom plot slot, we update the session registry.
+           If 'active' is true, the logger records the value. 
+           If 'active' is false, the logger records a placeholder '0'. */
+        if (plot_slots[i].source == PLOT_CUSTOM) {
+            RegisterPlot(plot_slots[i].custom_name, &plot_slots[i].custom_value, plot_slots[i].active);
         }
     }
 
-    /* Assign new sources to free slots */
+    /* 2. Assign new sources to free slots */
     for (int r = 0; r < (int)(sizeof(requested)/sizeof(requested[0])); r++) {
         plot_source_t src = requested[r];
-
-        if (!IsSourceEnabled(src))
-            continue;
+        if (!IsSourceEnabled(src)) continue;
 
         bool already_assigned = false;
-
         for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
             if (plot_slots[i].active && plot_slots[i].source == src) {
                 already_assigned = true;
@@ -529,19 +543,15 @@
             }
         }
 
-        if (already_assigned)
-            continue;
+        if (already_assigned) continue;
 
         for (int i = 0; i < MAX_PLOT_SLOTS; i++) {
             if (!plot_slots[i].active) {
                 plot_slots[i].source = src;
                 plot_slots[i].active = true;
-
-                /* Update legend text */
                 lv_label_set_text(plot_slots[i].legend_label, PlotSourceName(src));
-                /* Show legend elements */
                 lv_obj_clear_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(plot_slots[i].legend_colour_box,  LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(plot_slots[i].legend_colour_box, LV_OBJ_FLAG_HIDDEN);
                 break;
             }
         }
@@ -569,10 +579,8 @@ void CustomPlot(int slot, int value, const char * name) {
     strncpy(plot_slots[index].custom_name, name, 31);
     plot_slots[index].custom_name[31] = '\0'; // Ensure null termination
 
-    // Also update the current_log for logging purposes
-    if (index >= 0 && index < 4) {
-        current_log.custom[index] = value;
-    }
+    // Register new variable for data logging
+    RegisterPlot(name, &plot_slots[index].custom_value, true);
 
     // Tell the UI task it needs to update the label text
     plot_slots[index].needs_ui_refresh = true;
@@ -752,25 +760,69 @@ void StopButtonTask(lv_timer_t *t) {
 }
 
 /**
+  * @brief A function that generates a unique file path for data logging.
+  * @param name (const char*) The user-defined name for the log file
+  * @param out_path (char*) Buffer to store the generated unique file path
+  */
+void GenerateUniquePath(const char* name, char* out_path) {
+    
+    int attempt = 0;
+    while (true) {
+        if (attempt == 0) {
+            snprintf(out_path, 128, "/usd/%s.csv", name);
+        } else {
+            snprintf(out_path, 128, "/usd/%s_%d.csv", name, attempt);
+        }
+
+        // Try to open the file just to see if it exists
+        FILE* test_file = fopen(out_path, "r");
+        if (test_file == NULL) {
+            // Success! The file does NOT exist, so we can use this path.
+            break; 
+        } else {
+            // File exists, close it and try the next number
+            fclose(test_file);
+        }
+        attempt++;
+    }
+}
+
+void RegisterPlot(const char* name, int* var_ptr, bool active) {
+    // 1. Check if this name is already in our session registry
+    for (int i = 0; i < session_plot_count; i++) {
+        if (strcmp(session_plots[i].name, name) == 0) {
+            // It's already registered! Just update the active status and leave.
+            session_plots[i].currently_active = active;
+            return;
+        }
+    }
+
+    // 2. If it's a brand new name, add it to the list
+    if (session_plot_count < MAX_CUSTOM_PLOTS) {
+        strncpy(session_plots[session_plot_count].name, name, MAX_NAME_LEN - 1);
+        session_plots[session_plot_count].var_ptr = var_ptr;
+        session_plots[session_plot_count].currently_active = active;
+        session_plot_count++;
+    }
+}
+
+/**
   * @brief A function that starts data logging to a CSV file on the SD card.
   * @param name (const char*) The user-defined name for the log file
   */
 void StartDataLogging(const char* name) {
-    if (is_logging) return; // Already logging
-
-    // Construct the path: /usd/ + user name + .csv
-    snprintf(current_filename, sizeof(current_filename), "/usd/%s.csv", name);
-
-    log_file = fopen(current_filename, "w");
+    if (is_logging || temp_log_file != NULL) return;
+ 
+    // Reset session tracking
+    session_plot_count = 0;
     
-    if (log_file != NULL) {
-
-        // Write the Header immediately
-        fprintf(log_file, "Time,Left Enc,Right Enc,Arm Enc,Left Dist,Right Dist,Left Light,Mid Light,Right Light,Custom1,Custom2,Custom3,Custom4\n");
-        fflush(log_file);
-
+    GenerateUniquePath(name, current_filename);
+    
+    // Open a hidden temp file for raw data
+    temp_log_file = fopen("/usd/temp_raw.txt", "w");
+    
+    if (temp_log_file != NULL) {
         log_start_timestamp = millis();
-
         is_logging = true;
     }
 }
@@ -781,18 +833,46 @@ void StartDataLogging(const char* name) {
   */
 void StopDataLogging() {
     if (!is_logging) return;
-    
     is_logging = false;
 
-    uint32_t timeout = millis();
-    while (logger_is_busy && (millis() - timeout < 500)) {
-        delay(5); // Give it a few ms to finish
-    }
+    // Wait for the logger task to finish its last write
+    while(logger_is_busy) delay(10);
     
-    if (log_file != NULL) {
-        fclose(log_file);
-        log_file = NULL;
+    delay(20); // Ensure file buffer is flushed
+
+    if (temp_log_file != NULL) {        
+        fflush(temp_log_file);  // Force flush all buffered data             
+        fclose(temp_log_file);  // Retry once            
+        temp_log_file = NULL;
     }
+
+    // 1. Create the final CSV
+    FILE* final_csv = fopen(current_filename, "w");
+    if (final_csv == NULL) return;
+
+    // 2. Write the dynamic Header
+    fprintf(final_csv, "Time,Left Enc,Right Enc,Arm Enc,Left Dist,Right Dist,Left Light,Mid Light,Right Light");
+    for (int i = 0; i < session_plot_count; i++) {
+        fprintf(final_csv, ",%s", session_plots[i].name);
+    }
+    fprintf(final_csv, "\n");
+
+    // 3. Merge raw data into the final file
+    FILE* temp_read = fopen("/usd/temp_raw.txt", "r");
+    if (temp_read != NULL) {
+        char buffer[1024];
+        while (fgets(buffer, sizeof(buffer), temp_read)) {
+            fputs(buffer, final_csv);
+        }
+        fclose(temp_read);
+        temp_read = NULL;
+    }
+
+    fclose(final_csv);
+    final_csv = NULL;
+
+    delay(50); 
+    remove("/usd/temp_raw.txt"); // Clean up
 }
 
 /**
@@ -800,47 +880,34 @@ void StopDataLogging() {
   * @param none
   */
 void SDLoggerTask(void* param) {
-    uint32_t start_time = millis();
-    uint32_t last_wake_time = start_time;
-
+    uint32_t last_wake_time = millis();
     while (true) {
-        if (is_logging && log_file != NULL) {
+        if (is_logging && temp_log_file != NULL) {
             logger_is_busy = true;
 
-            uint32_t current_time = millis();
-            uint32_t relative_time = (current_time <= log_start_timestamp) ? 0 : (current_time - log_start_timestamp);
+            // 1. Standard Sensors
+            fprintf(temp_log_file, "%u,%d,%d,%d,%d,%d,%d,%d,%d",
+                    millis() - log_start_timestamp,
+                    readSensor(LeftEncoder), readSensor(RightEncoder), readSensor(ArmEncoder),
+                    readSensor(LeftDistance), readSensor(RightDistance),
+                    readSensor(LeftLight), readSensor(MidLight), readSensor(RightLight));
 
-            relative_time = (relative_time / log_rate) * log_rate;
-
-            // 1. Update standard sensors
-            current_log.left_enc   = readSensor(LeftEncoder);
-            current_log.right_enc  = readSensor(RightEncoder);
-            current_log.arm_enc    = readSensor(ArmEncoder);
-            current_log.left_dist  = readSensor(LeftDistance);
-            current_log.right_dist = readSensor(RightDistance);
-            current_log.left_light = readSensor(LeftLight);
-            current_log.mid_light  = readSensor(MidLight);
-            current_log.right_light = readSensor(RightLight);
-
-            // 2. Write the row
-            fprintf(log_file, "%u,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
-                    relative_time,
-                    current_log.left_enc, current_log.right_enc, current_log.arm_enc,
-                    current_log.left_dist, current_log.right_dist,
-                    current_log.left_light, current_log.mid_light, current_log.right_light,
-                    current_log.custom[0], current_log.custom[1],
-                    current_log.custom[2], current_log.custom[3]);
-            
-            fflush(log_file); 
-
-            // Check if the SD card was pulled out mid-run
-            if (!usd_is_installed()) {
-                StopDataLogging(); // Emergency stop
-                continue;
+            // 2. Dynamic Columns: Write data for EVERY unique plot seen so far
+            for (int i = 0; i < session_plot_count; i++) {
+                if (session_plots[i].currently_active && session_plots[i].var_ptr != NULL) {
+                    fprintf(temp_log_file, ",%d", *session_plots[i].var_ptr);
+                } else {
+                    fprintf(temp_log_file, ",0"); // Column placeholder
+                }
             }
-        logger_is_busy = false;
+            fprintf(temp_log_file, "\n");
+            // Periodically flush to ensure data is written
+            fflush(temp_log_file);
         }
-
+        if (!usd_is_installed()) {
+            is_logging = false; // Emergency stop
+        }
+        logger_is_busy = false;
         task_delay_until(&last_wake_time, log_rate);
     }
 }

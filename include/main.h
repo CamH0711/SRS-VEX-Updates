@@ -163,25 +163,59 @@ typedef struct {
  void CustomPlot(int slot, int value, const char * name);
 
 /* Data logging with SD card related*/
-typedef struct {
-    int left_enc;
-    int right_enc;
-    int arm_enc;
-    int left_dist;
-    int right_dist;
-    int left_light;
-    int mid_light;
-    int right_light;
-    int custom[4]; 
-} logger_ctx_t;
 
-extern logger_ctx_t current_log;
-extern int log_rate;
-extern FILE *log_file;
+// Maximums for the system
+#define MAX_CUSTOM_PLOTS 15
+#define MAX_NAME_LEN 32
+
+// structure to hold all custom plot info
+typedef struct {
+    char name[MAX_NAME_LEN];
+    int* var_ptr;
+    bool currently_active;
+    // int slot_index;
+} plot_registry_t;
+
+//Global variables for data logging
 extern bool is_logging;
-extern char current_filename[64];
 extern bool logger_is_busy;
 extern uint32_t log_start_timestamp;
+extern int log_rate;
+extern char current_filename[128];
+extern plot_registry_t session_plots[MAX_CUSTOM_PLOTS];
+extern int session_plot_count;
+extern FILE* temp_log_file;
+
+// Function Prototypes
+extern void StartDataLogging(const char* name);
+extern void StopDataLogging();
+extern void SDLoggerTask(void* param);
+extern void RegisterPlot(const char* name, int* var_ptr, bool active);
+extern void GenerateUniquePath(const char* name, char* out_path);
+extern void SetLogRate(int ms);
+
+
+
+// typedef struct {
+//     int left_enc;
+//     int right_enc;
+//     int arm_enc;
+//     int left_dist;
+//     int right_dist;
+//     int left_light;
+//     int mid_light;
+//     int right_light;
+//     int custom[4]; 
+// } logger_ctx_t;
+
+// extern logger_ctx_t current_log;
+// extern int log_rate;
+// extern FILE *log_file;
+// extern bool is_logging;
+// extern bool logger_is_busy;
+// extern uint32_t log_start_timestamp;
+
+
 
 void StartDataLogging(const char* name);
 void StopDataLogging();
