@@ -173,7 +173,7 @@ typedef struct {
     char name[MAX_NAME_LEN];
     int* var_ptr;
     bool currently_active;
-    // int slot_index;
+    int slot_index;
 } plot_registry_t;
 
 //Global variables for data logging
@@ -190,7 +190,7 @@ extern FILE* temp_log_file;
 extern void StartDataLogging(const char* name);
 extern void StopDataLogging();
 extern void SDLoggerTask(void* param);
-extern void RegisterPlot(const char* name, int* var_ptr, bool active);
+extern void RegisterPlot(const char* name, int* var_ptr, bool active, int slot_index);
 extern void GenerateUniquePath(const char* name, char* out_path);
 extern void SetLogRate(int ms);
 

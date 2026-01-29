@@ -526,7 +526,7 @@
            If 'active' is true, the logger records the value. 
            If 'active' is false, the logger records a placeholder '0'. */
         if (plot_slots[i].source == PLOT_CUSTOM) {
-            RegisterPlot(plot_slots[i].custom_name, &plot_slots[i].custom_value, plot_slots[i].active);
+            RegisterPlot(plot_slots[i].custom_name, &plot_slots[i].custom_value, plot_slots[i].active, i);
         }
     }
 
@@ -580,7 +580,7 @@ void CustomPlot(int slot, int value, const char * name) {
     plot_slots[index].custom_name[31] = '\0'; // Ensure null termination
 
     // Register new variable for data logging
-    RegisterPlot(name, &plot_slots[index].custom_value, true);
+    RegisterPlot(name, &plot_slots[index].custom_value, true, index);
 
     // Tell the UI task it needs to update the label text
     plot_slots[index].needs_ui_refresh = true;
@@ -787,7 +787,15 @@ void GenerateUniquePath(const char* name, char* out_path) {
     }
 }
 
-void RegisterPlot(const char* name, int* var_ptr, bool active) {
+void RegisterPlot(const char* name, int* var_ptr, bool active, int slot_index) {
+    if (active) {
+        for (int i = 0; i < session_plot_count; i++) {
+            if (session_plots[i].slot_index == slot_index) {
+                session_plots[i].currently_active = false;
+            }
+        }
+    }
+
     // 1. Check if this name is already in our session registry
     for (int i = 0; i < session_plot_count; i++) {
         if (strcmp(session_plots[i].name, name) == 0) {
