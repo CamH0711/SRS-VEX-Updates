@@ -73,7 +73,6 @@ bool plot_arm_enabled = false;
 bool plot_left_dist_enabled = false;
 bool plot_right_dist_enabled = false;
 numpad_ctx_t numpad_ctx;
-int point_count = 50;
 int plotting_rate = 100;
 variable_slot_t variable_slots[3];
 bool numpad_is_open = false;       // Tracks if the Numpad is on screen
@@ -342,16 +341,6 @@ if (numpad_ctx.target_label == NULL) return;
                          numpad_ctx.prefix, numpad_ctx.buffer);
 }
 
-//Timer that updates the point count based on dropdown selection
-void UpdatePointCount(lv_timer_t *t) {
-    if (!ui_Chart) return;
-
-    int point_count_prev = lv_chart_get_point_count(ui_Chart);
-    if (point_count != point_count_prev) {
-        lv_chart_set_point_count(ui_Chart, point_count);
-    }
-}
-
 // A helper function - for finding the closest value in the dropdown to the target value
 int FindClosestDropdownIndex(lv_obj_t * dropdown, int target_value) {
     const char * options = lv_dropdown_get_options(dropdown);
@@ -409,17 +398,23 @@ void ConfigSlot(int slot_num, void * var, numpad_data_type_t type, const char * 
     int index = slot_num - 1;
     if (index < 0 || index >= 3) return;
 
-    variable_slots[index].var_ptr = var;
-    variable_slots[index].type = type;
-    variable_slots[index].active = true;
+    // Reset the abandonment counter
+    variable_slots[index].cycles_since_update = 0;
 
-if (strlen(name) > 16) {
-    strncpy(variable_slots[index].name, name, 13);
-    variable_slots[index].name[13] = '\0';
-    strcat(variable_slots[index].name, "...");
-} else {
-    strcpy(variable_slots[index].name, name);
-}
+    if (variable_slots[index].var_ptr != var || strcmp(variable_slots[index].name, name) != 0) {
+        variable_slots[index].var_ptr = var;
+        variable_slots[index].type = type;
+        variable_slots[index].active = true;
+        
+        // Name truncation logic...
+        if (strlen(name) > 16) {
+            strncpy(variable_slots[index].name, name, 13);
+            variable_slots[index].name[13] = '\0';
+            strcat(variable_slots[index].name, "...");
+        } else {
+            strcpy(variable_slots[index].name, name);
+        }
+    }
 
     // Initial update
     char buffer[64];
@@ -439,6 +434,7 @@ void RefreshVariableLabels(lv_timer_t * t) {
     if (_stopflag == 1) return; // Do not update if in stop mode
 
     for (int i = 0; i < 3; i++) {
+
         // Safety: skip if not active, no pointer, or no label
         if (!variable_slots[i].active || variable_slots[i].var_ptr == NULL || variable_slots[i].slot_label == NULL) {
             continue; 
@@ -461,6 +457,16 @@ void RefreshVariableLabels(lv_timer_t * t) {
         }
 
         lv_label_set_text(variable_slots[i].slot_label, buffer);
+    }
+}
+
+void ResetVariableSlots() {
+    for (int i = 0; i < 3; i++) {
+        variable_slots[i].active = false;
+        variable_slots[i].var_ptr = NULL; 
+        if (variable_slots[i].slot_label) {
+            lv_label_set_text(variable_slots[i].slot_label, " - ");
+        }
     }
 }
 
@@ -572,7 +578,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_x(ui_Slot1Label, -40);
     lv_obj_set_y(ui_Slot1Label, 27);
     lv_obj_set_align(ui_Slot1Label, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_Slot1Label, "Slot1 = 0.0");
+    lv_label_set_text(ui_Slot1Label, " - ");
 
     ui_Slot2Label = lv_label_create(ui_AdjustGainsContainer);
     lv_obj_set_width(ui_Slot2Label, LV_SIZE_CONTENT);   /// 1
@@ -580,7 +586,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_x(ui_Slot2Label, -40);
     lv_obj_set_y(ui_Slot2Label, 77);
     lv_obj_set_align(ui_Slot2Label, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_Slot2Label, "Slot2 = 0.0");
+    lv_label_set_text(ui_Slot2Label, " - ");
 
     ui_Slot3Label = lv_label_create(ui_AdjustGainsContainer);
     lv_obj_set_width(ui_Slot3Label, LV_SIZE_CONTENT);   /// 1
@@ -588,7 +594,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_x(ui_Slot3Label, -40);
     lv_obj_set_y(ui_Slot3Label, 127);
     lv_obj_set_align(ui_Slot3Label, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_Slot3Label, "Slot3 = 0.0");
+    lv_label_set_text(ui_Slot3Label, " - ");
 
     ui_Slot1Button = lv_button_create(ui_AdjustGainsContainer);
     lv_obj_set_width(ui_Slot1Button, 80);
@@ -653,7 +659,7 @@ void ui_SettingsScreen_screen_init(void)
     ui_NumPad = lv_obj_create(ui_SettingsScreen);
     lv_obj_set_width(ui_NumPad, 220);
     lv_obj_set_height(ui_NumPad, 230);
-    lv_obj_set_x(ui_NumPad, -10);
+    lv_obj_set_x(ui_NumPad, -5);
     lv_obj_set_y(ui_NumPad, 0);
     lv_obj_set_align(ui_NumPad, LV_ALIGN_RIGHT_MID);
     lv_obj_add_flag(ui_NumPad, LV_OBJ_FLAG_HIDDEN);     /// Flags

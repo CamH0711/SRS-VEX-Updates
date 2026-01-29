@@ -42,18 +42,13 @@ void student_Main()
     // // SetLogRate(200);
     ShowChart();
     // PlotData(LeftDistance);
-    driveStraight(1000);
+    driveStraight(500);
     turnAngle(180, 2, 1);
-    driveStraight(1000);
+    driveStraight(-500);
 
-
-    // SetPointCount(-9999);
     // SetPlottingRate(-9999);
     // ShowChart();
     // PlotData(LeftDistance);
-
-    // setKp(1.0);
-    // setKi(0.1);
 
     // while(true) {
     //     lvgl_print(1, "Hello, this string is more than fifty characters long!! thats crazy!!!!!s");
@@ -171,6 +166,8 @@ void driveStraight(int distance) {
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
     
+        ResetVariableSlots();
+
         motorPower(LeftMotor, 0);
         motorPower(RightMotor, 0);
     }

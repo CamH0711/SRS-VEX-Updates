@@ -111,6 +111,7 @@ typedef struct {
     char name[17];          // Name to display (e.g., "Kp", "Arm Target")
     lv_obj_t * slot_label;  // The UI label showing "Name: Value"
     bool active;            // Whether this slot is in use
+    int cycles_since_update;
 } variable_slot_t;
 
 extern variable_slot_t variable_slots[3];
@@ -131,12 +132,12 @@ extern void ClearSeries(lv_chart_series_t *series);
 extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
 extern void NumpadButtonEvent(lv_event_t * e);
 extern void UpdateTargetLabel(void);
-extern void UpdatePointCount(lv_timer_t *t);
 extern void ui_event_PlottingRateDropdown(lv_event_t * e);
 extern int FindClosestDropdownIndex(lv_obj_t * dropdown, int target_value);
 extern void SetPlottingRate(int rate_ms);
 extern void ConfigSlot(int slot_num, void * var, numpad_data_type_t type, const char * name);
 void RefreshVariableLabels(lv_timer_t * t);
+void ResetVariableSlots();
 
 #ifdef __cplusplus
 } /*extern "C"*/

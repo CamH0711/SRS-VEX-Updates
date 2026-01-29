@@ -339,6 +339,14 @@
 
     if (is_logging) StopDataLogging();
 
+    for (int i = 0; i < 3; i++) {
+        variable_slots[i].active = false;
+        variable_slots[i].var_ptr = NULL;
+        if (variable_slots[i].slot_label) {
+            lv_label_set_text(variable_slots[i].slot_label, " - ");
+        }
+    }
+
     program_ended_normally_flag = true;
 
     lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
@@ -519,7 +527,6 @@
                 
                 // 1. Clear UI
                 ClearSeries(plot_slots[i].series);
-                // lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
                 lv_obj_add_flag(plot_slots[i].legend_label, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(plot_slots[i].legend_colour_box, LV_OBJ_FLAG_HIDDEN);
 
@@ -593,9 +600,6 @@ void CustomPlot(int slot, int value, const char * name) {
     if (strcmp(plot_slots[index].last_recorded_name, name) != 0) {
         ClearSeries(plot_slots[index].series);
         strncpy(plot_slots[index].last_recorded_name, name, 31);
-        
-        // Reset Y Axis to default range
-        // lv_chart_set_range(ui_Chart, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
 
         // Sync with logger: tell it the OLD name is now inactive
         RegisterPlot(name, &plot_slots[index].custom_value, true, index);

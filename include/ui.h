@@ -41,7 +41,6 @@ extern lv_timer_t *chart_resize_timer;
 extern lv_timer_t *adjustment_labels_timer;
 extern lv_timer_t *print_update_timer;
 extern lv_timer_t *stop_button_timer;
-extern lv_timer_t *update_point_count_timer;
 extern lv_timer_t *program_ended_banner_timer;
 
 #ifdef __cplusplus
