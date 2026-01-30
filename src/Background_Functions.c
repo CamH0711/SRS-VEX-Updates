@@ -937,13 +937,21 @@ void StopDataLogging() {
   */
 void SDLoggerTask(void* param) {
     uint32_t last_wake_time = millis();
+    bool was_logging = false;
     while (true) {
         if (is_logging && temp_log_file != NULL) {
+
+            if(!was_logging) {
+                last_wake_time = log_start_timestamp;
+                was_logging = true;
+            }
+
             logger_is_busy = true;
+            uint32_t session_time = last_wake_time - log_start_timestamp;
 
             // 1. Standard Sensors
             fprintf(temp_log_file, "%u,%d,%d,%d,%d,%d,%d,%d,%d",
-                    millis() - log_start_timestamp,
+                    session_time,
                     readSensor(LeftEncoder), readSensor(RightEncoder), readSensor(ArmEncoder),
                     readSensor(LeftDistance), readSensor(RightDistance),
                     readSensor(LeftLight), readSensor(MidLight), readSensor(RightLight));
