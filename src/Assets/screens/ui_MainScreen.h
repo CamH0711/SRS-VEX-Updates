@@ -49,8 +49,6 @@ extern lv_obj_t * ui_Plot1Label;
 extern lv_obj_t * ui_Plot2Label;
 extern lv_obj_t * ui_Plot3Label;
 extern lv_obj_t * ui_Plot4Label;
-extern lv_obj_t * ui_PausedPanel;
-extern lv_obj_t * ui_PausedText;
 extern lv_obj_t * ui_ResumeButton;
 extern lv_obj_t * ui_ResumeText;
 
@@ -66,9 +64,12 @@ extern void update_y_axis(int min, int max);
 extern void lvgl_print(int line_number, char* text, ...);
 extern void ui_event_OnScreenStopButton(lv_event_t * e);
 extern void ShowChart();
+extern void ui_event_ResumeButton(lv_event_t * e);
+extern void Pause();
 extern volatile bool print_panel_visible;
 extern char print_buffers[8][51];
 extern bool print_dirty[8];
+extern bool pause_active;
 
 #ifdef __cplusplus
 } /*extern "C"*/

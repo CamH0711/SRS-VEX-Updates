@@ -114,6 +114,7 @@
  void PrintUpdateTask(lv_timer_t * t);
  void StopButtonTask(lv_timer_t *t);
  void ProgramEndedBannerTask(lv_timer_t * t);
+ void PauseTask(lv_timer_t * t);
 
  /* Function declarations from Background_Tasks.c */
  void monitorMotorPower(void* param);

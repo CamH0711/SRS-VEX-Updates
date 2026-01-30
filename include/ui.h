@@ -42,6 +42,7 @@ extern lv_timer_t *adjustment_labels_timer;
 extern lv_timer_t *print_update_timer;
 extern lv_timer_t *stop_button_timer;
 extern lv_timer_t *program_ended_banner_timer;
+extern lv_timer_t *pause_timer;
 
 #ifdef __cplusplus
 } /*extern "C"*/

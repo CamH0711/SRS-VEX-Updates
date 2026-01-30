@@ -977,3 +977,15 @@ void SetLogRate(int ms) {
     
     log_rate = ms;
 }
+
+
+ void PauseTask(lv_timer_t * t) {
+    if(pause_active) {
+        lv_label_set_text(ui_StopText, "Program Paused");
+        lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(ui_ResumeButton, LV_OBJ_FLAG_HIDDEN);
+    } else if (!pause_active && !program_ended_normally_flag) {
+        lv_obj_add_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(ui_ResumeButton, LV_OBJ_FLAG_HIDDEN);
+    }
+ }

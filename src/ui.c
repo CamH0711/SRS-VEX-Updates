@@ -32,6 +32,7 @@ lv_timer_t *adjustment_labels_timer = NULL;
 lv_timer_t *print_update_timer = NULL;
 lv_timer_t *stop_button_timer = NULL;
 lv_timer_t *program_ended_banner_timer = NULL;
+lv_timer_t *pause_timer = NULL;
 lv_chart_series_t *slot_series[MAX_PLOT_SLOTS] = {NULL};
 plot_slot_t plot_slots[MAX_PLOT_SLOTS];
 
@@ -55,6 +56,7 @@ void ui_init(void)
     print_update_timer = lv_timer_create(PrintUpdateTask, 50, NULL);
     stop_button_timer = lv_timer_create(StopButtonTask, 50, NULL);
     program_ended_banner_timer = lv_timer_create(ProgramEndedBannerTask, 500, NULL);
+    pause_timer = lv_timer_create(PauseTask, 100, NULL);
 }
 
 void ui_destroy(void)

@@ -110,6 +110,7 @@ void driveStraight(int distance) {
     ConfigSlot(1, &Kp, TYPE_DOUBLE, "Kp");
     ConfigSlot(2, &Ki, TYPE_DOUBLE, "Ki");
     ConfigSlot(3, &gg, TYPE_INT, "gg (integer for testing purposes)");
+    Pause();
 
     int i;
     
