@@ -879,6 +879,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_PlottingRateDropdown, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_PlottingRateDropdown, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_PlottingRateDropdown, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_dropdown_set_selected(ui_PlottingRateDropdown, 1);
 
     ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
     lv_obj_set_width(ui_StopPanel2, 480);
