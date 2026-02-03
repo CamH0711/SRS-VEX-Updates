@@ -522,7 +522,7 @@
             // Increment the counter every time the UI task runs
             plot_slots[i].cycles_since_update++;
 
-            // If 10 UI cycles pass without a CustomPlot() call, the slot is abandoned
+            // If 2 UI cycles pass without a CustomPlot() call, the slot is abandoned
             if (plot_slots[i].cycles_since_update >= 2) {
                 
                 // 1. Clear UI
@@ -961,7 +961,7 @@ void SDLoggerTask(void* param) {
                 if (session_plots[i].currently_active && session_plots[i].var_ptr != NULL) {
                     fprintf(temp_log_file, ",%d", *session_plots[i].var_ptr);
                 } else {
-                    fprintf(temp_log_file, ",0"); // Column placeholder
+                    fprintf(temp_log_file, ", "); // Column placeholder
                 }
             }
             fprintf(temp_log_file, "\n");

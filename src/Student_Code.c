@@ -36,22 +36,16 @@ int sensorWidth = 139;              // Distance between the left and right dista
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
-
-
-    StartDataLogging("New_Logging_Method_Testing");
-    // // SetLogRate(200);
+    StartDataLogging("3.2.26 Test123");
     ShowChart();
-    // PlotData(LeftDistance);
     driveStraight(500);
-    turnAngle(180, 2, 1);
-    driveStraight(-500);
+    turnAngle(180, 5, 2);
+    driveStraight(500);
 
-    // SetPlottingRate(-9999);
-    // ShowChart();
-    // PlotData(LeftDistance);
+    // PlotSensor(LeftDistance);
+    // PlotSensor(RightEncoder);
 
     // while(true) {
-    //     lvgl_print(1, "Hello, this string is more than fifty characters long!! thats crazy!!!!!s");
     //     delay(100);
     // }
 }
@@ -109,7 +103,7 @@ void driveStraight(int distance) {
 
     ConfigSlot(1, &Kp, TYPE_DOUBLE, "Kp");
     ConfigSlot(2, &Ki, TYPE_DOUBLE, "Ki");
-    ConfigSlot(3, &gg, TYPE_INT, "gg (integer for testing purposes)");
+    ConfigSlot(3, &Kp_straight, TYPE_DOUBLE, "Kp_straight");
     Pause();
 
     int i;
@@ -136,7 +130,7 @@ void driveStraight(int distance) {
         if (abs(u) < 70) {  					
             errorIntSum = errorIntSum + error;
         }
-        u = saturate(u, -50, 50);
+        u = saturate(u, -80, 80);
     
         //For the 1st second, ramp up voltage to stop twitching
         if (k < 70) {	

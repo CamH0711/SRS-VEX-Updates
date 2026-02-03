@@ -83,6 +83,7 @@ extern bool plot_left_dist_enabled;
 extern bool plot_right_dist_enabled;
 extern int point_count;
 extern int plotting_rate;
+extern lv_chart_series_t * series_to_be_removed;
 
 
 /* Number Pad related */
@@ -127,7 +128,8 @@ extern void ui_event_PlotRightEncCheckbox(lv_event_t * e);
 extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
 extern void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e);
 extern void ui_event_PlotRightDistanceCheckbox(lv_event_t * e);
-extern void PlotData(int sensor_name);
+extern void PlotSensor(int sensor_name);
+extern void ClearSeriesTimer(lv_event_t * e);
 extern void ClearSeries(lv_chart_series_t *series);
 extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
 extern void NumpadButtonEvent(lv_event_t * e);

@@ -77,6 +77,7 @@ int plotting_rate = 100;
 variable_slot_t variable_slots[3];
 bool numpad_is_open = false;       // Tracks if the Numpad is on screen
 void * current_target_ptr = NULL;  // Tracks exactly which variable we are editing
+lv_chart_series_t * series_to_be_removed = NULL;
 
 
 // event functions
@@ -240,7 +241,7 @@ void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
 /* CUSTOM FUNCTIONS*/
 
 // A function that can be used to check a box automatically to plot data
-void PlotData(int data_name) {
+void PlotSensor(int data_name) {
     if (data_name == LeftDistance) {
         lv_obj_add_state(ui_PlotLeftDistanceCheckbox, LV_STATE_CHECKED);
     } else if (data_name == RightDistance) {
@@ -254,8 +255,14 @@ void PlotData(int data_name) {
     }
 }
 
+void ClearSeriesTimer(lv_event_t * e) {
+    lv_chart_set_all_value(ui_Chart, series_to_be_removed, LV_CHART_POINT_NONE);
+}
+
 void ClearSeries(lv_chart_series_t * series) {
-    lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
+    series_to_be_removed = series;
+    lv_timer_t * t = lv_timer_create(ClearSeriesTimer, 20, NULL);
+    lv_timer_set_repeat_count(t, 1);
 }
 
 void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec){
