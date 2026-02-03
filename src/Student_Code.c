@@ -36,11 +36,11 @@ int sensorWidth = 139;              // Distance between the left and right dista
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
-    StartDataLogging("3.2.26 Test123");
-    ShowChart();
+    // StartDataLogging("3.2.26 Test123");
+    // ShowChart();
     driveStraight(500);
-    turnAngle(180, 5, 2);
-    driveStraight(500);
+    // turnAngle(180, 5, 2);
+    // driveStraight(500);
 
     // PlotSensor(LeftDistance);
     // PlotSensor(RightEncoder);

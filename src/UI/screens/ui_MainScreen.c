@@ -173,6 +173,7 @@ void ShowChart() {
     lv_obj_clear_flag(ui_Legend, LV_OBJ_FLAG_HIDDEN);
 }
 
+
 void Pause() {
     motor_move(_motorLeft, 0);
     motor_move(_motorRight, 0);
@@ -183,6 +184,7 @@ void Pause() {
     while(pause_active) {
         delay(100);
     }
+
 }
 
 // build functions

@@ -90,19 +90,18 @@ void ui_event_BackToMainButton(lv_event_t * e)
     }
 }
 
-// UPDATE ALL SLOT BUTTONS TO NEW SYSTEM
 
 void ui_event_Slot1Button(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        
+        lv_obj_clear_flag(ui_NumPad, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_state(ui_PlottingRateDropdown, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot1Button, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot2Button, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot3Button, LV_STATE_DISABLED);
+
         if (variable_slots[0].active) {
         // Open the Numpad targeting the stored pointer
         NumpadOpen(
@@ -122,11 +121,11 @@ void ui_event_Slot2Button(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        lv_obj_clear_flag(ui_NumPad, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_state(ui_PlottingRateDropdown, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot1Button, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot2Button, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot3Button, LV_STATE_DISABLED);
 
         if (variable_slots[1].active) {
         // Open the Numpad targeting the stored pointer
@@ -146,11 +145,11 @@ void ui_event_Slot3Button(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
+        lv_obj_clear_flag(ui_NumPad, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_state(ui_PlottingRateDropdown, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot1Button, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot2Button, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_Slot3Button, LV_STATE_DISABLED);
         
         if (variable_slots[2].active) {
         // Open the Numpad targeting the stored pointer
@@ -170,12 +169,11 @@ void ui_event_ButtonDone(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_flag_modify(ui_NumPad, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_state_modify(ui_PlottingRateDropdown, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot3Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot2Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        _ui_state_modify(ui_Slot1Button, LV_STATE_DISABLED, _UI_MODIFY_STATE_TOGGLE);
-        
+        lv_obj_add_flag(ui_NumPad, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_state(ui_PlottingRateDropdown, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_Slot1Button, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_Slot2Button, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_Slot3Button, LV_STATE_DISABLED);
     //Reset the label color to White
     if (numpad_ctx.target_label != NULL) {
         lv_obj_set_style_text_color(numpad_ctx.target_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -616,6 +614,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_Slot1Button, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_Slot1Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_Slot1Button, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_state(ui_Slot1Button, LV_STATE_DISABLED);
 
     ui_AdjustSlot1Label = lv_label_create(ui_Slot1Button);
     lv_obj_set_width(ui_AdjustSlot1Label, LV_SIZE_CONTENT);   /// 1
@@ -636,6 +635,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_Slot2Button, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_Slot2Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_Slot2Button, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_state(ui_Slot2Button, LV_STATE_DISABLED);
 
     ui_AdjustSlot2Label = lv_label_create(ui_Slot2Button);
     lv_obj_set_width(ui_AdjustSlot2Label, LV_SIZE_CONTENT);   /// 1
@@ -656,6 +656,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_Slot3Button, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_Slot3Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_Slot3Button, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_state(ui_Slot3Button, LV_STATE_DISABLED);
 
     ui_AdjustSlot3Label = lv_label_create(ui_Slot3Button);
     lv_obj_set_width(ui_AdjustSlot3Label, LV_SIZE_CONTENT);   /// 1
@@ -887,6 +888,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_style_border_opa(ui_PlottingRateDropdown, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_PlottingRateDropdown, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_dropdown_set_selected(ui_PlottingRateDropdown, 1);
+    lv_obj_add_state(ui_PlottingRateDropdown, LV_STATE_DISABLED);
 
     ui_StopPanel2 = lv_obj_create(ui_SettingsScreen);
     lv_obj_set_width(ui_StopPanel2, 480);
