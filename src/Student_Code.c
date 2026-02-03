@@ -91,10 +91,10 @@ void StraightenAngle(double percentPower) {
 void driveStraight(int distance) {
 
     //Initialise Variables
-    int error, errorIntSum = 0, encError;
+    int error = 0, errorIntSum = 0, encError = 0;
     int k = 50, errorArray[1000] = {0}; 
     double currentPosition = 0;
-    double u, uL, uR, uDiff;
+    double u = 0, uL = 0, uR = 0, uDiff = 0;
     double encoderAverage;
     double tolerance = 0.1;
     double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
@@ -104,7 +104,7 @@ void driveStraight(int distance) {
     ConfigSlot(1, &Kp, "Kp");
     // ConfigSlot(2, &Ki, "Ki");
     ConfigSlot(3, &gg, "example int");
-    // Pause();
+    Pause();
 
     int i;
     

@@ -94,7 +94,6 @@
  extern task_t monitorMotors_Task;
  extern task_t check_sensors;
  extern task_t low_pass_filter;
- extern task_t data_logging_task;
 
  /* Function declarations from Background_Functions.c */
  
@@ -195,12 +194,13 @@ extern int log_rate;
 extern char current_filename[128];
 extern plot_registry_t session_plots[MAX_CUSTOM_PLOTS];
 extern int session_plot_count;
-extern FILE* temp_log_file;
+extern FILE *temp_log_file;
+extern lv_timer_t *logging_timer;
 
 // Function Prototypes
 extern void StartDataLogging(const char* name);
 extern void StopDataLogging();
-extern void SDLoggerTask(void* param);
+extern void SDLoggerTimer(lv_timer_t * t);
 extern void RegisterPlot(const char* name, int* var_ptr, bool active, int slot_index);
 extern void GenerateUniquePath(const char* name, char* out_path);
 extern void SetLogRate(int ms);

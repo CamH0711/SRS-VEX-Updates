@@ -57,7 +57,7 @@ lv_chart_series_t *series_RightDist = NULL;
 volatile bool print_panel_visible = true;
 char print_buffers[8][51];
 bool print_dirty[8];
-bool pause_active = false;
+volatile bool pause_active = false;
 
 
 // event functions
@@ -181,10 +181,21 @@ void Pause() {
 
     pause_active = true;
 
+    // Wait for logger to acknowledge pause (prevents mid-write corruption)
+    int timeout = 100; // 100ms timeout
+    while (logger_is_busy && timeout > 0) {        
+        delay(10);
+        timeout = timeout - 10;
+    }
+
+    // Flush any buffered data
+    if (is_logging && temp_log_file != NULL) {
+        fflush(temp_log_file);
+    }
+
     while(pause_active) {
         delay(100);
     }
-
 }
 
 // build functions

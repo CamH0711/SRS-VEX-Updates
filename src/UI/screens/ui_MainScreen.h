@@ -69,7 +69,7 @@ extern void Pause();
 extern volatile bool print_panel_visible;
 extern char print_buffers[8][51];
 extern bool print_dirty[8];
-extern bool pause_active;
+extern volatile bool pause_active;
 
 #ifdef __cplusplus
 } /*extern "C"*/

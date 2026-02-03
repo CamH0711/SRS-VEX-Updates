@@ -39,6 +39,7 @@
  plot_registry_t session_plots[MAX_CUSTOM_PLOTS];
  int session_plot_count = 0;
  FILE* temp_log_file = NULL;
+ lv_timer_t *logging_timer = NULL;
 
 
 
@@ -872,11 +873,15 @@ void StartDataLogging(const char* name) {
     if (usd_is_installed()) {
         temp_log_file = fopen("/usd/temp_raw.txt", "w");
     }
-    
-    if (temp_log_file != NULL) {
-        log_start_timestamp = millis();
-        is_logging = true;
+
+    log_start_timestamp = millis(); 
+    is_logging = true;
+
+    if (logging_timer == NULL) {
+        logging_timer = lv_timer_create(SDLoggerTimer, log_rate, NULL);
     }
+
+    pause_active = false; // Ensure we don't start paused
 }
 
 /**
@@ -931,46 +936,35 @@ void StopDataLogging() {
   * @brief A task that runs in the background to log data to the SD card at regular intervals.
   * @param none
   */
-void SDLoggerTask(void* param) {
-    uint32_t last_wake_time = millis();
-    bool was_logging = false;
-    while (true) {
-        
-        if (is_logging && temp_log_file != NULL) {
-
-            if(!was_logging) {
-                last_wake_time = log_start_timestamp;
-                was_logging = true;
-            }
-
-            logger_is_busy = true;
-            uint32_t session_time = last_wake_time - log_start_timestamp;
-
-            // 1. Standard Sensors
-            fprintf(temp_log_file, "%u,%d,%d,%d,%d,%d,%d,%d,%d",
-                    session_time,
-                    readSensor(LeftEncoder), readSensor(RightEncoder), readSensor(ArmEncoder),
-                    readSensor(LeftDistance), readSensor(RightDistance),
-                    readSensor(LeftLight), readSensor(MidLight), readSensor(RightLight));
-
-            // 2. Dynamic Columns: Write data for EVERY unique plot seen so far
-            for (int i = 0; i < session_plot_count; i++) {
-                if (session_plots[i].currently_active && session_plots[i].var_ptr != NULL) {
-                    fprintf(temp_log_file, ",%d", *session_plots[i].var_ptr);
-                } else {
-                    fprintf(temp_log_file, ", "); // Column placeholder
-                }
-            }
-            fprintf(temp_log_file, "\n");
-            // Periodically flush to ensure data is written
-            fflush(temp_log_file);
-        }
-        if (!usd_is_installed()) {
-            is_logging = false; // Emergency stop
-        }
-        logger_is_busy = false;
-        task_delay_until(&last_wake_time, log_rate);
+void SDLoggerTimer(lv_timer_t * timer) {
+    if (!is_logging || pause_active || temp_log_file == NULL) {
+        return; 
     }
+
+    logger_is_busy = true;
+    uint32_t raw_elapsed = millis() - log_start_timestamp; 
+    uint32_t session_time = (raw_elapsed / log_rate) * log_rate;
+
+    // 2. Standard Sensors
+    fprintf(temp_log_file, "%u,%d,%d,%d,%d,%d,%d,%d,%d",
+            session_time,
+            readSensor(LeftEncoder), readSensor(RightEncoder), readSensor(ArmEncoder),
+            readSensor(LeftDistance), readSensor(RightDistance),
+            readSensor(LeftLight), readSensor(MidLight), readSensor(RightLight));
+
+    // 3. Dynamic Columns
+    for (int i = 0; i < session_plot_count; i++) {
+        if (session_plots[i].currently_active && session_plots[i].var_ptr != NULL) {
+            fprintf(temp_log_file, ",%d", *session_plots[i].var_ptr);
+        } else {
+            fprintf(temp_log_file, ", "); 
+        }
+    }
+    
+    fprintf(temp_log_file, "\n");
+    fflush(temp_log_file);
+
+    logger_is_busy = false;
 }
 
 /**
