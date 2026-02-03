@@ -6,6 +6,7 @@
 #include "ui.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include "main.h"
 #include "../src/Student_Code.h"
 
@@ -78,6 +79,7 @@ variable_slot_t variable_slots[3];
 bool numpad_is_open = false;       // Tracks if the Numpad is on screen
 void * current_target_ptr = NULL;  // Tracks exactly which variable we are editing
 lv_chart_series_t * series_to_be_removed = NULL;
+uint32_t last_config_time = 0;
 
 
 // event functions
@@ -398,10 +400,16 @@ void SetPlottingRate(int rate_ms) {
 }
 
 // A function students can use to configure a variable adjustment slot
-void ConfigSlot(int slot_num, void * var, numpad_data_type_t type, const char * name) {
+void _InternalConfig(int slot_num, void * var, numpad_data_type_t type, const char * name) {
     
     int index = slot_num - 1;
     if (index < 0 || index >= 3) return;
+
+    // Check if slots need to be reset
+    if (millis() - last_config_time > 100) {
+        ResetVariableSlots();
+    }
+    last_config_time = millis();
 
     // Reset the abandonment counter
     variable_slots[index].cycles_since_update = 0;

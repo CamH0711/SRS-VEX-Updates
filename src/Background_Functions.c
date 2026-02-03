@@ -339,13 +339,7 @@
 
     if (is_logging) StopDataLogging();
 
-    for (int i = 0; i < 3; i++) {
-        variable_slots[i].active = false;
-        variable_slots[i].var_ptr = NULL;
-        if (variable_slots[i].slot_label) {
-            lv_label_set_text(variable_slots[i].slot_label, " - ");
-        }
-    }
+    ResetVariableSlots();
 
     program_ended_normally_flag = true;
 
@@ -875,7 +869,9 @@ void StartDataLogging(const char* name) {
     GenerateUniquePath(name, current_filename);
     
     // Open a hidden temp file for raw data
-    temp_log_file = fopen("/usd/temp_raw.txt", "w");
+    if (usd_is_installed()) {
+        temp_log_file = fopen("/usd/temp_raw.txt", "w");
+    }
     
     if (temp_log_file != NULL) {
         log_start_timestamp = millis();
@@ -939,6 +935,7 @@ void SDLoggerTask(void* param) {
     uint32_t last_wake_time = millis();
     bool was_logging = false;
     while (true) {
+        
         if (is_logging && temp_log_file != NULL) {
 
             if(!was_logging) {

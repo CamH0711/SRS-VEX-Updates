@@ -118,7 +118,12 @@ typedef struct {
 extern variable_slot_t variable_slots[3];
 extern bool numpad_is_open;       // Tracks if the Numpad is on screen
 extern void * current_target_ptr;  // Tracks exactly which variable we are editing
+extern uint32_t last_config_time;
 
+#define ConfigSlot(slot, var, name) _Generic((var), \
+    double*: _InternalConfig, \
+    int*:    _InternalConfig    \
+)(slot, var, (sizeof(*(var)) == sizeof(double) ? TYPE_DOUBLE : TYPE_INT), name)
 
 // Custom Functions
 extern void ui_event_PlotUCheckbox(lv_event_t * e);
@@ -137,9 +142,10 @@ extern void UpdateTargetLabel(void);
 extern void ui_event_PlottingRateDropdown(lv_event_t * e);
 extern int FindClosestDropdownIndex(lv_obj_t * dropdown, int target_value);
 extern void SetPlottingRate(int rate_ms);
-extern void ConfigSlot(int slot_num, void * var, numpad_data_type_t type, const char * name);
+extern void _InternalConfig(int slot_num, void * var, numpad_data_type_t type, const char * name);
 void RefreshVariableLabels(lv_timer_t * t);
 void ResetVariableSlots();
+
 
 #ifdef __cplusplus
 } /*extern "C"*/

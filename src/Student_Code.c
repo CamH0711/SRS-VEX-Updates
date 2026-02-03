@@ -36,11 +36,11 @@ int sensorWidth = 139;              // Distance between the left and right dista
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
-    // StartDataLogging("3.2.26 Test123");
+    StartDataLogging("Don't log during pause test");
     // ShowChart();
     driveStraight(500);
-    // turnAngle(180, 5, 2);
-    // driveStraight(500);
+    turnAngle(180, 5, 2);
+    driveStraight(500);
 
     // PlotSensor(LeftDistance);
     // PlotSensor(RightEncoder);
@@ -97,14 +97,14 @@ void driveStraight(int distance) {
     double u, uL, uR, uDiff;
     double encoderAverage;
     double tolerance = 0.1;
-    static double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
+    double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
     
-    static int gg = 10;
+    int gg = 10;
 
-    ConfigSlot(1, &Kp, TYPE_DOUBLE, "Kp");
-    ConfigSlot(2, &Ki, TYPE_DOUBLE, "Ki");
-    ConfigSlot(3, &Kp_straight, TYPE_DOUBLE, "Kp_straight");
-    Pause();
+    ConfigSlot(1, &Kp, "Kp");
+    // ConfigSlot(2, &Ki, "Ki");
+    ConfigSlot(3, &gg, "example int");
+    // Pause();
 
     int i;
     
@@ -161,7 +161,7 @@ void driveStraight(int distance) {
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
     
-        ResetVariableSlots();
+        // ResetVariableSlots();
 
         motorPower(LeftMotor, 0);
         motorPower(RightMotor, 0);
@@ -202,6 +202,8 @@ void turnAngle(int targetAngle, int Kp, int tolerance){
     // reset encoder counts
     resetEncoder(LeftEncoder);
     resetEncoder(RightEncoder);
+
+    ConfigSlot(2, &Ki, "Ki");
 
     do{
 		prevError = error;

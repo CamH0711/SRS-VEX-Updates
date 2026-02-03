@@ -90,6 +90,12 @@
 
  void initialize(void);
  
+ /* PROS Tasks */
+ extern task_t monitorMotors_Task;
+ extern task_t check_sensors;
+ extern task_t low_pass_filter;
+ extern task_t data_logging_task;
+
  /* Function declarations from Background_Functions.c */
  
  double saturate(double input, double lower, double upper);
@@ -198,34 +204,5 @@ extern void SDLoggerTask(void* param);
 extern void RegisterPlot(const char* name, int* var_ptr, bool active, int slot_index);
 extern void GenerateUniquePath(const char* name, char* out_path);
 extern void SetLogRate(int ms);
-
-
-
-// typedef struct {
-//     int left_enc;
-//     int right_enc;
-//     int arm_enc;
-//     int left_dist;
-//     int right_dist;
-//     int left_light;
-//     int mid_light;
-//     int right_light;
-//     int custom[4]; 
-// } logger_ctx_t;
-
-// extern logger_ctx_t current_log;
-// extern int log_rate;
-// extern FILE *log_file;
-// extern bool is_logging;
-// extern bool logger_is_busy;
-// extern uint32_t log_start_timestamp;
-
-
-
-void StartDataLogging(const char* name);
-void StopDataLogging();
-void SDLoggerTask(void* param);
-void SetLogRate(int ms);
-
 
  #endif  // _PROS_MAIN_H_
