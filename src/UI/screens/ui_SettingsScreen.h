@@ -83,7 +83,6 @@ extern bool plot_left_dist_enabled;
 extern bool plot_right_dist_enabled;
 extern int point_count;
 extern int plotting_rate;
-extern lv_chart_series_t * series_to_be_removed;
 
 
 /* Number Pad related */

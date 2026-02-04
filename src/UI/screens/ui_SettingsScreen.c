@@ -78,7 +78,6 @@ int plotting_rate = 100;
 variable_slot_t variable_slots[3];
 bool numpad_is_open = false;       // Tracks if the Numpad is on screen
 void * current_target_ptr = NULL;  // Tracks exactly which variable we are editing
-lv_chart_series_t * series_to_be_removed = NULL;
 uint32_t last_config_time = 0;
 
 
@@ -256,12 +255,15 @@ void PlotSensor(int data_name) {
 }
 
 void ClearSeriesTimer(lv_timer_t * t) {
-    lv_chart_set_all_value(ui_Chart, series_to_be_removed, LV_CHART_POINT_NONE);
-}
+    // Retrieve the series pointer from the timer's user_data
+    lv_chart_series_t * series = (lv_chart_series_t *)t->user_data;
+    if (series) {
+        lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
+    }}
 
 void ClearSeries(lv_chart_series_t * series) {
-    series_to_be_removed = series;
-    lv_timer_t * t = lv_timer_create(ClearSeriesTimer, 20, NULL);
+    if (!series) return;
+    lv_timer_t * t = lv_timer_create(ClearSeriesTimer, 20, series);
     lv_timer_set_repeat_count(t, 1);
 }
 

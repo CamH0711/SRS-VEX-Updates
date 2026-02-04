@@ -966,18 +966,7 @@ void SDLoggerTimer(lv_timer_t * timer) {
     logger_is_busy = false;
 }
 
-/**
-  * @brief A function that sets the data logging rate.
-  * @param ms (int) Desired logging rate in milliseconds (minimum 50ms)
-  */
-void SetLogRate(int ms) {
-    if (ms < 50) ms = 50;
-    
-    log_rate = ms;
-}
-
-
- void PauseTask(lv_timer_t * t) {
+void PauseTask(lv_timer_t * t) {
 
     if (_stopflag == 1) {
         lv_timer_del(t); 

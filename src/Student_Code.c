@@ -36,14 +36,16 @@ int sensorWidth = 139;              // Distance between the left and right dista
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
-    // StartDataLogging("Don't log during pause test");
+    StartDataLogging("Set Log Rate Test");
+    PlotSensor(LeftEncoder);
+    PlotSensor(RightEncoder);
     ShowChart();
-    driveStraight(500);
     turnAngle(180, 5, 2);
     driveStraight(500);
     turnAngle(180, 5, 2);
     driveStraight(500);
     turnAngle(180, 5, 2);
+    driveStraight(500);
 
 
     // PlotSensor(LeftDistance);
@@ -108,7 +110,7 @@ void driveStraight(int distance) {
     // ConfigSlot(1, &Kp, "Kp");
     // // ConfigSlot(2, &Ki, "Ki");
     // ConfigSlot(3, &gg, "example int");
-    Pause();
+    // Pause();
 
     int i;
     
@@ -160,8 +162,8 @@ void driveStraight(int distance) {
         lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
         lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
 
-        // CustomPlot(1, (int) u, "Control Effort");
-        // CustomPlot(2, error, "Error");
+        CustomPlot(1, (int) u, "Control Effort");
+        CustomPlot(2, error, "Error");
         // PlotSensor(LeftEncoder);
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
@@ -241,7 +243,7 @@ void turnAngle(int targetAngle, int Kp, int tolerance){
         // CustomPlot(1, (int) uL, "Effort left");
         lvgl_print(1, "uL = %f", uL);
         // CustomPlot(2, uR, "Effort Right");
-        // CustomPlot(3, error, "Turn Error");
+        CustomPlot(1, error, "Turn Error");
 
 
         delay(50);

@@ -203,6 +203,5 @@ extern void StopDataLogging();
 extern void SDLoggerTimer(lv_timer_t * t);
 extern void RegisterPlot(const char* name, int* var_ptr, bool active, int slot_index);
 extern void GenerateUniquePath(const char* name, char* out_path);
-extern void SetLogRate(int ms);
 
  #endif  // _PROS_MAIN_H_
