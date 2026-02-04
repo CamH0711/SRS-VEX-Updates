@@ -765,8 +765,7 @@ void ProgramEndedBannerTask(lv_timer_t * t) {
   * are being updated.
   * @param t (lv_timer_t) Pointer to the timer object
   */
-void PrintUpdateTask(lv_timer_t * t)
-{
+void PrintUpdateTask(lv_timer_t * t) {
     if (!print_panel_visible) return;
 
     lv_obj_t* lines[8] = {
@@ -979,6 +978,13 @@ void SetLogRate(int ms) {
 
 
  void PauseTask(lv_timer_t * t) {
+
+    if (_stopflag == 1) {
+        lv_timer_del(t); 
+        lv_obj_add_flag(ui_ResumeButton, LV_OBJ_FLAG_HIDDEN);
+        return;
+    }
+
     if(pause_active) {
         lv_label_set_text(ui_StopText, "Program Paused");
         lv_obj_clear_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);

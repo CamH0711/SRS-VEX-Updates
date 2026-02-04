@@ -134,7 +134,7 @@ extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
 extern void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e);
 extern void ui_event_PlotRightDistanceCheckbox(lv_event_t * e);
 extern void PlotSensor(int sensor_name);
-extern void ClearSeriesTimer(lv_event_t * e);
+extern void ClearSeriesTimer(lv_timer_t * t);
 extern void ClearSeries(lv_chart_series_t *series);
 extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
 extern void NumpadButtonEvent(lv_event_t * e);
@@ -152,4 +152,3 @@ void ResetVariableSlots();
 #endif
 
 #endif
-

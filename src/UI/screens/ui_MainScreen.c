@@ -70,6 +70,10 @@ void ui_event_Switch(lv_event_t * e)
     _ui_flag_modify(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
     _ui_flag_modify(ui_Chart, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
     _ui_flag_modify(ui_Legend, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+
+    if(print_panel_visible) {
+        lv_obj_invalidate(ui_PrintPanel);
+    }
 }
 
 void ui_event_SettingsButton(lv_event_t * e)
@@ -168,9 +172,10 @@ if (line_number < 1 || line_number > 8) return;
 
 void ShowChart() {
     lv_obj_add_state(ui_Switch, LV_STATE_CHECKED);
-    lv_obj_clear_flag(ui_Chart, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_clear_flag(ui_Legend, LV_OBJ_FLAG_HIDDEN);
+    _ui_flag_modify(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    _ui_flag_modify(ui_Chart, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    _ui_flag_modify(ui_Legend, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+    print_panel_visible = !print_panel_visible;
 }
 
 

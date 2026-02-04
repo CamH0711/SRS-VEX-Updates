@@ -255,7 +255,7 @@ void PlotSensor(int data_name) {
     }
 }
 
-void ClearSeriesTimer(lv_event_t * e) {
+void ClearSeriesTimer(lv_timer_t * t) {
     lv_chart_set_all_value(ui_Chart, series_to_be_removed, LV_CHART_POINT_NONE);
 }
 
@@ -951,7 +951,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_add_event_cb(ui_Slot1Button, ui_event_Slot1Button, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Slot2Button, ui_event_Slot2Button, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Slot3Button, ui_event_Slot3Button, LV_EVENT_ALL, NULL);
-
+    // Event callback for the back to main button
     lv_obj_add_event_cb(ui_BackToMainButton, ui_event_BackToMainButton, LV_EVENT_ALL, NULL);
 }
 
