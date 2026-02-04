@@ -175,7 +175,7 @@ typedef struct {
 /* Data logging with SD card related*/
 
 // Maximums for the system
-#define MAX_CUSTOM_PLOTS 15
+#define MAX_CUSTOM_PLOTS 30
 #define MAX_NAME_LEN 32
 
 // structure to hold all custom plot info

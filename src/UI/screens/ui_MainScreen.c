@@ -358,22 +358,29 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_height(ui_SwitchFrame, 40);
     lv_obj_set_align(ui_SwitchFrame, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_SwitchFrame, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_SwitchFrame, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_SwitchFrame, lv_color_hex(0x2F2F2F), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_SwitchFrame, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
+    lv_obj_set_style_border_color(ui_SwitchFrame, lv_color_hex(0x2095F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_SwitchFrame, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_SwitchFrame, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    
     ui_Switch = lv_switch_create(ui_DisplaySwap);
     lv_obj_set_width(ui_Switch, 50);
     lv_obj_set_height(ui_Switch, 25);
     lv_obj_set_align(ui_Switch, LV_ALIGN_CENTER);
 
+    lv_obj_set_style_border_color(ui_Switch, lv_color_hex(0x2095F6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_Switch, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Switch, 2, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
     ui_DisplayPrintText = lv_label_create(ui_DisplaySwap);
     lv_obj_set_width(ui_DisplayPrintText, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_DisplayPrintText, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_DisplayPrintText, 155);
+    lv_obj_set_x(ui_DisplayPrintText, -55);
     lv_obj_set_y(ui_DisplayPrintText, 0);
-    lv_obj_set_align(ui_DisplayPrintText, LV_ALIGN_LEFT_MID);
-    lv_label_set_text(ui_DisplayPrintText, "Output");
-    lv_obj_set_style_text_color(ui_DisplayPrintText, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_align(ui_DisplayPrintText, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_DisplayPrintText, "Print");
+    lv_obj_set_style_text_color(ui_DisplayPrintText, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_DisplayPrintText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_DisplayChartText = lv_label_create(ui_DisplaySwap);
@@ -383,8 +390,9 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_y(ui_DisplayChartText, 0);
     lv_obj_set_align(ui_DisplayChartText, LV_ALIGN_RIGHT_MID);
     lv_label_set_text(ui_DisplayChartText, "Chart");
-    lv_obj_set_style_text_color(ui_DisplayChartText, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_DisplayChartText, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_DisplayChartText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
 
     ui_RunningText = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_RunningText, LV_SIZE_CONTENT);   /// 1

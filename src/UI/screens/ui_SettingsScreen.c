@@ -525,6 +525,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotLeftEncCheckbox, 0);
     lv_obj_add_flag(ui_PlotLeftEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
+
     ui_PlotRightEncCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
     lv_checkbox_set_text(ui_PlotRightEncCheckbox, "Plot Right Encoder");
     lv_obj_set_width(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);   /// 1

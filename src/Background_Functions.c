@@ -987,6 +987,11 @@ void SetLogRate(int ms) {
         lv_obj_clear_state(ui_Slot1Button, LV_STATE_DISABLED);
         lv_obj_clear_state(ui_Slot2Button, LV_STATE_DISABLED);
         lv_obj_clear_state(ui_Slot3Button, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_PlotLeftEncCheckbox, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_PlotRightEncCheckbox, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_PlotArmEncCheckbox, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_PlotLeftDistanceCheckbox, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_PlotRightDistanceCheckbox, LV_STATE_DISABLED);
     } else if (!pause_active && !program_ended_normally_flag) {
         lv_obj_add_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(ui_ResumeButton, LV_OBJ_FLAG_HIDDEN);
@@ -994,5 +999,11 @@ void SetLogRate(int ms) {
         lv_obj_add_state(ui_Slot1Button, LV_STATE_DISABLED);
         lv_obj_add_state(ui_Slot2Button, LV_STATE_DISABLED);
         lv_obj_add_state(ui_Slot3Button, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_PlotLeftEncCheckbox, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_PlotRightEncCheckbox, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_PlotArmEncCheckbox, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_PlotLeftDistanceCheckbox, LV_STATE_DISABLED);
+        lv_obj_add_state(ui_PlotRightDistanceCheckbox, LV_STATE_DISABLED);
+
     }
  }
