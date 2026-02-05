@@ -24,7 +24,6 @@
  long T3_timer = 0;
  long T4_timer = 0;
  bool chart_needs_resize = false;
- int plot_divider = 0;
  int observed_min = INT32_MAX;
  int observed_max = INT32_MIN;
  int shrink_counter = 0;
@@ -526,10 +525,6 @@
             }
         }
 
-        /* SYNC WITH LOGGER:
-           Whenever we encounter a custom plot slot, we update the session registry.
-           If 'active' is true, the logger records the value. 
-           If 'active' is false, the logger records a placeholder '0'. */
         if (plot_slots[i].source == PLOT_CUSTOM) {
             RegisterPlot(plot_slots[i].custom_name, &plot_slots[i].custom_value, plot_slots[i].active, i);
         }
@@ -593,7 +588,7 @@ void CustomPlot(int slot, int value, const char * name) {
     plot_slots[index].custom_value = value;
     plot_slots[index].needs_ui_refresh = true;
 
-    // Copy the string safely into our buffer
+    // Copy the string safely into the buffer
     strncpy(plot_slots[index].custom_name, name, 31);
     plot_slots[index].custom_name[31] = '\0'; // Ensure null termination
 
@@ -816,6 +811,16 @@ void GenerateUniquePath(const char* name, char* out_path) {
     }
 }
 
+
+/**
+  * @brief A function that registers a variable for plotting and data logging, 
+  * or updates its active status if it's already registered.
+  * @param name (const char*) The user-defined name for the log file
+  * @param var_ptr (int*) Pointer to the variable that holds the value to be logged
+  * @param active (bool) Whether this variable should be actively logged
+  * @param slot_index (int) The plot slot index associated with this variable (0 to 
+  * MAX_PLOT_SLOTS - 1)
+  */
 void RegisterPlot(const char* name, int* var_ptr, bool active, int slot_index) {
     if (active) {
         for (int i = 0; i < session_plot_count; i++) {
@@ -919,7 +924,7 @@ void StopDataLogging() {
 }
 
 /**
-  * @brief A task that runs in the background to log data to the SD card at regular intervals.
+  * @brief An LVGL timer that runs in the background to log data to the SD card at regular intervals.
   * @param none
   */
 void SDLoggerTimer(lv_timer_t * timer) {
@@ -953,6 +958,11 @@ void SDLoggerTimer(lv_timer_t * timer) {
     logger_is_busy = false;
 }
 
+
+/**
+  * @brief A function that pauses the program and enables variable adjustment when called.
+  * @param t (lv_timer_t) Pointer to the timer object
+  */
 void PauseTask(lv_timer_t * t) {
 
     if (_stopflag == 1) {

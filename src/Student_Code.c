@@ -1,10 +1,9 @@
 /**
  * @file Student_Code.c
- * @author Cameron Hall
- * @brief Copy of the project provided to all ME201 students, but with updated capabilities 
- *        for the distance sensor.
+ * @author your name (you@domain.com)
+ * @brief description of this file
  * @version 0.1
- * @date 14-05-2025
+ * @date yyyy-mm-dd
  *
  * @copyright Copyright (c) 2023
  *
@@ -19,9 +18,6 @@
 #include <math.h>
 #include "Student_Code.h"
 #include "../include/ui.h"
-#include "pros/misc.h"
-
-#define BLACK_LOWER 1100
 
 // ---------------------- Defining physical robot parameters --------------------------
 // Update these numbers to match the physical robot (information found in the lab manual)
@@ -37,208 +33,7 @@ double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of 
 void student_Main()
 { 
 
-    StartDataLogging("Set Log Rate Test");
-    PlotSensor(SonarSensor);
-    ShowChart();
-    driveStraight(2000);
-    // turnAngle(180, 5, 2);
-    // driveStraight(500);
-    // turnAngle(180, 5, 2);
-    // driveStraight(500);
-
-    // while(true) {
-    //     delay(100);
-    // }
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
 // Don't forget to add your function prototypes to Student_Code.h
-
-// *** FUNCTIONS COPIED OVER FROM SEM 1 201 PROJECT ***
-
-//A function for driving a specified distance forwards or backwards
-void driveStraight(int distance) {
-
-    //Initialise Variables
-    int error = 0, errorIntSum = 0, encError = 0;
-    int k = 50, errorArray[1000] = {0}; 
-    double currentPosition = 0;
-    double u = 0, uL = 0, uR = 0, uDiff = 0;
-    double encoderAverage;
-    double tolerance = 0.1;
-    double Kp = 1.0, Ki = 0.1, Kp_straight = 1.0; 
-    
-    int gg = 10;
-
-    ConfigSlot(1, &Kp, "Kp");
-    ConfigSlot(2, &Ki, "Ki");
-    ConfigSlot(3, &gg, "example int");
-    Pause();
-
-    int i;
-    
-    for (i = 0; i <= 1000; i++) {
-        errorArray[i] = 9999;
-    }
-    
-    //Reset Encoders
-    resetEncoder(LeftEncoder);
-    resetEncoder(RightEncoder);
-    
-    do {
-        // ** Drive Controller (PI Controller) **
-        //Use encoders to Calculate the current position of the robot
-        encoderAverage = (readSensor(LeftEncoder) + readSensor(RightEncoder))*0.5;
-        currentPosition = convertPosition(encoderAverage);
-        
-        //PI controller calculations
-        error = distance - currentPosition;
-        u = Kp*error + Ki*errorIntSum;
-        
-        //If Controller is not saturated, add integral
-        if (abs(u) < 70) {  					
-            errorIntSum = errorIntSum + error;
-        }
-        u = saturate(u, -60, 60);
-    
-        //For the 1st second, ramp up voltage to stop twitching
-        if (k < 70) {	
-            u = (((double) k - 49.0)/20.0) * u;
-        }
-        //Store all the values of the error in an array
-        errorArray[k] = error;
-        k = k + 1;
-    
-        // ** Straight Controller (P controller) **
-        //Adjust for difference the difference in motor speeds, stopping the robot from curving
-        encError = readSensor(RightEncoder) - readSensor(LeftEncoder);
-        uDiff = Kp_straight*encError;
-        uR = u - uDiff;
-        uL = u + uDiff;
-        uR = saturate(uR, -100, 100);
-        uL = saturate(uL, -100, 100);
-    
-        //Use uR and uL to drive the motors
-        motorPower(RightMotor, convertPower(uR));
-        motorPower(LeftMotor, convertPower(uL));
-
-        lvgl_print(1, "Sonar = %d", readSensor(SonarSensor));
-
-        // CustomPlot(1, (int) u, "Control Effort");
-        // CustomPlot(2, error, "Error");
-        delay(50);
-        } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
-
-        motorPower(LeftMotor, 0);
-        motorPower(RightMotor, 0);
-    }
-
-int driveToObject(int finalDistance) {
-
-	//Ensure Arm is not blocking the sonar
-	armUp(4000);
-
-    /* For Distance Sensors */
-    delay(200);	//Give time for distance sensors to stabilise
-    //Initialise Variables
-    int current_distance = readSensor(SonarSensor);
-    // int average_distance = readSensor(SonarSensor);
-    int distance = current_distance - finalDistance;
-
-	//driveStraight until specified distance from the object
-	driveStraight(distance);
-
-	return distance;
-}
-
-void turnAngle(int targetAngle, int Kp, int tolerance){
-    
-	//Initialise Variables
-    double error = 0, controlEffort, currentAngle;
-    double averageCount;
-	double uL, uR;
-	double errorSum = 0, Ki = 0.1;
-	double encError;
-	double Kpe = 0.1;	
-	double uDiff;
-	double prevError = 0, errorChange;
-
-    // reset encoder counts
-    resetEncoder(LeftEncoder);
-    resetEncoder(RightEncoder);
-
-    // ConfigSlot(2, &Ki, "Ki");
-
-    do{
-		prevError = error;
-        // get average of encoder counts and use to estimate current angle
-        averageCount = (double)(readSensor(RightEncoder) - readSensor(LeftEncoder))/2.0;
-        currentAngle = 0.17 * averageCount;
-
-		// calculate u (PI Controller)
-        error = targetAngle - currentAngle;
-        controlEffort = Kp * error + Ki * errorSum;
-		controlEffort = saturate(controlEffort, -60, 60);
-
-		errorChange = prevError - error;
-
-		//If Controller is not saturated, add integral
-		if (abs(controlEffort) < 60) { 
-			errorSum = errorSum + error;
-		}
-
-		//Account for different wheel speeds (P Controller)
-		encError = readSensor(RightEncoder) + readSensor(LeftEncoder);
-        uDiff = Kpe * encError;
-		uL = controlEffort + uDiff;
-		uR = controlEffort - uDiff;
-		uL = -convertPower(saturate(uL, -80, 80));
-		uR = convertPower(saturate(uR, -80, 80));
-		
-		//Use uL and uR to drive the motors
-		motorPower(LeftMotor, uL);
-        motorPower(RightMotor, uR);
-
-        // CustomPlot(1, (int) uL, "Effort left");
-        lvgl_print(1, "uL = %f", uL);
-        // CustomPlot(2, uR, "Effort Right");
-        CustomPlot(1, error, "Turn Error");
-
-
-        delay(50);
-    } while(errorChange && (abs(error) > tolerance));
-
-    motorPower(LeftMotor, 0);
-    motorPower(RightMotor, 0);
-}
-
-
-//Convert a percentage input to a voltage output
-int convertPower(double percentPower) {
-	
-	//Initialise Variables
-	int convertedVoltage = 0;
-	
-	percentPower = saturate(percentPower, -100, 100);	//Saturate input between -100 and 100 - protects motors
-
-	convertedVoltage = 50.0 * percentPower;	//Convert Percentage to Voltage
-
-	return convertedVoltage;
-}
-
-//Convert Encoder Counts to position in mm
-double convertPosition(double encoderCount) {
-
-	double position = (1/encCountPerRev)*encoderCount*PI*drivingWheelDiameter;
-
-	return position;
-} 
-
-//Convert Encoder counts to angle in degrees
-double convertAngle(double encoderCount) {
-
-	double angle = (360.0/encCountPerRev)*encoderCount;
-
-	return angle;
-}
-    

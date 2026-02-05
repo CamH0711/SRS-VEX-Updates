@@ -43,8 +43,6 @@ lv_obj_t * ui_Plot3Label = NULL;
 lv_obj_t * ui_Plot4Label = NULL;
 lv_obj_t * ui_ResumeButton = NULL;
 lv_obj_t * ui_ResumeText = NULL;
-
-
 // CUSTOM VARIABLES
 lv_chart_series_t *series_U = NULL;
 lv_chart_series_t *series_E = NULL;
@@ -122,7 +120,9 @@ void ui_event_ResumeButton(lv_event_t * e) {
     }
 }
 
-// Custom Functions
+/*Custom Functions */
+
+// A function that updates the Y axis of the graph based on the current max and min values
 void update_y_axis(int min, int max)
 {
     if (max <= min) max = min + 1;
@@ -143,6 +143,7 @@ void update_y_axis(int min, int max)
     lv_scale_set_label_show(ui_Chart_Yaxis1, true);
 }
 
+// A custom printf-like function for printing to the LVGL screen
 void lvgl_print(int line_number, char* text, ...) {
 if (line_number < 1 || line_number > 8) return;
     int index = line_number - 1;
@@ -151,7 +152,6 @@ if (line_number < 1 || line_number > 8) return;
     va_start(args, text);
 
     // 1. Attempt to format the string into the buffer.
-    // result = total length the string WANTED to be.
     int result = vsnprintf(print_buffers[index], 51, text, args);
     
     va_end(args);
@@ -169,6 +169,7 @@ if (line_number < 1 || line_number > 8) return;
     print_dirty[index] = true;
 }
 
+// A student accessible function that displays the graph automatically on startup
 void ShowChart() {
     lv_obj_add_state(ui_Switch, LV_STATE_CHECKED);
     _ui_flag_modify(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
@@ -177,7 +178,7 @@ void ShowChart() {
     print_panel_visible = !print_panel_visible;
 }
 
-
+// A student accessible function that pauses the entire program.
 void Pause() {
     motor_move(_motorLeft, 0);
     motor_move(_motorRight, 0);

@@ -73,8 +73,6 @@ extern lv_obj_t * ui_StopText2;
 // Custom Variables
 extern int current_y_min;
 extern int current_y_max;
-extern bool plot_u_enabled;
-extern bool plot_e_enabled;
 extern bool plot_left_enc_enabled;
 extern bool plot_right_enc_enabled;
 extern bool plot_arm_enabled;
@@ -102,7 +100,7 @@ typedef struct {
 
 extern numpad_ctx_t numpad_ctx;
 
-/* Adjust Slots Related */
+/* Adjustable Slots Related */
 typedef struct {
     void *var_ptr;        // Pointer to the student's variable
     numpad_data_type_t type; // Your enum: NUMPAD_TYPE_DOUBLE or NUMPAD_TYPE_INT

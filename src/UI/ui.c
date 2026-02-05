@@ -67,6 +67,7 @@ void ui_destroy(void)
     ui_SettingsScreen_screen_destroy();
 }
 
+// A function that initialises the LVGL series objects
 void init_plot_series(void) {
 
     slot_series[0] = lv_chart_add_series(
@@ -94,6 +95,7 @@ void init_plot_series(void) {
     );
 }
 
+// A function that initialises the plot_slots array
 void init_plot_slots(void) {
     plot_slots[0].legend_label = ui_Plot1Label;
     plot_slots[1].legend_label = ui_Plot2Label;

@@ -65,8 +65,6 @@ lv_obj_t * ui_StopText2 = NULL;
 // Custom Variables
 int current_y_min = 0;
 int current_y_max = 100;
-bool plot_u_enabled = false;
-bool plot_e_enabled = false;
 bool plot_left_enc_enabled = false;
 bool plot_right_enc_enabled = false;
 bool plot_arm_enabled = false;
@@ -246,6 +244,8 @@ void PlotSensor(int data_name) {
     }
 }
 
+
+// A timer function that clears the values from a series when enabled
 void ClearSeriesTimer(lv_timer_t * t) {
     // Retrieve the series pointer from the timer's user_data
     lv_chart_series_t * series = (lv_chart_series_t *)t->user_data;
@@ -253,12 +253,14 @@ void ClearSeriesTimer(lv_timer_t * t) {
         lv_chart_set_all_value(ui_Chart, series, LV_CHART_POINT_NONE);
     }}
 
+// A helper function that clears a series using a timer.
 void ClearSeries(lv_chart_series_t * series) {
     if (!series) return;
     lv_timer_t * t = lv_timer_create(ClearSeriesTimer, 20, series);
     lv_timer_set_repeat_count(t, 1);
 }
 
+// A function that retrieves all of the info about a variable slot when the student clicks adjust on the screen
 void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec){
     // Store the label data
     numpad_ctx.target_value = value;
@@ -288,6 +290,7 @@ void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const cha
     UpdateTargetLabel();
 }
 
+// A function that handles the events from the numpad buttons
 void NumpadButtonEvent(lv_event_t *e)
 {
     const char *key = lv_event_get_user_data(e);
@@ -334,6 +337,7 @@ void NumpadButtonEvent(lv_event_t *e)
     UpdateTargetLabel();
 }
 
+// A function that updates the variable label with the current variable value as the student types
 void UpdateTargetLabel(void)
 {
 if (numpad_ctx.target_label == NULL) return;
@@ -467,6 +471,7 @@ void RefreshVariableLabels(lv_timer_t * t) {
     }
 }
 
+// A helper function to reset all variable slots
 void ResetVariableSlots() {
     for (int i = 0; i < 3; i++) {
         variable_slots[i].active = false;
