@@ -17,8 +17,7 @@ lv_obj_t * ui_CheckboxesContainer = NULL;
 lv_obj_t * ui_PlotLeftEncCheckbox = NULL;
 lv_obj_t * ui_PlotRightEncCheckbox = NULL;
 lv_obj_t * ui_PlotArmEncCheckbox = NULL;
-lv_obj_t * ui_PlotLeftDistanceCheckbox = NULL;
-lv_obj_t * ui_PlotRightDistanceCheckbox = NULL;
+lv_obj_t * ui_PlotSonarCheckbox = NULL;
 lv_obj_t * ui_BackToMainButton = NULL;
 lv_obj_t * ui_GoBackLabel = NULL;
 lv_obj_t * ui_AdjustGainsContainer = NULL;
@@ -71,8 +70,7 @@ bool plot_e_enabled = false;
 bool plot_left_enc_enabled = false;
 bool plot_right_enc_enabled = false;
 bool plot_arm_enabled = false;
-bool plot_left_dist_enabled = false;
-bool plot_right_dist_enabled = false;
+bool plot_sonar_enabled = false;
 numpad_ctx_t numpad_ctx;
 int plotting_rate = 100;
 variable_slot_t variable_slots[3];
@@ -229,22 +227,16 @@ void ui_event_PlotArmEncCheckbox(lv_event_t * e) {
      plot_arm_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
 }
 // Show/Hide left distance sensor series
-void ui_event_PlotLeftDistanceCheckbox(lv_event_t * e) {
-     plot_left_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
-}
-// Show/Hide Right distance sensor series
-void ui_event_PlotRightDistanceCheckbox(lv_event_t * e) {
-     plot_right_dist_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
+void ui_event_PlotSonarCheckbox(lv_event_t * e) {
+     plot_sonar_enabled = lv_obj_has_state(lv_event_get_target(e), LV_STATE_CHECKED);
 }
 
 /* CUSTOM FUNCTIONS*/
 
 // A function that can be used to check a box automatically to plot data
 void PlotSensor(int data_name) {
-    if (data_name == LeftDistance) {
-        lv_obj_add_state(ui_PlotLeftDistanceCheckbox, LV_STATE_CHECKED);
-    } else if (data_name == RightDistance) {
-        lv_obj_add_state(ui_PlotRightDistanceCheckbox, LV_STATE_CHECKED);
+    if (data_name == SonarSensor) {
+        lv_obj_add_state(ui_PlotSonarCheckbox, LV_STATE_CHECKED);
     } else if (data_name == LeftEncoder) {
         lv_obj_add_state(ui_PlotLeftEncCheckbox, LV_STATE_CHECKED);
     } else if (data_name == RightEncoder) {
@@ -513,7 +505,7 @@ void ui_SettingsScreen_screen_init(void)
     ui_CheckboxesContainer = lv_obj_create(ui_SettingsScreen);
     lv_obj_remove_style_all(ui_CheckboxesContainer);
     lv_obj_set_width(ui_CheckboxesContainer, 220);
-    lv_obj_set_height(ui_CheckboxesContainer, 200);
+    lv_obj_set_height(ui_CheckboxesContainer, 190);
     lv_obj_set_x(ui_CheckboxesContainer, 0);
     lv_obj_set_y(ui_CheckboxesContainer, 15);
     lv_obj_set_align(ui_CheckboxesContainer, LV_ALIGN_RIGHT_MID);
@@ -527,13 +519,12 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_y(ui_PlotLeftEncCheckbox, 0);
     lv_obj_add_flag(ui_PlotLeftEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-
     ui_PlotRightEncCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
     lv_checkbox_set_text(ui_PlotRightEncCheckbox, "Plot Right Encoder");
     lv_obj_set_width(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotRightEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotRightEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotRightEncCheckbox, 28);
+    lv_obj_set_y(ui_PlotRightEncCheckbox, 35);
     lv_obj_add_flag(ui_PlotRightEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_PlotArmEncCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
@@ -541,24 +532,16 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_set_width(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PlotArmEncCheckbox, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_PlotArmEncCheckbox, 20);
-    lv_obj_set_y(ui_PlotArmEncCheckbox, 56);
+    lv_obj_set_y(ui_PlotArmEncCheckbox, 70);
     lv_obj_add_flag(ui_PlotArmEncCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
-    ui_PlotLeftDistanceCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
-    lv_checkbox_set_text(ui_PlotLeftDistanceCheckbox, "Plot Left Distance");
-    lv_obj_set_width(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_PlotLeftDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PlotLeftDistanceCheckbox, 20);
-    lv_obj_set_y(ui_PlotLeftDistanceCheckbox, 84);
-    lv_obj_add_flag(ui_PlotLeftDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-
-    ui_PlotRightDistanceCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
-    lv_checkbox_set_text(ui_PlotRightDistanceCheckbox, "Plot Right Distance");
-    lv_obj_set_width(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_PlotRightDistanceCheckbox, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PlotRightDistanceCheckbox, 20);
-    lv_obj_set_y(ui_PlotRightDistanceCheckbox, 112);
-    lv_obj_add_flag(ui_PlotRightDistanceCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    ui_PlotSonarCheckbox = lv_checkbox_create(ui_CheckboxesContainer);
+    lv_checkbox_set_text(ui_PlotSonarCheckbox, "Plot Sonar");
+    lv_obj_set_width(ui_PlotSonarCheckbox, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PlotSonarCheckbox, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PlotSonarCheckbox, 20);
+    lv_obj_set_y(ui_PlotSonarCheckbox, 105);
+    lv_obj_add_flag(ui_PlotSonarCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_BackToMainButton = lv_button_create(ui_SettingsScreen);
     lv_obj_set_width(ui_BackToMainButton, 160);
@@ -931,8 +914,7 @@ void ui_SettingsScreen_screen_init(void)
     lv_obj_add_event_cb(ui_PlotLeftEncCheckbox, ui_event_PlotLeftEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotRightEncCheckbox, ui_event_PlotRightEncCheckbox, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PlotArmEncCheckbox, ui_event_PlotArmEncCheckbox, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PlotLeftDistanceCheckbox, ui_event_PlotLeftDistanceCheckbox, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_PlotRightDistanceCheckbox, ui_event_PlotRightDistanceCheckbox, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PlotSonarCheckbox, ui_event_PlotSonarCheckbox, LV_EVENT_ALL, NULL);
     // Event callbacks for numpad buttons
     lv_obj_add_event_cb(ui_Button0,   NumpadButtonEvent, LV_EVENT_CLICKED, "0");
     lv_obj_add_event_cb(ui_Button1,   NumpadButtonEvent, LV_EVENT_CLICKED, "1");
@@ -969,8 +951,7 @@ void ui_SettingsScreen_screen_destroy(void)
     ui_PlotLeftEncCheckbox = NULL;
     ui_PlotRightEncCheckbox = NULL;
     ui_PlotArmEncCheckbox = NULL;
-    ui_PlotLeftDistanceCheckbox = NULL;
-    ui_PlotRightDistanceCheckbox = NULL;
+    ui_PlotSonarCheckbox = NULL;
     ui_BackToMainButton = NULL;
     ui_GoBackLabel = NULL;
     ui_AdjustGainsContainer = NULL;

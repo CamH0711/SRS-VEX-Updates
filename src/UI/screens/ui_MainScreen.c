@@ -51,8 +51,7 @@ lv_chart_series_t *series_E = NULL;
 lv_chart_series_t *series_LeftEnc = NULL;
 lv_chart_series_t *series_RightEnc = NULL;
 lv_chart_series_t *series_ArmEnc = NULL;
-lv_chart_series_t *series_LeftDist = NULL;
-lv_chart_series_t *series_RightDist = NULL;
+lv_chart_series_t *series_Sonar = NULL;
 // Global Variables for printing
 volatile bool print_panel_visible = true;
 char print_buffers[8][51];

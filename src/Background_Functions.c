@@ -43,7 +43,7 @@
 
 
 
- #define SHRINK_DELAY_TICKS 50   // ~1 second if timer = 50ms
+ #define SHRINK_DELAY_TICKS 50   // ~2.5 second if timer = 50ms
  #define CHART_GROW_STEP 50
  
  // __[ GET MOTOR POWER ]________________________________________________
@@ -140,15 +140,6 @@
              prevSonar = sensorOutput;
          }
          break;
-     case 11: // left distance sensor
-        sensorOutput = filteredDistanceLeft;
-         break;
-     case 12: // right distance sensor
-         sensorOutput = filteredDistanceRight;
-         break;
-    //  case 13: // unfiltered left distance sensor
-    //      sensorOutput = distance_get(_distanceLeft);
-    //      break;
      }
      return sensorOutput;
  }
@@ -448,8 +439,7 @@
         case PLOT_LEFT_ENC:    return readSensor(LeftEncoder);
         case PLOT_RIGHT_ENC:   return readSensor(RightEncoder);
         case PLOT_ARM_ENC:     return readSensor(ArmEncoder);
-        case PLOT_LEFT_DIST:   return readSensor(LeftDistance);
-        case PLOT_RIGHT_DIST:  return readSensor(RightDistance);
+        case PLOT_SONAR:       return readSensor(SonarSensor);
         default:               return 0;
     }
 }
@@ -464,8 +454,7 @@
         case PLOT_LEFT_ENC:    return plot_left_enc_enabled;
         case PLOT_RIGHT_ENC:   return plot_right_enc_enabled;
         case PLOT_ARM_ENC:     return plot_arm_enabled;
-        case PLOT_LEFT_DIST:   return plot_left_dist_enabled;
-        case PLOT_RIGHT_DIST:  return plot_right_dist_enabled;
+        case PLOT_SONAR:       return plot_sonar_enabled;
         default:               return false;
     }
 }
@@ -481,8 +470,7 @@
         case PLOT_LEFT_ENC:    return "Left Encoder";
         case PLOT_RIGHT_ENC:   return "Right Encoder";
         case PLOT_ARM_ENC:     return "Arm Encoder";
-        case PLOT_LEFT_DIST:   return "Left Distance";
-        case PLOT_RIGHT_DIST:  return "Right Distance";
+        case PLOT_SONAR:       return "Sonar Sensor";
         default:               return "";
     }
 }
@@ -496,8 +484,7 @@
         PLOT_LEFT_ENC,
         PLOT_RIGHT_ENC,
         PLOT_ARM_ENC,
-        PLOT_LEFT_DIST,
-        PLOT_RIGHT_DIST
+        PLOT_SONAR
     };
 
     /* 1. Cleanup and Logger Sync */
@@ -907,7 +894,7 @@ void StopDataLogging() {
     if (final_csv == NULL) return;
 
     // 2. Write the dynamic Header
-    fprintf(final_csv, "Time,Left Enc,Right Enc,Arm Enc,Left Dist,Right Dist,Left Light,Mid Light,Right Light");
+    fprintf(final_csv, "Time,Left Enc,Right Enc,Arm Enc,Sonar,Left Light,Mid Light,Right Light");
     for (int i = 0; i < session_plot_count; i++) {
         fprintf(final_csv, ",%s", session_plots[i].name);
     }
@@ -945,11 +932,11 @@ void SDLoggerTimer(lv_timer_t * timer) {
     uint32_t session_time = (raw_elapsed / log_rate) * log_rate;
 
     // 2. Standard Sensors
-    fprintf(temp_log_file, "%u,%d,%d,%d,%d,%d,%d,%d,%d",
+    fprintf(temp_log_file, "%u,%d,%d,%d,%d,%d,%d,%d",
             session_time,
             readSensor(LeftEncoder), readSensor(RightEncoder), readSensor(ArmEncoder),
-            readSensor(LeftDistance), readSensor(RightDistance),
-            readSensor(LeftLight), readSensor(MidLight), readSensor(RightLight));
+            readSensor(SonarSensor), readSensor(LeftLight), readSensor(MidLight), 
+            readSensor(RightLight));
 
     // 3. Dynamic Columns
     for (int i = 0; i < session_plot_count; i++) {
@@ -985,8 +972,7 @@ void PauseTask(lv_timer_t * t) {
         lv_obj_clear_state(ui_PlotLeftEncCheckbox, LV_STATE_DISABLED);
         lv_obj_clear_state(ui_PlotRightEncCheckbox, LV_STATE_DISABLED);
         lv_obj_clear_state(ui_PlotArmEncCheckbox, LV_STATE_DISABLED);
-        lv_obj_clear_state(ui_PlotLeftDistanceCheckbox, LV_STATE_DISABLED);
-        lv_obj_clear_state(ui_PlotRightDistanceCheckbox, LV_STATE_DISABLED);
+        lv_obj_clear_state(ui_PlotSonarCheckbox, LV_STATE_DISABLED);
     } else if (!pause_active && !program_ended_normally_flag) {
         lv_obj_add_flag(ui_StopPanel, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(ui_ResumeButton, LV_OBJ_FLAG_HIDDEN);
@@ -997,8 +983,6 @@ void PauseTask(lv_timer_t * t) {
         lv_obj_add_state(ui_PlotLeftEncCheckbox, LV_STATE_DISABLED);
         lv_obj_add_state(ui_PlotRightEncCheckbox, LV_STATE_DISABLED);
         lv_obj_add_state(ui_PlotArmEncCheckbox, LV_STATE_DISABLED);
-        lv_obj_add_state(ui_PlotLeftDistanceCheckbox, LV_STATE_DISABLED);
-        lv_obj_add_state(ui_PlotRightDistanceCheckbox, LV_STATE_DISABLED);
-
+        lv_obj_add_state(ui_PlotSonarCheckbox, LV_STATE_DISABLED);
     }
  }

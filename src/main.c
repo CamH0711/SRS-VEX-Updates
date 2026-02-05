@@ -21,7 +21,6 @@
  /* Background processing variables. Do not modify or delete */
  task_t monitorMotors_Task;
  task_t check_sensors;
- task_t low_pass_filter;
  int _stopflag = 0;
  int _arm_State = 0;
  bool gui_running = true;
@@ -48,8 +47,6 @@
 	 success = adi_port_set_config(_buttonStop, E_ADI_DIGITAL_IN);
  
 	//begin background processing tasks
-	 delay(100);
-	 low_pass_filter = task_create(lowPassFilter, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Low Pass Filter");
 	 delay(100);
 	 check_sensors = task_create(checkSensors, NULL, TASK_PRIORITY_DEFAULT+2, TASK_STACK_DEPTH_DEFAULT, "Check sensors");
 	 delay(100);

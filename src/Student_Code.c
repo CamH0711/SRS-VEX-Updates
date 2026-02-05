@@ -31,49 +31,20 @@ int wheelWidth = 22;				// width of the driving wheel [mm]
 double drivingWheelRatio = 1;	    // ratio of wheel shaft rotations to wheel motor shaft rotations
 double armRatio = 7;				// ratio of arm shaft rotations to arm motor shaft rotations
 double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of the motor shaft
-// REMOVE IF ONLY ONE DISTANCE SENSOR IS USED
-int sensorWidth = 139;              // Distance between the left and right distance sensors [mm]
 // ------------------------------------------------------------------------------------
 
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
 
-    // Print the left encoder value to line 1
-    lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
-    // Print the right encoder value to line 2
-    lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
-
-
-
-
     StartDataLogging("Set Log Rate Test");
-    // PlotSensor(LeftEncoder);
-    // PlotSensor(RightEncoder);
-    // ShowChart();
-    turnAngle(180, 5, 2);
-    driveStraight(500);
-    turnAngle(180, 5, 2);
-    driveStraight(500);
-    turnAngle(180, 5, 2);
-    driveStraight(500);
-
-    // FILE* file_testtest123 = fopen("/usd/remove_test.xyz", "w");
-    // if (file_testtest123) {
-    //     fprintf(file_testtest123, "ggs it didn't work");
-    //     fflush(file_testtest123); // Force data out of RAM buffer
-    //     fclose(file_testtest123);
-    //     file_testtest123 = NULL;
-    // }
-
-    // // Give the FAT32 driver 50ms to finalize the file entry
-    // delay(200); 
-
-    // remove("/usd/remove_test.xyz");
-
-
-    // PlotSensor(LeftDistance);
-    // PlotSensor(RightEncoder);
+    PlotSensor(SonarSensor);
+    ShowChart();
+    driveStraight(2000);
+    // turnAngle(180, 5, 2);
+    // driveStraight(500);
+    // turnAngle(180, 5, 2);
+    // driveStraight(500);
 
     // while(true) {
     //     delay(100);
@@ -82,38 +53,6 @@ void student_Main()
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
 // Don't forget to add your function prototypes to Student_Code.h
-
-// *** NEW FUNCTIONS FOR SRS PROJECT ***
-
-//A function that calculates the angle at which the object in front of the robot is currently positioned at. Returns a positive 
-//angle for an angle of elevation, and negative for an angle of depression, measured from the right corner.
-double findObjectAngle() {
-    //Find Sensor Distances
-    double left_distance = (double) readSensor(LeftDistance); 
-    double right_distance = (double) readSensor(RightDistance);
-    double elevation = 1.0;
-
-    //Calculate the opposite
-    double opposite = left_distance - right_distance;
-    if (opposite < 0) {
-        opposite *= -1.0;
-        elevation = -1.0;
-    }
-    //Calculate the adjacent
-    double adjacent = (double) sensorWidth;
-
-    //Calculate the angle
-    if (opposite == 0.0) {
-        return 0.0;
-    } else {
-        return elevation * (180/PI) * atan(opposite/adjacent);
-    }
-}
-
-void StraightenAngle(double percentPower) {
-
-}
-
 
 // *** FUNCTIONS COPIED OVER FROM SEM 1 201 PROJECT ***
 
@@ -131,10 +70,10 @@ void driveStraight(int distance) {
     
     int gg = 10;
 
-    // ConfigSlot(1, &Kp, "Kp");
-    // // ConfigSlot(2, &Ki, "Ki");
-    // ConfigSlot(3, &gg, "example int");
-    // Pause();
+    ConfigSlot(1, &Kp, "Kp");
+    ConfigSlot(2, &Ki, "Ki");
+    ConfigSlot(3, &gg, "example int");
+    Pause();
 
     int i;
     
@@ -183,12 +122,10 @@ void driveStraight(int distance) {
         motorPower(RightMotor, convertPower(uR));
         motorPower(LeftMotor, convertPower(uL));
 
-        lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
-        lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
+        lvgl_print(1, "Sonar = %d", readSensor(SonarSensor));
 
-        CustomPlot(1, (int) u, "Control Effort");
-        CustomPlot(2, error, "Error");
-        // PlotSensor(LeftEncoder);
+        // CustomPlot(1, (int) u, "Control Effort");
+        // CustomPlot(2, error, "Error");
         delay(50);
         } while((abs(errorArray[k-1]) > (abs(distance)*tolerance)) || (abs(errorArray[k-40]) > (abs(distance)*tolerance)));
 
@@ -204,11 +141,9 @@ int driveToObject(int finalDistance) {
     /* For Distance Sensors */
     delay(200);	//Give time for distance sensors to stabilise
     //Initialise Variables
-    int left_distance = readSensor(LeftDistance);
-    int right_distance = readSensor(RightDistance);
-    int average_distance = (left_distance + right_distance) / 2;
+    int current_distance = readSensor(SonarSensor);
     // int average_distance = readSensor(SonarSensor);
-    int distance = average_distance - finalDistance;
+    int distance = current_distance - finalDistance;
 
 	//driveStraight until specified distance from the object
 	driveStraight(distance);
@@ -305,18 +240,5 @@ double convertAngle(double encoderCount) {
 	double angle = (360.0/encCountPerRev)*encoderCount;
 
 	return angle;
-} 
-
-void driveStraight(int distance) {
-
-    double Kp = 1.0;
-    double Ki = 0.1;
- 
-    ConfigSlot(1, &Kp, "Kp");   // Link Kp to variable slot 1
-    ConfigSlot(2, &Ki, "Ki");   // Link Ki to variable slot 2
-    Pause();                    // Pause program for editing values
-
-    // ... Control Loop ...
-
 }
     

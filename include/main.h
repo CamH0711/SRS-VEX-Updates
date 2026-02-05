@@ -28,8 +28,6 @@
  #define _motorRight     19  //right wheel motor
  #define _encoderArm     20  //robot arm encoder
  #define _motorArm       20  //robot arm motor
- #define _distanceLeft   1   //left distance sensor
- #define _distanceRight  10  //right distance sensor
  #define _sonarPing      'A' //sonar ping
  #define _sonarEcho      'B' //sonar echo
  #define _lightRight     'C' //right light sensor
@@ -56,8 +54,6 @@
  #define HighArmLimit    8   //upper limit switch of robot arm
  #define ArmEncoder      9   //robot arm encoder
  #define SonarSensor     10  //sonar sensor
- #define LeftDistance    11  //left distance sensor
- #define RightDistance   12  //right distance sensor
  
  /* LCD macros for student use */
  #define LCDLine1        0   //line 1 of LCD (SHOWS BATTERY LEVEL)
@@ -83,17 +79,13 @@
  #define MOTOR_FLOOR     -5000
  #define MOTOR_CEILING   5000
  #define PI 3.14159265359
- 
- /* Macros for Error and Control Effort */
- #define ControlEffort 22
- #define Error 23
+
 
  void initialize(void);
  
  /* PROS Tasks */
  extern task_t monitorMotors_Task;
  extern task_t check_sensors;
- extern task_t low_pass_filter;
 
  /* Function declarations from Background_Functions.c */
  
@@ -125,19 +117,12 @@
  void monitorMotorPower(void* param);
  void motorStopAll(void);
  void checkSensors(void* param);
- void lowPassFilter(void *param);
 
  /* Global variables */
  extern int _stopflag;              //1 || 0 - Used to control whether or not robot is to be stopped or in stop mode.
  extern int _arm_State;             // Variable that defines the state of the robot arm (-1 at lower limit, 1 at upper limit, and 0 in between)
  extern bool program_ended_normally_flag;
-
-// New functions/global variables for SRS
  extern volatile bool stop_requested;
- extern bool leftInitialised;
- extern bool rightInitialised;
- extern double filteredDistanceLeft;
- extern double filteredDistanceRight;
 
  /* Plotting Related */
  typedef enum {
@@ -145,8 +130,7 @@
     PLOT_LEFT_ENC,
     PLOT_RIGHT_ENC,
     PLOT_ARM_ENC,
-    PLOT_LEFT_DIST,
-    PLOT_RIGHT_DIST,
+    PLOT_SONAR,
     PLOT_CUSTOM
 } plot_source_t;
 
