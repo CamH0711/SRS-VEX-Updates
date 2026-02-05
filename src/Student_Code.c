@@ -15,9 +15,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <math.h>
 #include "Student_Code.h"
 #include "../include/ui.h"
+#include "pros/misc.h"
 
 #define BLACK_LOWER 1100
 
@@ -36,16 +38,38 @@ int sensorWidth = 139;              // Distance between the left and right dista
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
+
+    // Print the left encoder value to line 1
+    lvgl_print(1, "Left Encoder = %d", readSensor(LeftEncoder));
+    // Print the right encoder value to line 2
+    lvgl_print(2, "Right Encoder = %d", readSensor(RightEncoder));
+
+
+
+
     StartDataLogging("Set Log Rate Test");
-    PlotSensor(LeftEncoder);
-    PlotSensor(RightEncoder);
-    ShowChart();
+    // PlotSensor(LeftEncoder);
+    // PlotSensor(RightEncoder);
+    // ShowChart();
     turnAngle(180, 5, 2);
     driveStraight(500);
     turnAngle(180, 5, 2);
     driveStraight(500);
     turnAngle(180, 5, 2);
     driveStraight(500);
+
+    // FILE* file_testtest123 = fopen("/usd/remove_test.xyz", "w");
+    // if (file_testtest123) {
+    //     fprintf(file_testtest123, "ggs it didn't work");
+    //     fflush(file_testtest123); // Force data out of RAM buffer
+    //     fclose(file_testtest123);
+    //     file_testtest123 = NULL;
+    // }
+
+    // // Give the FAT32 driver 50ms to finalize the file entry
+    // delay(200); 
+
+    // remove("/usd/remove_test.xyz");
 
 
     // PlotSensor(LeftDistance);
@@ -282,4 +306,17 @@ double convertAngle(double encoderCount) {
 
 	return angle;
 } 
+
+void driveStraight(int distance) {
+
+    double Kp = 1.0;
+    double Ki = 0.1;
+ 
+    ConfigSlot(1, &Kp, "Kp");   // Link Kp to variable slot 1
+    ConfigSlot(2, &Ki, "Ki");   // Link Ki to variable slot 2
+    Pause();                    // Pause program for editing values
+
+    // ... Control Loop ...
+
+}
     
