@@ -144,7 +144,7 @@ void update_y_axis(int min, int max)
 }
 
 // A custom printf-like function for printing to the LVGL screen
-void lvgl_print(int line_number, char* text, ...) {
+void ScreenPrint(int line_number, char* text, ...) {
 if (line_number < 1 || line_number > 8) return;
     int index = line_number - 1;
 

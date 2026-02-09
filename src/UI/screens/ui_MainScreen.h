@@ -60,7 +60,7 @@ extern lv_chart_series_t *series_RightEnc;
 extern lv_chart_series_t *series_ArmEnc;
 extern lv_chart_series_t *series_Sonar;
 extern void update_y_axis(int min, int max);
-extern void lvgl_print(int line_number, char* text, ...);
+extern void ScreenPrint(int line_number, char* text, ...);
 extern void ui_event_OnScreenStopButton(lv_event_t * e);
 extern void ShowChart();
 extern void ui_event_ResumeButton(lv_event_t * e);

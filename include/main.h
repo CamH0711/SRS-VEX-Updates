@@ -55,16 +55,6 @@
  #define ArmEncoder      9   //robot arm encoder
  #define SonarSensor     10  //sonar sensor
  
- /* LCD macros for student use */
- #define LCDLine1        0   //line 1 of LCD (SHOWS BATTERY LEVEL)
- #define LCDLine2        1   //line 2 of LCD
- #define LCDLine3        2   //line 3 of LCD
- #define LCDLine4        3   //line 4 of LCD
- #define LCDLine5        4   //line 5 of LCD
- #define LCDLine6        5   //line 6 of LCD
- #define LCDLine7        6   //line 7 of LCD
- #define LCDLine8        7   //line 8 of LCD
- 
  /* Timer initialisation and macros */
  extern long T1_timer;
  extern long T2_timer;
