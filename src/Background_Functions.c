@@ -42,7 +42,7 @@
 
 
 
- #define SHRINK_DELAY_TICKS 50   // ~2.5 second if timer = 50ms
+ #define SHRINK_DELAY_TICKS 40   // ~2 second if timer = 50ms
  #define CHART_GROW_STEP 50
  
  // __[ GET MOTOR POWER ]________________________________________________

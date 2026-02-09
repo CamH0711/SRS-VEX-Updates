@@ -36,7 +36,7 @@
 	// initialise LCD screen
 	// lcd_initialize();
 
-	delay(50); // short delay to allow GUI to initialise
+	 delay(50); // short delay to allow GUI to initialise
 
 	 //initialise and configure adi pins
 	 int32_t success = adi_port_set_config(_lightLeft, E_ADI_ANALOG_IN);

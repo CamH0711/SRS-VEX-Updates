@@ -16,7 +16,10 @@
  #define _PROS_MAIN_H_
  #define PROS_USE_LITERALS
 
+ // New Macros for 2026
  #define MAX_PLOT_SLOTS 4
+ #define MAX_CUSTOM_PLOTS 30
+ #define MAX_NAME_LEN 32
  
  #include "api.h"
  #include "pros/distance.h"
@@ -78,7 +81,6 @@
  extern task_t check_sensors;
 
  /* Function declarations from Background_Functions.c */
- 
  double saturate(double input, double lower, double upper);
  int getMotorPower(int motorName);
  int readSensor (int sensorName);
@@ -92,7 +94,7 @@
  double min(double num1, double num2);
  double max(double num1, double num2);
  int sgn(double input);
- // New functions/global variables for SRS
+ // New functions/global variables for 2026
  void GraphUpdateTask(lv_timer_t * timer);
  void ProgramEndedBanner(lv_timer_t *timer);
  void ChartUpdateTask(lv_timer_t* timer);
@@ -114,7 +116,7 @@
  extern bool program_ended_normally_flag;
  extern volatile bool stop_requested;
 
- /* Plotting Related */
+ /* Declarations for plotting */
  typedef enum {
     PLOT_NONE = 0,
     PLOT_LEFT_ENC,
@@ -146,11 +148,7 @@ typedef struct {
  char *PlotSourceName(plot_source_t src);
  void CustomPlot(int slot, int value, const char * name);
 
-/* Data logging with SD card related*/
-
-// Maximums for the system
-#define MAX_CUSTOM_PLOTS 30
-#define MAX_NAME_LEN 32
+/* Declarations for Data Logging */
 
 // structure to hold all custom plot info
 typedef struct {
