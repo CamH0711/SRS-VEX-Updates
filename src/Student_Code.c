@@ -32,7 +32,7 @@ double encCountPerRev = 900;	    // number of encoder ticks per 1 revolution of 
 /* Write your code in the function below. You may add helper functions below the studentCode function. */
 void student_Main()
 { 
-
+    
 }
 
 // ----------------------------------------------- Function definitions go here  -----------------------------------------------//
