@@ -57,6 +57,8 @@ volatile bool stop_requested = false;
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              lv_label_set_text(ui_StopText2, text);
              _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+             lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
+             lv_timer_set_repeat_count(t, 1);
          }
          // Check right motor
          if ((abs(powerRMonitor) > threshold)  && ((motor_get_position(_encoderRight) - countR) == 0) )
@@ -68,7 +70,9 @@ volatile bool stop_requested = false;
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              lv_label_set_text(ui_StopText2, text);
              _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-         }
+             lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
+             lv_timer_set_repeat_count(t, 1);
+            }
          // Check arm motor
          if ((abs(powerArmMonitor)> threshold) && ((motor_get_position(_encoderArm) - countA) == 0) )
          {
@@ -79,7 +83,9 @@ volatile bool stop_requested = false;
              _ui_flag_modify(ui_StopPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
              lv_label_set_text(ui_StopText2, text);
              _ui_flag_modify(ui_StopPanel2, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-         }
+             lv_timer_t * t = lv_timer_create(ExitProgram, 5000, NULL);
+             lv_timer_set_repeat_count(t, 1);
+            }
  
      }
  }
