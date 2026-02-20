@@ -69,6 +69,9 @@ bool plot_left_enc_enabled = false;
 bool plot_right_enc_enabled = false;
 bool plot_arm_enabled = false;
 bool plot_sonar_enabled = false;
+bool plot_left_light_enabled = false;
+bool plot_mid_light_enabled = false;
+bool plot_right_light_enabled = false;
 numpad_ctx_t numpad_ctx;
 int plotting_rate = 100;
 variable_slot_t variable_slots[3];
@@ -241,6 +244,12 @@ void PlotSensor(int data_name) {
         lv_obj_add_state(ui_PlotRightEncCheckbox, LV_STATE_CHECKED);
     } else if (data_name == ArmEncoder) {
         lv_obj_add_state(ui_PlotArmEncCheckbox, LV_STATE_CHECKED);
+    } else if (data_name == LeftLight) {
+        plot_left_light_enabled = true;
+    } else if (data_name == MidLight) {
+        plot_mid_light_enabled = true;
+    } else if (data_name == RightLight) {
+        plot_right_light_enabled = true;
     }
 }
 

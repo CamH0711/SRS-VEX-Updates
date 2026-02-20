@@ -44,12 +44,13 @@ lv_obj_t * ui_Plot4Label = NULL;
 lv_obj_t * ui_ResumeButton = NULL;
 lv_obj_t * ui_ResumeText = NULL;
 // CUSTOM VARIABLES
-lv_chart_series_t *series_U = NULL;
-lv_chart_series_t *series_E = NULL;
 lv_chart_series_t *series_LeftEnc = NULL;
 lv_chart_series_t *series_RightEnc = NULL;
 lv_chart_series_t *series_ArmEnc = NULL;
 lv_chart_series_t *series_Sonar = NULL;
+lv_chart_series_t *series_LeftLight = NULL;
+lv_chart_series_t *series_MidLight = NULL;
+lv_chart_series_t *series_RightLight = NULL;
 // Global Variables for printing
 volatile bool print_panel_visible = true;
 char print_buffers[8][51];

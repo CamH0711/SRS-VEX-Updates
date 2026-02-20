@@ -439,6 +439,9 @@
         case PLOT_RIGHT_ENC:   return readSensor(RightEncoder);
         case PLOT_ARM_ENC:     return readSensor(ArmEncoder);
         case PLOT_SONAR:       return readSensor(SonarSensor);
+        case PLOT_LEFT_LIGHT:  return readSensor(LeftLight);
+        case PLOT_MID_LIGHT:   return readSensor(MidLight);
+        case PLOT_RIGHT_LIGHT: return readSensor(RightLight);
         default:               return 0;
     }
 }
@@ -454,6 +457,9 @@
         case PLOT_RIGHT_ENC:   return plot_right_enc_enabled;
         case PLOT_ARM_ENC:     return plot_arm_enabled;
         case PLOT_SONAR:       return plot_sonar_enabled;
+        case PLOT_LEFT_LIGHT:  return plot_left_light_enabled;
+        case PLOT_MID_LIGHT:   return plot_mid_light_enabled;
+        case PLOT_RIGHT_LIGHT: return plot_right_light_enabled;
         default:               return false;
     }
 }
@@ -470,6 +476,9 @@
         case PLOT_RIGHT_ENC:   return "Right Encoder";
         case PLOT_ARM_ENC:     return "Arm Encoder";
         case PLOT_SONAR:       return "Sonar Sensor";
+        case PLOT_LEFT_LIGHT:  return "Left Light";
+        case PLOT_MID_LIGHT:   return "Mid Light";
+        case PLOT_RIGHT_LIGHT: return "Right Light";
         default:               return "";
     }
 }
@@ -483,7 +492,10 @@
         PLOT_LEFT_ENC,
         PLOT_RIGHT_ENC,
         PLOT_ARM_ENC,
-        PLOT_SONAR
+        PLOT_SONAR,
+        PLOT_LEFT_LIGHT,
+        PLOT_MID_LIGHT,
+        PLOT_RIGHT_LIGHT
     };
 
     /* 1. Cleanup and Logger Sync */

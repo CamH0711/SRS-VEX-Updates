@@ -77,6 +77,9 @@ extern bool plot_left_enc_enabled;
 extern bool plot_right_enc_enabled;
 extern bool plot_arm_enabled;
 extern bool plot_sonar_enabled;
+extern bool plot_left_light_enabled;
+extern bool plot_mid_light_enabled;
+extern bool plot_right_light_enabled;
 extern int point_count;
 extern int plotting_rate;
 

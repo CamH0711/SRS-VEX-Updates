@@ -123,6 +123,9 @@
     PLOT_RIGHT_ENC,
     PLOT_ARM_ENC,
     PLOT_SONAR,
+    PLOT_LEFT_LIGHT,
+    PLOT_MID_LIGHT,
+    PLOT_RIGHT_LIGHT,
     PLOT_CUSTOM
 } plot_source_t;
 
