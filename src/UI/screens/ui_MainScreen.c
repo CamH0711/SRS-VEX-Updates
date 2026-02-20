@@ -163,12 +163,21 @@ if (line_number < 1 || line_number > 8) return;
 }
 
 // A student accessible function that displays the graph automatically on startup
-void ShowChart() {
-    lv_obj_add_state(ui_Switch, LV_STATE_CHECKED);
+void ToggleChart() {
+    // 1. Toggle the visibility variable first
+    print_panel_visible = !print_panel_visible;
+
+    // 2. Set the switch state based on the new variable
+    if (print_panel_visible) {
+        lv_obj_clear_state(ui_Switch, LV_STATE_CHECKED);
+    } else {
+        lv_obj_add_state(ui_Switch, LV_STATE_CHECKED);
+    }
+
+    // 3. Toggle the UI elements
     _ui_flag_modify(ui_PrintPanel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
     _ui_flag_modify(ui_Chart, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
     _ui_flag_modify(ui_Legend, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-    print_panel_visible = !print_panel_visible;
 }
 
 // A student accessible function that pauses the entire program.
