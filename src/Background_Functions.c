@@ -580,6 +580,7 @@ void CustomPlot(int slot, int value, const char * name) {
 
     int index = slot - 1;
 
+    // Ensure valid slot (1-4) was entered
     if (index < 0 || index >= MAX_PLOT_SLOTS) return;
 
     // Reset the abandonment counter
