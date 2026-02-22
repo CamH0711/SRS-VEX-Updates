@@ -21,20 +21,16 @@ extern lv_obj_t * ui_PlotLeftEncCheckbox;
 extern lv_obj_t * ui_PlotRightEncCheckbox;
 extern lv_obj_t * ui_PlotArmEncCheckbox;
 extern lv_obj_t * ui_PlotSonarCheckbox;
-extern void ui_event_BackToMainButton(lv_event_t * e);
 extern lv_obj_t * ui_BackToMainButton;
 extern lv_obj_t * ui_GoBackLabel;
 extern lv_obj_t * ui_AdjustGainsContainer;
 extern lv_obj_t * ui_Slot1Label;
 extern lv_obj_t * ui_Slot2Label;
 extern lv_obj_t * ui_Slot3Label;
-extern void ui_event_Slot1Button(lv_event_t * e);
 extern lv_obj_t * ui_Slot1Button;
 extern lv_obj_t * ui_AdjustSlot1Label;
-extern void ui_event_Slot2Button(lv_event_t * e);
 extern lv_obj_t * ui_Slot2Button;
 extern lv_obj_t * ui_AdjustSlot2Label;
-extern void ui_event_Slot3Button(lv_event_t * e);
 extern lv_obj_t * ui_Slot3Button;
 extern lv_obj_t * ui_AdjustSlot3Label;
 extern lv_obj_t * ui_NumPad;
@@ -62,7 +58,6 @@ extern lv_obj_t * ui_ButtonDot;
 extern lv_obj_t * ui_ButtonTextDot;
 extern lv_obj_t * ui_ButtonDel;
 extern lv_obj_t * ui_ButtonTextDel;
-extern void ui_event_ButtonDone(lv_event_t * e);
 extern lv_obj_t * ui_ButtonDone;
 extern lv_obj_t * ui_ButtonTextDone;
 extern lv_obj_t * ui_GraphSettingsContainer;
@@ -70,79 +65,6 @@ extern lv_obj_t * ui_PlottingRateLabel;
 extern lv_obj_t * ui_PlottingRateDropdown;
 extern lv_obj_t * ui_StopPanel2;
 extern lv_obj_t * ui_StopText2;
-// Custom Variables
-extern int current_y_min;
-extern int current_y_max;
-extern bool plot_left_enc_enabled;
-extern bool plot_right_enc_enabled;
-extern bool plot_arm_enabled;
-extern bool plot_sonar_enabled;
-extern bool plot_left_light_enabled;
-extern bool plot_mid_light_enabled;
-extern bool plot_right_light_enabled;
-extern int point_count;
-extern int plotting_rate;
-
-
-/* Number Pad related */
-typedef enum {
-    TYPE_INT,
-    TYPE_DOUBLE
-} numpad_data_type_t;
-
-typedef struct {
-    void *target_value;       // Void pointer can hold int* OR double*
-    numpad_data_type_t type;  // Remembers which type it is
-    lv_obj_t *target_label;
-    char *prefix;
-    char buffer[16];
-
-    int max_length;
-    int max_decimals;
-} numpad_ctx_t;
-
-extern numpad_ctx_t numpad_ctx;
-
-/* Adjustable Slots Related */
-typedef struct {
-    void *var_ptr;        // Pointer to the student's variable
-    numpad_data_type_t type; // Your enum: NUMPAD_TYPE_DOUBLE or NUMPAD_TYPE_INT
-    char name[17];          // Name to display (e.g., "Kp", "Arm Target")
-    lv_obj_t * slot_label;  // The UI label showing "Name: Value"
-    bool active;            // Whether this slot is in use
-    int cycles_since_update;
-} variable_slot_t;
-
-extern variable_slot_t variable_slots[3];
-extern bool numpad_is_open;       // Tracks if the Numpad is on screen
-extern void * current_target_ptr;  // Tracks exactly which variable we are editing
-extern uint32_t last_config_time;
-
-#define ConfigSlot(slot, var, name) _Generic((var), \
-    double*: _InternalConfig, \
-    int*:    _InternalConfig    \
-)(slot, var, (sizeof(*(var)) == sizeof(double) ? TYPE_DOUBLE : TYPE_INT), name)
-
-// Custom Functions
-extern void ui_event_PlotUCheckbox(lv_event_t * e);
-extern void ui_event_PlotECheckbox(lv_event_t * e);
-extern void ui_event_PlotLeftEncCheckbox(lv_event_t * e);
-extern void ui_event_PlotRightEncCheckbox(lv_event_t * e);
-extern void ui_event_PlotArmEncCheckbox(lv_event_t * e);
-extern void ui_event_PlotSonarCheckbox(lv_event_t * e);
-extern void PlotSensor(int sensor_name);
-extern void ClearSeriesTimer(lv_timer_t * t);
-extern void ClearSeries(lv_chart_series_t *series);
-extern void NumpadOpen(void *value, numpad_data_type_t type, lv_obj_t *label, const char *prefix, int max_len, int max_dec);
-extern void NumpadButtonEvent(lv_event_t * e);
-extern void UpdateTargetLabel(void);
-extern void ui_event_PlottingRateDropdown(lv_event_t * e);
-extern int FindClosestDropdownIndex(lv_obj_t * dropdown, int target_value);
-extern void SetPlottingRate(int rate_ms);
-extern void _InternalConfig(int slot_num, void * var, numpad_data_type_t type, const char * name);
-void RefreshVariableLabels(lv_timer_t * t);
-void ResetVariableSlots();
-
 
 #ifdef __cplusplus
 } /*extern "C"*/

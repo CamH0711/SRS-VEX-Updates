@@ -59,6 +59,11 @@ void ui_init(void)
     stop_button_timer = lv_timer_create(StopButtonTask, 50, NULL);
     program_ended_banner_timer = lv_timer_create(ProgramEndedBannerTask, 500, NULL);
     pause_timer = lv_timer_create(PauseTask, 100, NULL);
+
+    // Initialize variable adjustment slots
+    variable_slots[0].slot_label = ui_Slot1Label;
+    variable_slots[1].slot_label = ui_Slot2Label;
+    variable_slots[2].slot_label = ui_Slot3Label;
 }
 
 void ui_destroy(void)

@@ -21,12 +21,10 @@ extern lv_obj_t * ui_Chart_Yaxis2;
 extern lv_obj_t * ui_PrintPanel;
 extern lv_obj_t * ui_DisplaySwap;
 extern lv_obj_t * ui_SwitchFrame;
-extern void ui_event_Switch(lv_event_t * e);
 extern lv_obj_t * ui_Switch;
 extern lv_obj_t * ui_DisplayPrintText;
 extern lv_obj_t * ui_DisplayChartText;
 extern lv_obj_t * ui_RunningText;
-extern void ui_event_SettingsButton(lv_event_t * e);
 extern lv_obj_t * ui_SettingsButton;
 extern lv_obj_t * ui_StopPanel;
 extern lv_obj_t * ui_StopText;
@@ -51,18 +49,6 @@ extern lv_obj_t * ui_Plot3Label;
 extern lv_obj_t * ui_Plot4Label;
 extern lv_obj_t * ui_ResumeButton;
 extern lv_obj_t * ui_ResumeText;
-
-// CUSTOM VARIABLES & FUNCTIONS
-extern void update_y_axis(int min, int max);
-extern void ScreenPrint(int line_number, char* text, ...);
-extern void ui_event_OnScreenStopButton(lv_event_t * e);
-extern void ToggleChart();
-extern void ui_event_ResumeButton(lv_event_t * e);
-extern void Pause();
-extern volatile bool print_panel_visible;
-extern char print_buffers[8][51];
-extern bool print_dirty[8];
-extern volatile bool pause_active;
 
 #ifdef __cplusplus
 } /*extern "C"*/
