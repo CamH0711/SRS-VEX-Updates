@@ -5,11 +5,7 @@ void student_Main();    // The main entry point to the student code
 
 // Add your function prototypes below
 
-void driveStraight(int distance);
 
-int convertPower(double percentPower);
-double convertPosition(double encoderCount);
-double convertAngle(double encoderCount);
 
 
 
